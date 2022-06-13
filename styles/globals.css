@@ -14,3 +14,8 @@ a {
 * {
   box-sizing: border-box;
 }
+
+.customDay {
+  width: 2rem !important;
+  height: 2rem;
+}
