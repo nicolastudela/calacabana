@@ -1,19 +1,14 @@
 import Carousel, { CarouselProps as CustomCarouselProps } from "nuka-carousel";
 
 import {
-  Box,
-  BoxProps,
-  Heading,
-  HStack,
-  Text,
   useBreakpointValue,
   IconButton,
-  Flex,
 } from "@chakra-ui/react";
 
 import { ArrowBackIcon, StarIcon, ArrowForwardIcon } from "@chakra-ui/icons";
 import { MouseEventHandler } from "react";
-import Image, { StaticImageData } from "next/image";
+import Image from "next/image";
+import { IApartmentImage } from "../types/shared";
 
 const preventDefaultClickHandlerWrapper = (wrappedHandler: () => void) => {
   const handler: MouseEventHandler<HTMLButtonElement> = (event) => {
@@ -26,7 +21,7 @@ const preventDefaultClickHandlerWrapper = (wrappedHandler: () => void) => {
 export interface CarouselProps extends CustomCarouselProps {
   aptName?: string;
   roundedBorder?: boolean;
-  images: { img: StaticImageData; alt: string }[];
+  images: IApartmentImage[];
 }
 
 const CustomCarousel = ({
@@ -70,8 +65,8 @@ const CustomCarousel = ({
       style={roundedBorder ? { borderRadius: "25px" } : {}}
     >
       {images &&
-        images.map(({ img, alt }, index) => (
-          <Image key={index} src={img} alt={alt} layout="responsive" />
+        images.map(({ src, alt, width, height }, index) => (
+          <Image key={index} src={src} alt={alt} layout="responsive" width={width} height={height}/>
         ))}
     </Carousel>
   );

@@ -12,14 +12,6 @@ import Head from "next/head";
 import Layout from "../components/Layout";
 import Carousel from "../components/Carousel";
 
-import cala_wide_1 from "../public/images/cala/wide/cala-1.jpeg";
-import cala_wide_2 from "../public/images/cala/wide/cala-2.jpeg";
-import cala_wide_3 from "../public/images/cala/wide/cala-3.jpeg";
-import cala_wide_4 from "../public/images/cala/wide/cala-4.jpeg";
-import cala_wide_5 from "../public/images/cala/wide/cala-5.jpeg";
-import cala_wide_6 from "../public/images/cala/wide/cala-6.jpeg";
-import cala_wide_7 from "../public/images/cala/wide/cala-7.jpeg";
-import cala_wide_8 from "../public/images/cala/wide/cala-8.jpeg";
 import ApartmentHeroGrid from "../components/apartment/ApartmentHeroGrid";
 
 import aparmentsData from "../shared/apartmentsData";
@@ -49,46 +41,7 @@ const BookingDates = dynamic(
   }
 )
 
-const images = [
-  {
-    img: cala_wide_1,
-    alt: "Apartamento Cala - comedor",
-  },
-  {
-    img: cala_wide_2,
-    alt: "Apartamento Cala - living",
-  },
-  {
-    img: cala_wide_3,
-    alt: "Apartamento Cala - vista",
-  },
-  {
-    img: cala_wide_4,
-    alt: "Apartamento Cala - dormitorio",
-  },
-  {
-    img: cala_wide_5,
-    alt: "Apartamento Cala - baño",
-  },
-  {
-    img: cala_wide_6,
-    alt: "Apartamento Cala - living/comendor de noche",
-  },
-  {
-    img: cala_wide_7,
-    alt: "Apartamento Cala - ambiente calido con salamandra",
-  },
-  {
-    img: cala_wide_8,
-    alt: "Apartamento Cala - segundo dormitorio",
-  },
-];
-
-
 const apartmentData = aparmentsData[APARMENTS_NAME.CALA];
-
-const apartmentDescription = "Contrary to popular belief, Lorem Ipsum is not simply random text. It has roots in a piece of classical Latin literature from 45 BC, making it over 2000 years old.\n Richard McClintock, a Latin professor at Hampden-Sydney College in Virginia, looked up one of the more obscure Latin words, consectetur, from a Lorem Ipsum passage, and going through the cites of the word in classical literature, discovered the undoubtable source. \n \n Lorem Ipsum comes from sections 1.10.32 and 1.10.33 of \"de Finibus Bonorum et Malorum\" (The Extremes of Good and Evil) by Cicero, written in 45 BC. This book is a treatise on the theory of ethics, very popular during the Renaissance. The first line of Lorem Ipsum, \"Lorem ipsum dolor sit amet..\", comes from a line in section 1.10.32. The standard chunk of Lorem Ipsum used since the 1500s is reproduced below for those interested. Sections 1.10.32 and 1.10.33 from \"de Finibus Bonorum et Malorum\" \n by Cicero are also reproduced in their exact original form, accompanied by English versions from the 1914 translation by H. Rackham."
-
 
 enum IDrawerActionTypes {
   SHOW_ALL_PICS,
@@ -103,7 +56,7 @@ function reducer(state: any, action: { type: any, payload?: any }) {
       if (!state) {
         return {
           title: "Todas las fotos",
-          component: <VerticalGrid images={images} />,
+          component: <VerticalGrid images={apartmentData.images} />,
         }
       }
       return null;
@@ -121,7 +74,7 @@ function reducer(state: any, action: { type: any, payload?: any }) {
       if (!state) {
         return {
           title: "Acerca de este alojamiento",
-          component: <Text>{apartmentDescription}</Text>,
+          component: <Text>{apartmentData.description}</Text>,
         }
       }
       return null;
@@ -175,7 +128,7 @@ const Cala: NextPage = () => {
       <Box>
         <Layout>
           {isMobile ? (
-            <Carousel aptName="cala" images={images} />
+            <Carousel aptName="cala" images={apartmentData.images} />
           ) : (
             <ApartmentHeroGrid
               onShowAllPicks={() => {
@@ -183,7 +136,7 @@ const Cala: NextPage = () => {
                 // openDrawerAndDispatch({ type: "showAllPics" });
                 dispatch({ type: IDrawerActionTypes.SHOW_ALL_PICS });
               }}
-              images={images}
+              images={apartmentData.images}
             />
           )}
 
@@ -214,8 +167,8 @@ const Cala: NextPage = () => {
                 </ApartmentFeature>
               </ApartmentFeatures>
               <Divider my={4} />
-              <Text noOfLines={[4,20]}>{apartmentDescription}</Text>
-              <Button textDecoration="underline" variant="link" onClick={() => dispatch({ type: IDrawerActionTypes.SHOW_DESCRIPTION, payload: apartmentDescription})}>Mostrar mas</Button>
+              <Text noOfLines={[4,20]}>{apartmentData.description}</Text>
+              <Button textDecoration="underline" variant="link" onClick={() => dispatch({ type: IDrawerActionTypes.SHOW_DESCRIPTION, payload:  apartmentData.description})}>Mostrar mas</Button>
               <Divider my={4} />
               <HiglightAmenities amenities={apartmentData.amenities} onExpand={() => dispatch({ type: IDrawerActionTypes.SHOW_ALL_AMENITIES, payload: apartmentData.amenities })} />
               <Divider my={4} />         

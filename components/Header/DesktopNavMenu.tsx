@@ -1,4 +1,4 @@
-import { ChevronDownIcon } from "@chakra-ui/icons";
+// import { ChevronDownIcon } from "@chakra-ui/icons";
 import { Menu, MenuButton, MenuList, MenuItem, Link } from "@chakra-ui/react";
 import { INavMenu } from "../../types/types";
 
@@ -8,7 +8,7 @@ const DesktopNavMenu: React.FC<{ menu: INavMenu }> = ({ menu }) => (
     <MenuButton
       as={Link}
       _focus={{ boxShadow: "none" }}
-      rightIcon={<ChevronDownIcon />}
+      // rightIcon={<ChevronDownIcon />}
     >
       {menu.label}
     </MenuButton>

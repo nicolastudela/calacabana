@@ -3,15 +3,14 @@ import {
   Grid,
   GridItem,
   GridProps,
-  useBreakpointValue,
 } from "@chakra-ui/react";
-import { Children } from "react";
 
-import Image, { StaticImageData } from "next/image";
+import Image from "next/image";
+import { IApartmentImage } from "../../types/shared";
 
 type ApartmentHeroProps = GridProps & {
   onShowAllPicks: () => void;
-  images: { img: StaticImageData; alt: string }[];
+  images: IApartmentImage[];
 };
 
 const ApartmentHeroGrid = ({ images, onShowAllPicks }: ApartmentHeroProps) => {
@@ -26,7 +25,7 @@ const ApartmentHeroGrid = ({ images, onShowAllPicks }: ApartmentHeroProps) => {
       position="relative"
     >
       {images &&
-        images.slice(0, 5).map(({ img, alt }, index) => {
+        images.slice(0, 5).map(({ alt, src, height, width }, index) => {
           return index == 0 ? (
             <GridItem
               position="relative"
@@ -34,12 +33,13 @@ const ApartmentHeroGrid = ({ images, onShowAllPicks }: ApartmentHeroProps) => {
               rowSpan={2}
               colSpan={2}
               maxW={"1000px"}
+              key={alt}
             >
-              <Image src={img} placeholder="blur" layout="fill" alt={alt} />
+              <Image src={src}  layout="fill" alt={alt} width={width} height={height} />
             </GridItem>
           ) : (
-            <GridItem position="relative" display="grid" maxW={"1000px"}>
-              <Image src={img} placeholder="blur" layout="fill" alt={alt} />
+            <GridItem position="relative" display="grid" maxW={"1000px"} key={alt}>
+              <Image src={src} layout="fill" alt={alt} width={width} height={height} />
             </GridItem>
           );
         })}

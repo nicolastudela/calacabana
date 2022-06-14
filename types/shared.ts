@@ -3,13 +3,21 @@ export enum APARMENTS_NAME {
   CABANA,
 }
 
+export interface IApartmentImage {
+  alt: string;
+  height: number;
+  src: string;
+  width: number;
+}
 export interface IApartmentData {
-  name: string;
-  maxPeople: string;
-  rooms: string;
-  beds: string;
-  mainFeature: string;
   amenities: IAparmentAmenitiesGroup[];
+  beds: string;
+  description: string;
+  images: IApartmentImage[];
+  mainFeature: string;
+  maxPeople: string;
+  name: string;
+  rooms: string;
 }
 
 export enum AMENITIES_GROUP {
