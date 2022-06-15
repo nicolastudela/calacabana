@@ -16,29 +16,32 @@ import AparmentCard from "../components/apartment/AparmentCard";
 import Carousel from "../components/Carousel";
 
 import aparmentsData from "../shared/apartmentsData";
-
-import img1 from "../public/images/noche-vista-deck-4-[1_1].jpeg";
-import img2 from "../public/images/noche-vista-deck-4.jpeg";
-import img3 from "../public/images/dia-cala-6-principal.jpeg";
-import img4 from "../public/images/noche-cabana-afuera-4-principal.jpeg";
 import { APARMENTS_NAME } from "../types/shared";
 
 const images = [
   {
-    img: img1,
+    src: "/images/noche-vista-deck-4-[1_1].jpeg",
     alt: "TODO",
+    width: 450,
+    height: 450,
   },
   {
-    img: img2,
+    src: "/images/noche-vista-deck-4.jpeg",
     alt: "TODO",
+    width: 1280,
+    height: 853,
   },
   {
-    img: img3,
+    src: "/images/dia-cala-6-principal.jpeg",
     alt: "TODO",
+    width: 1024,
+    height: 682,
   },
   {
-    img: img4,
+    src: "/images/noche-cabana-afuera-4-principal.jpeg",
     alt: "TODO",
+    width: 1024,
+    height: 682,
   }];
 
 
@@ -74,7 +77,7 @@ const Home: NextPage = () => {
               bg="tomato"
               maxW={"1000px"}
             >
-              <Image src={images[1].img} alt={images[1].alt} layout="fill" />
+              <Image src={images[0].src} width={images[1].width} height={images[1].height} alt={images[1].alt} layout="fill" />
             </GridItem>
             <GridItem
               position="relative"
@@ -83,7 +86,7 @@ const Home: NextPage = () => {
               bg="papayawhip"
               maxW={"1000px"}
             >
-              <Image src={images[0].img} alt={images[0].alt} layout="fill" />
+              <Image src={images[0].src} width={images[0].width} height={images[0].height} alt={images[0].alt} layout="fill" />
             </GridItem>
             <GridItem
               position="relative"
@@ -92,7 +95,7 @@ const Home: NextPage = () => {
               bg="papayawhip"
               maxW={"1000px"}
             >
-              <Image src={images[0].img} alt={images[0].alt} layout="fill" />
+              <Image src={images[0].src} width={images[0].width} height={images[0].height} alt={images[0].alt} layout="fill" />
             </GridItem>
             <GridItem
               position="relative"
@@ -101,7 +104,7 @@ const Home: NextPage = () => {
               bg="papayawhip"
               maxW={"1000px"}
             >
-              <Image src={images[2].img} alt={images[2].alt} layout="fill" />
+              <Image src={images[2].src} width={images[2].width} height={images[2].height} alt={images[2].alt} layout="fill" />
             </GridItem>
           </Grid>
         )}

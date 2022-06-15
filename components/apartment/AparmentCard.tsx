@@ -1,21 +1,14 @@
-import { StarIcon } from "@chakra-ui/icons";
 import {
   Box,
   BoxProps,
-  Heading,
-  HStack,
-  Text,
-  Flex,
 } from "@chakra-ui/react";
-import { StaticImageData } from "next/image";
-import { IApartmentData } from "../../types/shared";
+import { IApartmentData, IApartmentImage } from "../../types/shared";
 
 import Carousel from "../Carousel"
 import ApartmentTitle from "./ApartmentTitle";
 
-
 export interface AparmentCardProps extends IApartmentData {
-  images: { img: StaticImageData; alt: string }[];
+  images: IApartmentImage[];
 }
 
 const AparmentCard = ({

@@ -40,6 +40,7 @@ import {
 } from "react-icons/cg";
 import { BsDoorOpen, BsShieldShaded } from "react-icons/bs";
 
+//FIXME: This is increasing bundle with in 100k? NEED to be fixed, it can return files paths (paths icons files)
 const amenityIconMapper = (amenity: AMENITY) => {
   switch (amenity) {
     case AMENITY.AIR_CONDITIONING:

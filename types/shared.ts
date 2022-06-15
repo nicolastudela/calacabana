@@ -1,6 +1,6 @@
 export enum APARMENTS_NAME {
-  CALA,
-  CABANA,
+  CALA = "cala",
+  CABANA = "cabana",
 }
 
 export interface IApartmentImage {
