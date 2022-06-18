@@ -13,7 +13,10 @@ export interface IApartmentData {
   amenities: IAparmentAmenitiesGroup[];
   beds: string;
   description: string;
-  images: IApartmentImage[];
+  images: {
+    wide: IApartmentImage[],
+    square: IApartmentImage[],
+  }
   mainFeature: string;
   maxPeople: string;
   name: string;

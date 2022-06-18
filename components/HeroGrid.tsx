@@ -6,14 +6,14 @@ import {
 } from "@chakra-ui/react";
 
 import Image from "next/image";
-import { IApartmentImage } from "../../types/shared";
+import { IApartmentImage } from "../types/shared";
 
-type ApartmentHeroProps = GridProps & {
+type HeroGridProps = GridProps & {
   onShowAllPicks: () => void;
   images: IApartmentImage[];
 };
 
-const ApartmentHeroGrid = ({ images, onShowAllPicks }: ApartmentHeroProps) => {
+const HeroGrid = ({ images, onShowAllPicks }: HeroGridProps) => {
   return (
     <Grid
       height={"450px"}
@@ -58,4 +58,4 @@ const ApartmentHeroGrid = ({ images, onShowAllPicks }: ApartmentHeroProps) => {
   );
 };
 
-export default ApartmentHeroGrid;
+export default HeroGrid;

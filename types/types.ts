@@ -12,4 +12,11 @@ export interface INavLink extends INavGeneral {
   link: string;
 }
 
+export enum IDrawerActionTypes {
+  SHOW_ALL_PICS,
+  SHOW_ALL_AMENITIES,
+  SHOW_DESCRIPTION,
+  HIDE,
+}
+
 export type INav = INavMenu | INavLink
