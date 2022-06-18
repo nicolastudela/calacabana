@@ -3,7 +3,6 @@ import aparmentsData, { APARTMENTS_BUILD } from "../shared/apartmentsData";
 
 import {
   Box,
-  useDisclosure,
   useBreakpointValue,
   Flex,
   Divider,
@@ -28,8 +27,7 @@ import { IAparmentAmenitiesGroup, IApartmentData } from "../types/shared";
 import HiglightAmenities from "../components/amenities/HiglightAmenities";
 import BookingButton from "../components/booking/BookingButton";
 import { IDrawerActionTypes } from "../types/types";
-
-const Drawer = dynamic(() => import("../components/Drawer"));
+import PageDrawer from "../components/PageDrawer";
 
 const VerticalGrid = dynamic(() => import("../components/VerticalGallery"));
 
@@ -52,15 +50,10 @@ export interface IApartmentProps {
 const Page = ({ apartmentData }: IApartmentProps) => {
   const isMobile = useBreakpointValue({ base: true, md: false });
   const [isClient, setClient] = useState(false);
-  const {
-    isOpen: isDrawerOpen,
-    onOpen: onDrawerOpen,
-    onClose: onDrawerClose,
-  } = useDisclosure();
-  const [isDrawerMounted, setDrawerMounted] = useState(false);
   const [datesSelected, setSelectedDates] = useState<Date[] | null>(null);
 
 
+  // use reducer to get dispachers to be used on CTAs, where some CTAs will update whats shown on the PageDrawer
   const reducer = useCallback((state: any, action: { type: any; payload?: any }) => {
       switch (action.type) {
         case IDrawerActionTypes.SHOW_ALL_PICS: {
@@ -101,28 +94,9 @@ const Page = ({ apartmentData }: IApartmentProps) => {
       }
     },[apartmentData.description, apartmentData.images])
 
-  // use reducer to get dispachers to be used on CTAs, where some CTAs will update whats shown on the drawer
   const [componentToShow, dispatch] = useReducer(reducer, null);
 
   const datePickerRef = useRef<HTMLDivElement>(null);
-
-  // manage the drawer state
-  useEffect(() => {
-    if (componentToShow) {
-      if (!isDrawerMounted) {
-        setDrawerMounted(true);
-      }
-      onDrawerOpen();
-    } else {
-      onDrawerClose();
-    }
-  }, [
-    isDrawerOpen,
-    componentToShow,
-    isDrawerMounted,
-    onDrawerOpen,
-    onDrawerClose,
-  ]);
 
   useEffect(() => {
     setClient(true);
@@ -287,17 +261,7 @@ const Page = ({ apartmentData }: IApartmentProps) => {
             </Box>
           )}
 
-          {isDrawerMounted && (
-            <Drawer
-              placement={"bottom"}
-              onClose={() => dispatch({ type: "hide" })}
-              isOpen={isDrawerOpen}
-              size={"full"}
-              title={componentToShow?.title}
-            >
-              {componentToShow?.component}
-            </Drawer>
-          )}
+          <PageDrawer componentToShow={componentToShow} onHide={() => dispatch({ type: "hide" })} />
         </Layout>
       </Box>
     </>
