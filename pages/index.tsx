@@ -2,51 +2,146 @@ import {
   AspectRatio,
   Box,
   Container,
-  Grid,
-  GridItem,
   Heading,
   HStack,
   useBreakpointValue,
+  useDisclosure,
 } from "@chakra-ui/react";
 import type { NextPage } from "next";
 import Head from "next/head";
-import Image from "next/image";
 import Layout from "../components/Layout";
 import AparmentCard from "../components/apartment/AparmentCard";
 import Carousel from "../components/Carousel";
 
 import aparmentsData from "../shared/apartmentsData";
 import { APARMENTS_NAME } from "../types/shared";
+import HeroGrid from "../components/HeroGrid";
+import { useState, useCallback, useEffect, useReducer } from "react";
+import { IDrawerActionTypes } from "../types/types";
+import dynamic from "next/dynamic";
+
+const Drawer = dynamic(() => import("../components/Drawer"));
+
+const VerticalGrid = dynamic(() => import("../components/VerticalGallery"));
 
 const images = [
   {
-    src: "/images/noche-vista-deck-4-[1_1].jpeg",
-    alt: "TODO",
-    width: 450,
-    height: 450,
-  },
-  {
-    src: "/images/noche-vista-deck-4.jpeg",
-    alt: "TODO",
+    src: '/images/homepage/1-homepage.jpeg',
+    alt: "Servicio de hospedaje Calacabana - vista noche pileta",
     width: 1280,
     height: 853,
   },
   {
-    src: "/images/dia-cala-6-principal.jpeg",
-    alt: "TODO",
-    width: 1024,
-    height: 682,
+    src: '/images/homepage/2-homepage.jpeg',
+    alt: "Servicio de hospedaje Calacabana - vista solarium pileta",
+    width: 1280,
+    height: 853,
   },
   {
-    src: "/images/noche-cabana-afuera-4-principal.jpeg",
-    alt: "TODO",
-    width: 1024,
-    height: 682,
-  }];
+    src: '/images/homepage/3-homepage.jpeg',
+    alt: "Servicio de hospedaje Calacabana - vista desde cascada pileta",
+    width: 1280,
+    height: 853,
+  },
+  {
+    src: '/images/homepage/4-homepage.jpeg',
+    alt: "Servicio de hospedaje Calacabana - cochera bajo techo de noche",
+    width: 1280,
+    height: 853,
+  },
+  {
+    src: '/images/homepage/9-homepage.jpeg',
+    alt: "Servicio de hospedaje Calacabana - camino de noche",
+    width: 1280,
+    height: 853,
+  },
+  {
+    src: '/images/homepage/6-homepage.jpeg',
+    alt: "Servicio de hospedaje Calacabana - vista hacia los apartamntos con jardin",
+    width: 1280,
+    height: 853,
+  },
+  {
+    src: '/images/homepage/7-homepage.jpeg',
+    alt: "Servicio de hospedaje Calacabana - cochera vista a la entrada de dia",
+    width: 1280,
+    height: 853,
+  },
+  {
+    src: '/images/homepage/8-homepage.jpeg',
+    alt: "Servicio de hospedaje Calacabana - jardin",
+    width: 1280,
+    height: 853,
+  },
+  {
+    src: '/images/homepage/9-homepage.jpeg',
+    alt: "Servicio de hospedaje Calacabana - camino de noche",
+    width: 1280,
+    height: 853,
+  },
+  {
+    src: '/images/homepage/5-homepage.jpeg',
+    alt: "Servicio de hospedaje Calacabana - pileta de noche efectos",
+    width: 1280,
+    height: 853,
+  },
+  {
+    src: '/images/homepage/10-homepage.jpeg',
+    alt: "Servicio de hospedaje Calacabana - madera",
+    width: 1280,
+    height: 853,
+  }
+];
 
 
 const Home: NextPage = () => {
   const isMobile = useBreakpointValue({ base: true, md: false });
+  const {
+    isOpen: isDrawerOpen,
+    onOpen: onDrawerOpen,
+    onClose: onDrawerClose,
+  } = useDisclosure();
+  const [isDrawerMounted, setDrawerMounted] = useState(false);
+
+  const reducer = useCallback((state: any, action: { type: any; payload?: any }) => {
+    switch (action.type) {
+      case IDrawerActionTypes.SHOW_ALL_PICS: {
+        if (!state) {
+          return {
+            title: "Todas las fotos",
+            component: <VerticalGrid images={images} />,
+          };
+        }
+        return null;
+      }
+      case "hide":
+        return null;
+      default:
+        return null;
+    }
+  },[])
+
+   // use reducer to get dispachers to be used on CTAs, where some CTAs will update whats shown on the drawer
+   const [componentToShow, dispatch] = useReducer(reducer, null);
+
+     // manage the drawer state
+  useEffect(() => {
+    if (componentToShow) {
+      if (!isDrawerMounted) {
+        setDrawerMounted(true);
+      }
+      onDrawerOpen();
+    } else {
+      onDrawerClose();
+    }
+  }, [
+    isDrawerOpen,
+    componentToShow,
+    isDrawerMounted,
+    onDrawerOpen,
+    onDrawerClose,
+  ]);
+
   return (
     <>
       <Head>
@@ -59,55 +154,17 @@ const Home: NextPage = () => {
       </Head>
       <Layout>
         {isMobile ? (
-            <Carousel images={images} />
-        ) : (
-          <Grid
-            height={"450px"}
-            templateRows="repeat(2, 1fr)"
-            templateColumns="repeat(6, 1fr)"
-            rowGap={2}
-            columnGap={3}
-            px={0.5}
-          >
-            <GridItem
-              position="relative"
-              display="grid"
-              rowSpan={2}
-              colSpan={4}
-              bg="tomato"
-              maxW={"1000px"}
-            >
-              <Image src={images[0].src} width={images[1].width} height={images[1].height} alt={images[1].alt} layout="fill" />
-            </GridItem>
-            <GridItem
-              position="relative"
-              display="grid"
-              colSpan={1}
-              bg="papayawhip"
-              maxW={"1000px"}
-            >
-              <Image src={images[0].src} width={images[0].width} height={images[0].height} alt={images[0].alt} layout="fill" />
-            </GridItem>
-            <GridItem
-              position="relative"
-              display="grid"
-              colSpan={1}
-              bg="papayawhip"
-              maxW={"1000px"}
-            >
-              <Image src={images[0].src} width={images[0].width} height={images[0].height} alt={images[0].alt} layout="fill" />
-            </GridItem>
-            <GridItem
-              position="relative"
-              display="grid"
-              colSpan={2}
-              bg="papayawhip"
-              maxW={"1000px"}
-            >
-              <Image src={images[2].src} width={images[2].width} height={images[2].height} alt={images[2].alt} layout="fill" />
-            </GridItem>
-          </Grid>
-        )}
+            <Carousel aptName="cala" images={images} />
+          ) : (
+            <HeroGrid
+              onShowAllPicks={() => {
+                // onOpen();
+                // openDrawerAndDispatch({ type: "showAllPics" });
+                dispatch({ type: IDrawerActionTypes.SHOW_ALL_PICS });
+              }}
+              images={images}
+            />
+          )}
         {isMobile && (
           <Heading
             as="h2"
@@ -140,6 +197,17 @@ const Home: NextPage = () => {
             <Box w="100%" bgColor="lightBlue" />
           </AspectRatio>
         </Container>
+        {isDrawerMounted && (
+            <Drawer
+              placement={"bottom"}
+              onClose={() => dispatch({ type: "hide" })}
+              isOpen={isDrawerOpen}
+              size={"full"}
+              title={componentToShow?.title}
+            >
+              {componentToShow?.component}
+            </Drawer>
+          )}
       </Layout>
     </>
   );

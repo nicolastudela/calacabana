@@ -7,7 +7,7 @@ import { IApartmentData, IApartmentImage } from "../../types/shared";
 import Carousel from "../Carousel"
 import ApartmentTitle from "./ApartmentTitle";
 
-export interface AparmentCardProps extends IApartmentData {
+export interface AparmentCardProps extends Pick<IApartmentData, "name" | "mainFeature" | "rooms" | "beds" | "maxPeople">{
   images: IApartmentImage[];
 }
 

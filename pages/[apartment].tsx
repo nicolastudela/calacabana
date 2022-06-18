@@ -14,7 +14,7 @@ import Head from "next/head";
 import Layout from "../components/Layout";
 import Carousel from "../components/Carousel";
 
-import ApartmentHeroGrid from "../components/apartment/ApartmentHeroGrid";
+import HeroGrid from "../components/HeroGrid";
 import dynamic from "next/dynamic";
 import { useCallback, useEffect, useReducer, useRef, useState } from "react";
 import ApartmentTitle from "../components/apartment/ApartmentTitle";
@@ -27,6 +27,7 @@ import ApartmentFeatures, {
 import { IAparmentAmenitiesGroup, IApartmentData } from "../types/shared";
 import HiglightAmenities from "../components/amenities/HiglightAmenities";
 import BookingButton from "../components/booking/BookingButton";
+import { IDrawerActionTypes } from "../types/types";
 
 const Drawer = dynamic(() => import("../components/Drawer"));
 
@@ -42,13 +43,6 @@ const BookingDates = dynamic(
     suspense: true,
   }
 );
-
-enum IDrawerActionTypes {
-  SHOW_ALL_PICS,
-  SHOW_ALL_AMENITIES,
-  SHOW_DESCRIPTION,
-  HIDE,
-}
 
 export interface IApartmentProps {
   apartmentData: IApartmentData;
@@ -66,8 +60,6 @@ const Page = ({ apartmentData }: IApartmentProps) => {
   const [isDrawerMounted, setDrawerMounted] = useState(false);
   const [datesSelected, setSelectedDates] = useState<Date[] | null>(null);
 
-  console.log(apartmentData);
-
 
   const reducer = useCallback((state: any, action: { type: any; payload?: any }) => {
       switch (action.type) {
@@ -75,7 +67,7 @@ const Page = ({ apartmentData }: IApartmentProps) => {
           if (!state) {
             return {
               title: "Todas las fotos",
-              component: <VerticalGrid images={apartmentData.images} />,
+              component: <VerticalGrid images={apartmentData.images.wide} />,
             };
           }
           return null;
@@ -149,15 +141,15 @@ const Page = ({ apartmentData }: IApartmentProps) => {
       <Box>
         <Layout>
           {isMobile ? (
-            <Carousel aptName="cala" images={apartmentData.images} />
+            <Carousel aptName="cala" images={apartmentData.images.wide} />
           ) : (
-            <ApartmentHeroGrid
+            <HeroGrid
               onShowAllPicks={() => {
                 // onOpen();
                 // openDrawerAndDispatch({ type: "showAllPics" });
                 dispatch({ type: IDrawerActionTypes.SHOW_ALL_PICS });
               }}
-              images={apartmentData.images}
+              images={apartmentData.images.wide}
             />
           )}
 
@@ -313,10 +305,11 @@ const Page = ({ apartmentData }: IApartmentProps) => {
 };
 
 const Apartment = ({ apartmentData }: IApartmentProps) => {
+
   return (
     <>
       <Head>
-        <title>CalaCabana - Departamento ${apartmentData.name}</title>
+        <title>CalaCabana - Departamento ${apartmentData?.name}</title>
         <meta
           name="description"
           content="Servicio de hospedaje. Mirador de las sierras, en las sierras"
@@ -331,29 +324,28 @@ const Apartment = ({ apartmentData }: IApartmentProps) => {
 // Return paths for pre built merchants during build phase
 // redirects for disabled and aliased merchants handled in next.config.js
 const getStaticPaths: GetStaticPaths = async () => {
-  console.log(APARTMENTS_BUILD);
   return {
     paths: APARTMENTS_BUILD.map((apartment: string) => ({
       params: { apartment: apartment },
     })),
-    fallback: true, // false or 'blocking'
+    fallback: false,
   };
 };
 
 // Fetch merchant data during build phase
 // NextJS API Middleware is not available here
-const getStaticProps: GetStaticProps = async ({ params = {} }) => {
-  const { apartment: apartmentName } = params;
-
-  const props: IApartmentProps = { 
-    apartmentData: aparmentsData[apartmentName as string],
+const getStaticProps: GetStaticProps<IApartmentProps> = async ({ params }) => {
+ 
+  let props: IApartmentProps | null = null;
+  if (params?.apartment) {
+    props = { 
+      apartmentData: aparmentsData[params?.apartment as "cala" | "cabana"],
+    }
   }
 
-  if (!props) {
+  if (!props || !props.apartmentData) {
     return { notFound: true };
   }
-
-  console.error(props);
 
   return {
     props,
