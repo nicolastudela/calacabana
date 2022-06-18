@@ -20,7 +20,7 @@ import { useState, useCallback, useEffect, useReducer } from "react";
 import { IDrawerActionTypes } from "../types/types";
 import dynamic from "next/dynamic";
 
-const Drawer = dynamic(() => import("../components/Drawer"));
+import PageDrawer from "../components/PageDrawer";
 
 const VerticalGrid = dynamic(() => import("../components/VerticalGallery"));
 
@@ -103,6 +103,7 @@ const Home: NextPage = () => {
   } = useDisclosure();
   const [isDrawerMounted, setDrawerMounted] = useState(false);
 
+     // use reducer to get dispachers to be used on CTAs, where some CTAs will update whats shown on the drawer
   const reducer = useCallback((state: any, action: { type: any; payload?: any }) => {
     switch (action.type) {
       case IDrawerActionTypes.SHOW_ALL_PICS: {
@@ -120,27 +121,8 @@ const Home: NextPage = () => {
         return null;
     }
   },[])
-
-   // use reducer to get dispachers to be used on CTAs, where some CTAs will update whats shown on the drawer
    const [componentToShow, dispatch] = useReducer(reducer, null);
 
-     // manage the drawer state
-  useEffect(() => {
-    if (componentToShow) {
-      if (!isDrawerMounted) {
-        setDrawerMounted(true);
-      }
-      onDrawerOpen();
-    } else {
-      onDrawerClose();
-    }
-  }, [
-    isDrawerOpen,
-    componentToShow,
-    isDrawerMounted,
-    onDrawerOpen,
-    onDrawerClose,
-  ]);
 
   return (
     <>
@@ -197,17 +179,7 @@ const Home: NextPage = () => {
             <Box w="100%" bgColor="lightBlue" />
           </AspectRatio>
         </Container>
-        {isDrawerMounted && (
-            <Drawer
-              placement={"bottom"}
-              onClose={() => dispatch({ type: "hide" })}
-              isOpen={isDrawerOpen}
-              size={"full"}
-              title={componentToShow?.title}
-            >
-              {componentToShow?.component}
-            </Drawer>
-          )}
+        <PageDrawer componentToShow={componentToShow} onHide={() => dispatch({ type: "hide" })} />
       </Layout>
     </>
   );
