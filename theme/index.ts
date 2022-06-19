@@ -22,14 +22,21 @@ const fonts = {
   mono: "Montserrat, monospace",
 };
 
+const shadows = {
+  brand: 'rgb(100, 158, 148) 2px 3px 6px'
+}
+
 const overrides = {
   colors,
   fonts,
+  shadows,
   components: {
     Link,
     DatePicker
   }
 }
+
+
 
 // 2. Add your color mode config
 const config: ThemeConfig = {

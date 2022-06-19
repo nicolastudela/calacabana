@@ -42,12 +42,10 @@ const BookingDates = dynamic(
   }
 );
 
-export interface IApartmentProps {
-  apartmentData: IApartmentData;
-}
+export type IApartmentProps = IApartmentData
 
-
-const Page = ({ apartmentData }: IApartmentProps) => {
+const Page = (apartmentData: IApartmentProps) => {
+  const { amenities, description, images, displayName } = apartmentData;
   const isMobile = useBreakpointValue({ base: true, md: false });
   const [isClient, setClient] = useState(false);
   const [datesSelected, setSelectedDates] = useState<Date[] | null>(null);
@@ -60,7 +58,7 @@ const Page = ({ apartmentData }: IApartmentProps) => {
           if (!state) {
             return {
               title: "Todas las fotos",
-              component: <VerticalGrid images={apartmentData.images.wide} />,
+              component: <VerticalGrid images={images.wide} />,
             };
           }
           return null;
@@ -82,7 +80,7 @@ const Page = ({ apartmentData }: IApartmentProps) => {
           if (!state) {
             return {
               title: "Acerca de este alojamiento",
-              component: <Text>{apartmentData.description}</Text>,
+              component: <Text>{description}</Text>,
             };
           }
           return null;
@@ -92,7 +90,7 @@ const Page = ({ apartmentData }: IApartmentProps) => {
         default:
           return null;
       }
-    },[apartmentData.description, apartmentData.images])
+    },[description, images])
 
   const [componentToShow, dispatch] = useReducer(reducer, null);
 
@@ -104,18 +102,10 @@ const Page = ({ apartmentData }: IApartmentProps) => {
 
   return (
     <>
-      <Head>
-        <title>CalaCabana - Departamento Cala</title>
-        <meta
-          name="description"
-          content="Servicio de hospedaje. Mirador de las sierras, en las sierras"
-        />
-        <link rel="icon" href="/favicon.ico" />
-      </Head>
       <Box>
         <Layout>
           {isMobile ? (
-            <Carousel aptName="cala" images={apartmentData.images.wide} />
+            <Carousel aptName="cala" images={images.wide} />
           ) : (
             <HeroGrid
               onShowAllPicks={() => {
@@ -123,7 +113,7 @@ const Page = ({ apartmentData }: IApartmentProps) => {
                 // openDrawerAndDispatch({ type: "showAllPics" });
                 dispatch({ type: IDrawerActionTypes.SHOW_ALL_PICS });
               }}
-              images={apartmentData.images.wide}
+              images={images.wide}
             />
           )}
 
@@ -164,14 +154,14 @@ const Page = ({ apartmentData }: IApartmentProps) => {
                 </ApartmentFeature>
               </ApartmentFeatures>
               <Divider my={4} />
-              <Text noOfLines={[4, 20]}>{apartmentData.description}</Text>
+              <Text noOfLines={[4, 20]}>{description}</Text>
               <Button
                 textDecoration="underline"
                 variant="link"
                 onClick={() =>
                   dispatch({
                     type: IDrawerActionTypes.SHOW_DESCRIPTION,
-                    payload: apartmentData.description,
+                    payload: description,
                   })
                 }
               >
@@ -179,11 +169,11 @@ const Page = ({ apartmentData }: IApartmentProps) => {
               </Button>
               <Divider my={4} />
               <HiglightAmenities
-                amenities={apartmentData.amenities}
+                amenities={amenities}
                 onExpand={() =>
                   dispatch({
                     type: IDrawerActionTypes.SHOW_ALL_AMENITIES,
-                    payload: apartmentData.amenities,
+                    payload:amenities,
                   })
                 }
               />
@@ -205,17 +195,18 @@ const Page = ({ apartmentData }: IApartmentProps) => {
                     width={"fit-content"}
                     margin="auto"
                     padding={{ base: "unset", md: "24px" }}
-                    boxShadow={{
-                      base: "none",
-                      md: "rgb(100, 158, 148) 0px 6px 16px",
-                    }}
-                    border="1px solid rgb(100, 158, 148"
+                    borderTop="0"
+                    borderLeft="0"
+                    borderBottom={{base:"none", md: "2px solid"}}
+                    borderRight={{base:"none", md: "2px solid"}}
+                    borderColor="brand.500"
+                    shadow={{base:"none", md: "brand"}}
                   >
                     <BookingDates
                       ref={datePickerRef}
                       m={"auto"}
                       width="fit-content"
-                      apartmentName={apartmentData.name}
+                      apartmentName={displayName}
                       forceInline={!!isMobile}
                       onDatesChange={(dates) => setSelectedDates(dates)}
                     />
@@ -255,7 +246,7 @@ const Page = ({ apartmentData }: IApartmentProps) => {
                   bg="tomato"
                   onClick={() => datePickerRef.current?.scrollIntoView()}
                 >
-                  Scroll to calendar
+                  Consultar disponibilidad
                 </Button>
               )}
             </Box>
@@ -268,19 +259,20 @@ const Page = ({ apartmentData }: IApartmentProps) => {
   );
 };
 
-const Apartment = ({ apartmentData }: IApartmentProps) => {
+const Apartment = (apartmentData: IApartmentProps) => {
 
   return (
     <>
       <Head>
-        <title>CalaCabana - Departamento ${apartmentData?.name}</title>
+        <title>{`Departamento ${apartmentData.displayName} - CalaCabana Hospedaje`}</title>
         <meta
           name="description"
+          // TODO poner descripcion SEO
           content="Servicio de hospedaje. Mirador de las sierras, en las sierras"
         />
         <link rel="icon" href="/favicon.ico" />
       </Head>
-      <Page apartmentData={apartmentData} />
+      <Page {...apartmentData} />
     </>
   );
 }
@@ -302,12 +294,10 @@ const getStaticProps: GetStaticProps<IApartmentProps> = async ({ params }) => {
  
   let props: IApartmentProps | null = null;
   if (params?.apartment) {
-    props = { 
-      apartmentData: aparmentsData[params?.apartment as "cala" | "cabana"],
-    }
+    props = aparmentsData[params?.apartment as "cala" | "cabana"]
   }
 
-  if (!props || !props.apartmentData) {
+  if (!props) {
     return { notFound: true };
   }
 
