@@ -20,6 +20,7 @@ export interface IApartmentData {
   mainFeature: string;
   maxPeople: string;
   name: string;
+  displayName: string;
   rooms: string;
 }
 

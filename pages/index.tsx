@@ -163,6 +163,8 @@ const Home: NextPage = () => {
           flexWrap={"wrap"}
           justifyContent={{ base: "space-around", md: "space-between" }}
           p="0"
+          gap={4}
+          my="4"
         >
          <AparmentCard {...aparmentsData[APARMENTS_NAME.CABANA]} images={images} />
          <AparmentCard {...aparmentsData[APARMENTS_NAME.CALA]} images={images} marginInlineStart={'0px !important'}/>

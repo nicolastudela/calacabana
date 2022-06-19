@@ -7,13 +7,14 @@ import { IApartmentData, IApartmentImage } from "../../types/shared";
 import Carousel from "../Carousel"
 import ApartmentTitle from "./ApartmentTitle";
 
-export interface AparmentCardProps extends Pick<IApartmentData, "name" | "mainFeature" | "rooms" | "beds" | "maxPeople">{
+export interface AparmentCardProps extends Pick<IApartmentData, "name" | "displayName" | "mainFeature" | "rooms" | "beds" | "maxPeople">{
   images: IApartmentImage[];
 }
 
 const AparmentCard = ({
   images,
   name,
+  displayName,
   mainFeature,
   rooms,
   beds,
@@ -27,12 +28,18 @@ const AparmentCard = ({
       href={`/${name.toLocaleLowerCase()}`}
       w={{ base: "100%", md: "50%" }}
       maxWidth={"550px"}
-      p={1}
       pb={4}
       {...rest}
+      borderTop="0"
+      borderLeft="0"
+      borderBottom="2px solid"
+      borderRight="2px solid"
+      borderColor="brand.500"
+      shadow={"brand"}
+      rounded={"md"}
     >
       <Carousel aptName={name} images={images}/>
-      <ApartmentTitle name={name} mainFeature={mainFeature} rooms={rooms} beds={beds} maxPeople={maxPeople} />
+      <ApartmentTitle displayName={displayName} mainFeature={mainFeature} rooms={rooms} beds={beds} maxPeople={maxPeople} p={1} />
     </Box>
   );
 };
