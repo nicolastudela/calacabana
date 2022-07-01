@@ -28,6 +28,7 @@ import HiglightAmenities from "../components/amenities/HiglightAmenities";
 import BookingButton from "../components/booking/BookingButton";
 import { IDrawerActionTypes } from "../types/types";
 import PageDrawer from "../components/PageDrawer";
+import { getBookingDatesFromQueryString } from  "../utils/queryStringHandler"
 
 const VerticalGrid = dynamic(() => import("../components/VerticalGallery"));
 
@@ -44,11 +45,25 @@ const BookingDates = dynamic(
 
 export type IApartmentProps = IApartmentData
 
+//TODO (#18) fetch booked periods 
+const excludedDateRanges: Date[][] = [
+    // [addDays(new Date(), 1), addDays(new Date(), 5)],
+    // [addDays(new Date(), 10), addDays(new Date(), 25)]
+  ];
+  
+interface QueryParams {
+  check_in?: string;
+  check_out?: string;
+}
+
 const Page = (apartmentData: IApartmentProps) => {
   const { amenities, description, images, displayName } = apartmentData;
   const isMobile = useBreakpointValue({ base: true, md: false });
   const [isClient, setClient] = useState(false);
   const [datesSelected, setSelectedDates] = useState<Date[] | null>(null);
+  const [defaultDates, setDefaultDates] = useState<[string, string]>();
+
+  const datePickerRef = useRef<HTMLDivElement>(null);
 
 
   // use reducer to get dispachers to be used on CTAs, where some CTAs will update whats shown on the PageDrawer
@@ -94,14 +109,20 @@ const Page = (apartmentData: IApartmentProps) => {
 
   const [componentToShow, dispatch] = useReducer(reducer, null);
 
-  const datePickerRef = useRef<HTMLDivElement>(null);
-
   useEffect(() => {
     setClient(true);
+
+    const defaultBookingDates = getBookingDatesFromQueryString(window.location.search)
+    if (defaultBookingDates) {
+        setDefaultDates([defaultBookingDates.checkInStr,defaultBookingDates.checkOutStr])
+    }
+  },[]);
+
+  const onDatesSelected = useCallback((dates: Date[] | null) => {      
+    setSelectedDates(dates);
   }, []);
 
   return (
-    <>
       <Box>
         <Layout>
           {isMobile ? (
@@ -109,8 +130,6 @@ const Page = (apartmentData: IApartmentProps) => {
           ) : (
             <HeroGrid
               onShowAllPicks={() => {
-                // onOpen();
-                // openDrawerAndDispatch({ type: "showAllPics" });
                 dispatch({ type: IDrawerActionTypes.SHOW_ALL_PICS });
               }}
               images={images.wide}
@@ -208,7 +227,9 @@ const Page = (apartmentData: IApartmentProps) => {
                       width="fit-content"
                       apartmentName={displayName}
                       forceInline={!!isMobile}
-                      onDatesChange={(dates) => setSelectedDates(dates)}
+                      onDatesSelected={onDatesSelected}
+                      excludeDatesRanges={excludedDateRanges}
+                      defaultDates={defaultDates}
                     />
                     {!isMobile && (
                       <>
@@ -255,7 +276,6 @@ const Page = (apartmentData: IApartmentProps) => {
           <PageDrawer componentToShow={componentToShow} onHide={() => dispatch({ type: "hide" })} />
         </Layout>
       </Box>
-    </>
   );
 };
 
@@ -267,7 +287,7 @@ const Apartment = (apartmentData: IApartmentProps) => {
         <title>{`Departamento ${apartmentData.displayName} - CalaCabana Hospedaje`}</title>
         <meta
           name="description"
-          // TODO poner descripcion SEO
+          // TODO(#20) SEO description is needed
           content="Servicio de hospedaje. Mirador de las sierras, en las sierras"
         />
         <link rel="icon" href="/favicon.ico" />

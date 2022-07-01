@@ -25,7 +25,7 @@ const HeroGrid = ({ images, onShowAllPicks }: HeroGridProps) => {
       position="relative"
     >
       {images &&
-        images.slice(0, 5).map(({ alt, src, height, width }, index) => {
+        images.slice(0, 5).map(({ alt, src }, index) => {
           return index == 0 ? (
             <GridItem
               position="relative"
@@ -35,11 +35,11 @@ const HeroGrid = ({ images, onShowAllPicks }: HeroGridProps) => {
               maxW={"1000px"}
               key={alt}
             >
-              <Image src={src}  layout="fill" alt={alt} width={width} height={height} />
+              <Image src={src} layout="fill" alt={alt} />
             </GridItem>
           ) : (
             <GridItem position="relative" display="grid" maxW={"1000px"} key={alt}>
-              <Image src={src} layout="fill" alt={alt} width={width} height={height} />
+              <Image src={src} layout="fill" alt={alt} />
             </GridItem>
           );
         })}
