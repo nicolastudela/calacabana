@@ -1,86 +1,57 @@
-import { addDays, isAfter, isBefore } from "date-fns";
+import { addDays, isBefore } from "date-fns";
+import { FIRST_BOOKING_DAY } from "./dates";
 
-
-
-interface RangesIterator {
-  allRanges: Date[][];
-  move: () => void;
-  range: () => Date[];
-}
-
-/**
- * 
- * @param {sorted ranges. Ai[n]<Ai[n+1] && Ai[n]<Ai+1[n]} A Array
- * @param {sorted ranges. Bi[n]<Bi[n+1] && Bi[n]<Bi+1[n]} B Array
- */
-const intersectDateRanges = (A: Date[][] = [], B: Date[][] = []) => {
-
-  const buildRangeObj = (allRanges : Date[][]) => (
-    { allRanges, 
-      move() {
-        this.allRanges = this.allRanges.slice(1);
-      },
-      range() {
-        return this.allRanges[0];
-      }
-    } as RangesIterator
-  )
-  
-  const calculateRangesOrder = ( rngIt1: RangesIterator, rngIt2: RangesIterator) => {
-    const range1 = rngIt1.range(); 
-    const range2 = rngIt2.range();
-  
-    if (!range1 || !range2) {
-      return { found: false };
-    }
-  
-    if (range1[0] >= range2[0])  {
-      return {
-        ranges: [rngIt1,rngIt2],
-        found: true,
-      }
-    } else {
-      return {
-        ranges: [rngIt2,rngIt1],
-        found: true,
-      }
-    } 
+const isBookingDateRangeAvailable = (
+  rangeToCompare: [Date, Date],
+  excludedDateRanges?: Date[][]
+) => {
+  if (!excludedDateRanges) {
+    return true;
   }
-
-  let intersectons = [];
-  let rangeOrder = calculateRangesOrder(buildRangeObj(A),buildRangeObj(B));
-  while (rangeOrder.found && rangeOrder.ranges) {
-
-    const [rangeStart, rangeEnd] = rangeOrder.ranges;
-    
-    const P = rangeStart.range();
-    const Q = rangeEnd.range();
-
-    if (P[0] > Q[1]) {
-      rangeEnd.move();
-    } else if (P[0] === Q[1]) {
-      intersectons.push([P[0],P[0]]);
-      rangeEnd.move();
-    } else  { // P[0] < Q[1]
-      if (P[1] < Q[1]) {
-        intersectons.push([P[0],P[1]]);
-        rangeStart.move();
-      } else if (P[1] > Q[1]) {
-        intersectons.push([P[0],Q[1]]);
-        rangeEnd.move();
-      } else {
-        intersectons.push([P[0],Q[1]]);
-        rangeStart.move();
-        rangeEnd.move();
-      }
-    }
-    rangeOrder = calculateRangesOrder(rangeStart,rangeEnd);
-  }
-  
-  return intersectons;
-
+  return (
+    excludedDateRanges.findIndex((range) => {
+      return (
+        isBefore(rangeToCompare[0], range[1]) &&
+        isBefore(range[0], rangeToCompare[1])
+      );
+    }) < 0
+  );
 };
 
-export {
-  intersectDateRanges,
+const isValidBookingDateRange  = (range: [Date, Date]) => {
+  if (range && range.length == 2) {
+    return isBefore(range[0],range[1]) && isBefore(FIRST_BOOKING_DAY, range[0])
+  }
 }
+
+
+const validateAndFormatDefaultDates = (defaultDates: [string, string]): [Date, Date] | null => {
+  if (defaultDates && defaultDates.length == 2) { 
+    const checkin = new Date(defaultDates[0]);
+    const checkout = new Date(defaultDates[1]);
+    if (checkin && checkout && isValidBookingDateRange([checkin, checkout])) {
+      return [checkin, checkout];
+    }
+  }
+  return null;
+}
+
+const flattenDateRanges = (excludeDatesRanges: Date[][] | undefined) => {
+  if (excludeDatesRanges) {
+    return excludeDatesRanges.flatMap((range) => {
+      const dates = [];
+      for (
+        let lowerBound = range[0];
+        lowerBound <= range[1];
+        lowerBound = addDays(lowerBound, 1)
+      ) {
+        dates.push(lowerBound);
+      }
+      return dates;
+    });
+  } else {
+    return undefined;
+  }
+};
+
+export { isBookingDateRangeAvailable, isValidBookingDateRange, validateAndFormatDefaultDates, flattenDateRanges };

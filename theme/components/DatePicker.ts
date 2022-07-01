@@ -18,7 +18,7 @@ const Datepicker = {
       '.react-datepicker__day-name': {
         width: '3em',
       },
-      '.react-datepicker__day--excluded': {
+      '.react-datepicker__day--excluded, .react-datepicker__day--disabled': {
         color: 'gray.500',
         textDecoration: "line-through",
       }
