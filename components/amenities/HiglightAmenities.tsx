@@ -1,9 +1,9 @@
 import { Button } from "@chakra-ui/react";
 import { useMemo } from "react";
-import { IAparmentAmenitiesGroup } from "../../types/shared";
+import { IAparmentAmenitiesGroup } from "@/types/shared";
 
-import basicAmenitiesIconMapper from "../utils/highlightAmenitiesIconMapper"
-import ApartmentFeatures, { ApartmentFeature, ApartmentFeatureIcon } from "../apartment/ApartmentFeatures";
+import basicAmenitiesIconMapper from "@/components/utils/highlightAmenitiesIconMapper"
+import ApartmentFeatures, { ApartmentFeature, ApartmentFeatureIcon } from "@/components/apartment/ApartmentFeatures";
 
 const HiglightAmenities = ({ amenities, onExpand} : { amenities: IAparmentAmenitiesGroup[], onExpand: () => void}) => {
   const allAmenities = useMemo(() => {

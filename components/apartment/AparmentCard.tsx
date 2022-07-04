@@ -2,10 +2,10 @@ import {
   Box,
   BoxProps,
 } from "@chakra-ui/react";
-import { IApartmentData, IApartmentImage } from "../../types/shared";
+import { IApartmentData, IApartmentImage } from "@/types/shared";
 
-import Carousel from "../Carousel"
-import ApartmentTitle from "./ApartmentTitle";
+import Carousel from "@/components/Carousel"
+import ApartmentTitle from "@/components/apartment/ApartmentTitle";
 
 export interface AparmentCardProps extends Pick<IApartmentData, "name" | "displayName" | "mainFeature" | "rooms" | "beds" | "maxPeople">{
   images: IApartmentImage[];

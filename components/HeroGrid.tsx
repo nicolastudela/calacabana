@@ -6,7 +6,7 @@ import {
 } from "@chakra-ui/react";
 
 import Image from "next/image";
-import { IApartmentImage } from "../types/shared";
+import { IApartmentImage } from "@/types/shared";
 
 type HeroGridProps = GridProps & {
   onShowAllPicks: () => void;

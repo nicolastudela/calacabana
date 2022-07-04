@@ -1,4 +1,4 @@
-import { INav, INavLink, INavMenu } from "../../types/types";
+import { INav, INavLink } from "../../types/types";
 
 const NAV_LINKS: INav[] = [
   {

@@ -10,25 +10,25 @@ import {
   Button,
 } from "@chakra-ui/react";
 import Head from "next/head";
-import Layout from "../components/Layout";
-import Carousel from "../components/Carousel";
+import Layout from "@/components/Layout";
+import Carousel from "@/components/Carousel";
 
-import HeroGrid from "../components/HeroGrid";
+import HeroGrid from "@/components/HeroGrid";
 import dynamic from "next/dynamic";
 import { useCallback, useEffect, useReducer, useRef, useState } from "react";
-import ApartmentTitle from "../components/apartment/ApartmentTitle";
+import ApartmentTitle from "@/components/apartment/ApartmentTitle";
 import { BsFillDoorOpenFill } from "react-icons/bs";
 import { GiCctvCamera, GiHomeGarage } from "react-icons/gi";
 import ApartmentFeatures, {
   ApartmentFeature,
   ApartmentFeatureIcon,
-} from "../components/apartment/ApartmentFeatures";
-import { IAparmentAmenitiesGroup, IApartmentData } from "../types/shared";
-import HiglightAmenities from "../components/amenities/HiglightAmenities";
-import BookingButton from "../components/booking/BookingButton";
-import { IDrawerActionTypes } from "../types/types";
-import PageDrawer from "../components/PageDrawer";
-import { getBookingDatesFromQueryString } from  "../utils/queryStringHandler"
+} from "@/components/apartment/ApartmentFeatures";
+import { IAparmentAmenitiesGroup, IApartmentData } from "@/types/shared";
+import HiglightAmenities from "@/components/amenities/HiglightAmenities";
+import BookingButton from "@/components/booking/BookingButton";
+import { IDrawerActionTypes } from "@/types/types";
+import PageDrawer from "@/components/PageDrawer";
+import { getBookingDatesFromQueryString } from  "@/utils/queryStringHandler"
 
 const VerticalGrid = dynamic(() => import("../components/VerticalGallery"));
 
@@ -126,7 +126,7 @@ const Page = (apartmentData: IApartmentProps) => {
       <Box>
         <Layout>
           {isMobile ? (
-            <Carousel aptName="cala" images={images.wide} />
+            <Carousel aptName="cala" images={images.wide}/>
           ) : (
             <HeroGrid
               onShowAllPicks={() => {

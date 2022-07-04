@@ -5,10 +5,10 @@ import {
   IconButton,
 } from "@chakra-ui/react";
 
-import { ArrowBackIcon, StarIcon, ArrowForwardIcon } from "@chakra-ui/icons";
+import { ArrowBackIcon, ArrowForwardIcon } from "@chakra-ui/icons";
 import { MouseEventHandler } from "react";
 import Image from "next/image";
-import { IApartmentImage } from "../types/shared";
+import { IApartmentImage } from "@/types/shared";
 
 const preventDefaultClickHandlerWrapper = (wrappedHandler: () => void) => {
   const handler: MouseEventHandler<HTMLButtonElement> = (event) => {
@@ -66,7 +66,7 @@ const CustomCarousel = ({
     >
       {images &&
         images.map(({ src, alt, width, height }, index) => (
-          <Image key={index} src={src} alt={alt} layout="responsive" width={width} height={height}/>
+          <Image key={index} src={src} alt={alt} layout="responsive" width={"100%"} height={"100%"}/>
         ))}
     </Carousel>
   );
