@@ -1,7 +1,6 @@
 import { useDisclosure } from "@chakra-ui/react";
-import { jsx } from "@emotion/react";
 import dynamic from "next/dynamic";
-import { memo, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 
 const Drawer = dynamic(() => import("../components/Drawer"));
 

@@ -4,9 +4,9 @@ import {
   StackProps,
   useBreakpointValue,
 } from "@chakra-ui/react";
-import DesktopHeader from "./Header/DesktopHeader";
-import MobileHeader from "./Header/MobileHeader";
-import Footer from "./Footer";
+import DesktopHeader from "@/components/Header/DesktopHeader";
+import MobileHeader from "@/components/Header/MobileHeader";
+import Footer from "@/components/Footer";
 
 const Layout = ({ children, ...rest }: StackProps) => {
   const isMobile = useBreakpointValue({ base: true, md: false });

@@ -9,18 +9,18 @@ import {
 } from "@chakra-ui/react";
 import type { NextPage } from "next";
 import Head from "next/head";
-import Layout from "../components/Layout";
-import AparmentCard from "../components/apartment/AparmentCard";
-import Carousel from "../components/Carousel";
+import Layout from "@/components/Layout";
+import AparmentCard from "@/components/apartment/AparmentCard";
+import Carousel from "@/components/Carousel";
 
 import aparmentsData from "../shared/apartmentsData";
-import { APARMENTS_NAME } from "../types/shared";
-import HeroGrid from "../components/HeroGrid";
+import { APARMENTS_NAME } from "@/types/shared";
+import HeroGrid from "@/components/HeroGrid";
 import { useState, useCallback, useEffect, useReducer } from "react";
-import { IDrawerActionTypes } from "../types/types";
+import { IDrawerActionTypes } from "@/types/types";
 import dynamic from "next/dynamic";
 
-import PageDrawer from "../components/PageDrawer";
+import PageDrawer from "@/components/PageDrawer";
 
 const VerticalGrid = dynamic(() => import("../components/VerticalGallery"));
 

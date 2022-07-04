@@ -17,14 +17,14 @@ import {
   Heading,
   Input,
 } from "@chakra-ui/react";
-import DatePicker from "./DatePicker";
+import DatePicker from "@/components/booking/DatePicker";
 import { useRouter } from "next/router";
 import {
   flattenDateRanges,
   isBookingDateRangeAvailable,
   validateAndFormatDefaultDates,
-} from "../../utils/dateRanges";
-import { updateQueryStringWithBookingDates } from "../../utils/queryStringHandler";
+} from "@/utils/dateRanges";
+import { updateQueryStringWithBookingDates } from "@/utils/queryStringHandler";
 
 const DatesInput = ({
   startDate,

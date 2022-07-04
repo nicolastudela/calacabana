@@ -6,7 +6,6 @@ import {
   Heading,
   LinkOverlay,
   LinkBox,
-  Button,
 } from "@chakra-ui/react";
 import MENU_LINKS from './navLinks'
 import DesktopNavMenu from "./DesktopNavMenu";

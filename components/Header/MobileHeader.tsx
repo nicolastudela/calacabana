@@ -5,7 +5,7 @@ import {
 } from "@chakra-ui/react";
 import dynamic from "next/dynamic";
 import React, { useCallback, useState } from "react";
-import MobileHeadMaster from "./MobileHeadMaster";
+import MobileHeadMaster from "@/components/Header/MobileHeadMaster";
 
 const MobileNavMenu = dynamic(
   () => import("./MobileNavMenu")

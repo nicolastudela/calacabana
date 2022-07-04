@@ -6,12 +6,12 @@ import {
   Flex,
   Heading,
 } from "@chakra-ui/react";
-import { IAparmentAmenitiesGroup } from "../../types/shared";
+import { IAparmentAmenitiesGroup } from "@/types/shared";
 import ApartmentFeatures, {
   ApartmentFeature,
   ApartmentFeatureIcon,
-} from "../apartment/ApartmentFeatures";
-import amenityIconMapper from "../utils/amenitiesIconMapper";
+} from "@/components/apartment/ApartmentFeatures";
+import amenityIconMapper from "@/components/utils/amenitiesIconMapper";
 
 const AllAmenities = ({
   amenities,

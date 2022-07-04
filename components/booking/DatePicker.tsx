@@ -2,8 +2,7 @@ import Datepicker, {registerLocale} from "react-datepicker";
 import { Box, BoxProps, useStyleConfig } from "@chakra-ui/react";
 import "react-datepicker/dist/react-datepicker.css";
 import es from 'date-fns/locale/es';
-import { addDays } from "date-fns";
-import { FIRST_BOOKING_DAY } from "../../utils/dates";
+import { FIRST_BOOKING_DAY } from "@/utils/dates";
 registerLocale('es', es)
 
 export interface DatePickerProps extends BoxProps {

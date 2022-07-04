@@ -1,6 +1,6 @@
 // import { ChevronDownIcon } from "@chakra-ui/icons";
 import { Menu, MenuButton, MenuList, MenuItem, Link } from "@chakra-ui/react";
-import { INavMenu } from "../../types/types";
+import { INavMenu } from "@/types/types";
 
 const DesktopNavMenu: React.FC<{ menu: INavMenu }> = ({ menu }) => (
   //TODO Menu component is INSANLY BIG. weigths like 50kb. Should replace it with some ad-hoc component o just lazy load it when the user hover on the link

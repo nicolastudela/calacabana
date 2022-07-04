@@ -2,9 +2,9 @@ import { ArrowBackIcon } from "@chakra-ui/icons";
 import {Link, LinkProps, Drawer, DrawerOverlay, DrawerContent, DrawerHeader, IconButton, DrawerBody, VStack, Divider, Text } from "@chakra-ui/react";
 import { NextRouter, useRouter } from "next/router";
 import { useState } from "react";
-import { INavLink } from "../../types/types";
-import MobileHeadMaster from "./MobileHeadMaster";
-import MENU_LINKS from './navLinks'
+import { INavLink } from "@/types/types";
+import MobileHeadMaster from "@/components/Header/MobileHeadMaster";
+import MENU_LINKS from '@/components/Header/navLinks'
 import theme from "../../theme";
 
 
