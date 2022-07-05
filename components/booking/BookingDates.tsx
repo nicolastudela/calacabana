@@ -139,6 +139,8 @@ function BookingDates(
     [excludeDatesRanges]
   );
 
+  // console.log(excludeDatesRanges);
+
   /**
    * Handles passed default dates:
    * - validates date range format and if its valid range

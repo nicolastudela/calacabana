@@ -1,7 +1,7 @@
 
 import { calendar_v3, google } from "googleapis";
 import { GaxiosPromise } from "googleapis-common";
-import { BookingsInfoResponseStatus, IAparmentBookingsResponseError } from "../types/api";
+import { BookingsInfoResponseStatus, IAparmentBookingsResponseError, IAparmentBookingsResponseSuccessful } from "../types/api";
 import { APARMENTS_NAME } from "../types/shared";
 
 const jwtClient = new google.auth.JWT(
@@ -18,7 +18,7 @@ const calendar = google.calendar({
 });
 
 const sanitizeBookingPeriods = (periods?: calendar_v3.Schema$Event[]) => {
-  const initValue: Date[][] = [];
+  const initValue: [Date,Date][] = [];
   if (!periods) {
     return initValue;
   }
@@ -40,16 +40,15 @@ const sanitizeEventListResponse = (
       status: BookingsInfoResponseStatus.SUCCESFUL,
       statusText: resp.statusText,
       bookedPeriods: sanitizeBookingPeriods(resp.data?.items),
-    }))
+    } as IAparmentBookingsResponseSuccessful))
     .catch(
       (error) => {
         console.error(error.response)
         return ({
           status: BookingsInfoResponseStatus.ERROR,
-          errorCode: error.response.data.error,
+          errorCode: error.response.data.error.code,
           statusText: error.response.status,
-          errorsDetails:
-            error?.response?.data.error_description && (JSON.stringify(error.response.data.error_description) as string),
+          errorsDetails: error.response.data.error.message
         } as IAparmentBookingsResponseError)
       }
     );

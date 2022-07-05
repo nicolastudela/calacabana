@@ -30,6 +30,12 @@ import { IDrawerActionTypes } from "@/types/types";
 import PageDrawer from "@/components/PageDrawer";
 import { getBookingDatesFromQueryString } from  "@/utils/queryStringHandler"
 
+import useSWR from 'swr'
+import { BookingsInfoResponseStatus, IAparmentBookingsResponseError, IAparmentBookingsResponseSerializedSuccessful, IAparmentBookingsResponseSuccessful } from "@/types/api";
+import { rejects } from "assert";
+import { validateAndFormatDefaultDates } from "@/utils/dateRanges";
+
+
 const VerticalGrid = dynamic(() => import("../components/VerticalGallery"));
 
 const AllAmenities = dynamic(
@@ -46,22 +52,54 @@ const BookingDates = dynamic(
 export type IApartmentProps = IApartmentData
 
 //TODO (#18) fetch booked periods 
-const excludedDateRanges: Date[][] = [
+// const excludedDateRanges: Date[][] = [
     // [addDays(new Date(), 1), addDays(new Date(), 5)],
     // [addDays(new Date(), 10), addDays(new Date(), 25)]
-  ];
+  // ];
   
-interface QueryParams {
-  check_in?: string;
-  check_out?: string;
+const fetcher = async (url:string) => {
+  const response = await fetch(url);
+  if (response.status === 200) {
+    const data = await response.json();
+    if (data.status === BookingsInfoResponseStatus.SUCCESFUL) {
+      const bookedPeriods =  (data as IAparmentBookingsResponseSerializedSuccessful).bookedPeriods;
+      return bookedPeriods.map(validateAndFormatDefaultDates).filter((per): per is [Date,Date] => !per);
+    } else {
+      const error = data as IAparmentBookingsResponseError;
+      throw new Error(`${error.errorsDetails}`);
+    }
+  }
 }
 
+// const fetcher = (url:string) => fetch(url).then(async (res) => {
+//   throw new Error('Required');
+// })
+
+// const fetcher = async (url: string) => {
+//   const res = await fetch(url)
+
+//   // If the status code is not in the range 200-299,
+//   // we still try to parse and throw it.
+//   if (res.status !== BookingsInfoResponseStatus.SUCCESFUL) {
+//     const error = new Error('An error occurred while fetching the data.')
+//     // Attach extra info to the error object.
+//     error.info = await res.json()
+//     error.status = res.status
+//     throw error
+//   }
+
+//   return res.json()
+// }
+
 const Page = (apartmentData: IApartmentProps) => {
-  const { amenities, description, images, displayName } = apartmentData;
+  const { amenities, description, images, displayName, name } = apartmentData;
   const isMobile = useBreakpointValue({ base: true, md: false });
   const [isClient, setClient] = useState(false);
   const [datesSelected, setSelectedDates] = useState<Date[] | null>(null);
   const [defaultDates, setDefaultDates] = useState<[string, string]>();
+  const { data: excludedDateRanges, error } = useSWR(`/api/bookings/${name}`, fetcher);
+
+  // data && !isValidating && !error && console.log(data);
 
   const datePickerRef = useRef<HTMLDivElement>(null);
 
@@ -220,8 +258,9 @@ const Page = (apartmentData: IApartmentProps) => {
                     borderRight={{base:"none", md: "2px solid"}}
                     borderColor="brand.500"
                     shadow={{base:"none", md: "brand"}}
+                    minWidth="350px"
                   >
-                    <BookingDates
+                    {excludedDateRanges && excludedDateRanges != null  && ! error && <BookingDates
                       ref={datePickerRef}
                       m={"auto"}
                       width="fit-content"
@@ -230,7 +269,9 @@ const Page = (apartmentData: IApartmentProps) => {
                       onDatesSelected={onDatesSelected}
                       excludeDatesRanges={excludedDateRanges}
                       defaultDates={defaultDates}
-                    />
+                    />}
+                    {!excludedDateRanges && !error && <div>Loading</div>}  
+
                     {!isMobile && (
                       <>
                         <Divider my={4} width="75%" />
