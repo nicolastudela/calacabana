@@ -51,12 +51,6 @@ const BookingDates = dynamic(
 
 export type IApartmentProps = IApartmentData
 
-//TODO (#18) fetch booked periods 
-// const excludedDateRanges: Date[][] = [
-    // [addDays(new Date(), 1), addDays(new Date(), 5)],
-    // [addDays(new Date(), 10), addDays(new Date(), 25)]
-  // ];
-  
 const fetcher = async (url:string) => {
   const response = await fetch(url);
   if (response.status === 200) {
@@ -71,26 +65,6 @@ const fetcher = async (url:string) => {
   }
 }
 
-// const fetcher = (url:string) => fetch(url).then(async (res) => {
-//   throw new Error('Required');
-// })
-
-// const fetcher = async (url: string) => {
-//   const res = await fetch(url)
-
-//   // If the status code is not in the range 200-299,
-//   // we still try to parse and throw it.
-//   if (res.status !== BookingsInfoResponseStatus.SUCCESFUL) {
-//     const error = new Error('An error occurred while fetching the data.')
-//     // Attach extra info to the error object.
-//     error.info = await res.json()
-//     error.status = res.status
-//     throw error
-//   }
-
-//   return res.json()
-// }
-
 const Page = (apartmentData: IApartmentProps) => {
   const { amenities, description, images, displayName, name } = apartmentData;
   const isMobile = useBreakpointValue({ base: true, md: false });
@@ -98,8 +72,6 @@ const Page = (apartmentData: IApartmentProps) => {
   const [datesSelected, setSelectedDates] = useState<Date[] | null>(null);
   const [defaultDates, setDefaultDates] = useState<[string, string]>();
   const { data: excludedDateRanges, error } = useSWR(`/api/bookings/${name}`, fetcher);
-
-  // data && !isValidating && !error && console.log(data);
 
   const datePickerRef = useRef<HTMLDivElement>(null);
 
