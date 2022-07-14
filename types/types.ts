@@ -14,6 +14,7 @@ export interface INavLink extends INavGeneral {
 
 export enum IDrawerActionTypes {
   SHOW_ALL_PICS,
+  SHOW_ALL_PICS_MOBILE,
   SHOW_ALL_AMENITIES,
   SHOW_DESCRIPTION,
   HIDE,

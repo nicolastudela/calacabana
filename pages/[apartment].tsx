@@ -31,10 +31,7 @@ import PageDrawer from "@/components/PageDrawer";
 import { getBookingDatesFromQueryString } from  "@/utils/queryStringHandler"
 
 import useSWR from 'swr'
-import { BookingsInfoResponseStatus, IAparmentBookingsResponseError, IAparmentBookingsResponseSerializedSuccessful, IAparmentBookingsResponseSuccessful } from "@/types/api";
-import { rejects } from "assert";
-import { validateAndFormatDefaultDates } from "@/utils/dateRanges";
-
+import aparmentBookingsFetcher from "@/shared/fetchers/aparmentBookingsFetcher"
 
 const VerticalGrid = dynamic(() => import("../components/VerticalGallery"));
 
@@ -51,30 +48,15 @@ const BookingDates = dynamic(
 
 export type IApartmentProps = IApartmentData
 
-const fetcher = async (url:string) => {
-  const response = await fetch(url);
-  if (response.status === 200) {
-    const data = await response.json();
-    if (data.status === BookingsInfoResponseStatus.SUCCESFUL) {
-      const bookedPeriods =  (data as IAparmentBookingsResponseSerializedSuccessful).bookedPeriods;
-      return bookedPeriods.map(validateAndFormatDefaultDates).filter((per): per is [Date,Date] => !per);
-    } else {
-      const error = data as IAparmentBookingsResponseError;
-      throw new Error(`${error.errorsDetails}`);
-    }
-  }
-}
-
 const Page = (apartmentData: IApartmentProps) => {
   const { amenities, description, images, displayName, name } = apartmentData;
   const isMobile = useBreakpointValue({ base: true, md: false });
   const [isClient, setClient] = useState(false);
   const [datesSelected, setSelectedDates] = useState<Date[] | null>(null);
   const [defaultDates, setDefaultDates] = useState<[string, string]>();
-  const { data: excludedDateRanges, error } = useSWR(`/api/bookings/${name}`, fetcher);
+  const { data: excludedDateRanges, error } = useSWR(`/api/bookings/${name}`, aparmentBookingsFetcher, { revalidateOnFocus: false});
 
   const datePickerRef = useRef<HTMLDivElement>(null);
-
 
   // use reducer to get dispachers to be used on CTAs, where some CTAs will update whats shown on the PageDrawer
   const reducer = useCallback((state: any, action: { type: any; payload?: any }) => {
@@ -136,7 +118,11 @@ const Page = (apartmentData: IApartmentProps) => {
       <Box>
         <Layout>
           {isMobile ? (
-            <Carousel aptName="cala" images={images.wide}/>
+            <a onClick={() => {
+              dispatch({ type: IDrawerActionTypes.SHOW_ALL_PICS });
+            }}>
+              <Carousel aptName="cala" images={images.wide} />
+            </a>
           ) : (
             <HeroGrid
               onShowAllPicks={() => {
@@ -337,7 +323,8 @@ const getStaticProps: GetStaticProps<IApartmentProps> = async ({ params }) => {
   return {
     props,
     notFound: false,
-    revalidate: Number(process.env.REVALIDATE || "0") || false,
+    // if you want revalidate data of an apartment manually.
+    //https://nextjs.org/docs/basic-features/data-fetching/incremental-static-regeneration#on-demand-revalidation
   };
 };
 

@@ -172,6 +172,7 @@ const Home: NextPage = () => {
 
         <Container w={{ base: "100%", md: "container.xl" }} mt={1} px="0">
           <AspectRatio ratio={16 / 9}>
+          {/* //TODO (#23) UNCOMENT THIS, IT'S JUST TO NOT TO CALL MAPS ON TESTING*/}
             {/* <iframe
                 loading="lazy"
                 allowFullScreen

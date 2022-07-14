@@ -18,18 +18,25 @@ const isBookingDateRangeAvailable = (
   );
 };
 
-const isValidBookingDateRange  = (range: [Date, Date]) => {
+const isValidBookingDateRange  = (range: [Date, Date] | null) => {
   if (range && range.length == 2) {
     return isBefore(range[0],range[1]) && isBefore(FIRST_BOOKING_DAY, range[0])
   }
 }
 
+const validateAndFormatBookingDates = (defaultDates: [string, string]): [Date, Date] | null => {
+  const range = formatStringDateRange(defaultDates)
+  if (range && isValidBookingDateRange(range)) {
+    return range
+  }
+  return range;
+}
 
-const validateAndFormatDefaultDates = (defaultDates: [string, string]): [Date, Date] | null => {
-  if (defaultDates && defaultDates.length == 2) { 
-    const checkin = new Date(defaultDates[0]);
-    const checkout = new Date(defaultDates[1]);
-    if (checkin && checkout && isValidBookingDateRange([checkin, checkout])) {
+const formatStringDateRange = (stringRange: [string, string]): [Date, Date] | null => {
+  if (stringRange && stringRange.length == 2) { 
+    const checkin = new Date(stringRange[0]);
+    const checkout = new Date(stringRange[1]);
+    if (checkin && checkout) {
       return [checkin, checkout];
     }
   }
@@ -54,4 +61,4 @@ const flattenDateRanges = (excludeDatesRanges: Date[][] | undefined) => {
   }
 };
 
-export { isBookingDateRangeAvailable, isValidBookingDateRange, validateAndFormatDefaultDates, flattenDateRanges };
+export { isBookingDateRangeAvailable, isValidBookingDateRange, validateAndFormatBookingDates, flattenDateRanges };

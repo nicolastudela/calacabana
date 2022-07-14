@@ -1,7 +1,6 @@
-import { addDays } from "date-fns"
+import { addDays, format } from "date-fns"
 
 const FIRST_BOOKING_DAY = addDays(new Date(), 2)
-
 
 const toYYYYMMDD = (date: Date) => {
   if (Number.isNaN(date.getFullYear())) {
