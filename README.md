@@ -1,6 +1,40 @@
+# CALACABANA
+
+
+## Environment Config   
+
+
+__Debugging pourposes__  
+
+`MOCK_CALENDAR_API=true` Will return stubbed results from calendar API. Won't hit real GoogleAPI.
+
+
+
+__Required__
+
+*GoogleCalendar API related*
+
+`GOOGLE_PRIVATE_KEY`
+
+`GOOGLE_CLIENT_EMAIL`
+
+`GOOGLE_CALENDAR_SCOPES_FULL`
+
+`GOOGLE_CALENDAR_SCOPES_READ_ONLY`
+
+`GOOGLE_PROJECT_NUMBER`
+
+`CABANA_GOOGLE_CALENDAR_ID`
+
+`CALA_GOOGLE_CALENDAR_ID`
+
+Follow this a explanatory tutorial on [how to configure Google Account](https://www.geeksforgeeks.org/how-to-integrate-google-calendar-in-node-js/)
+
+
+## Next.js How to start app on dev 
+
 This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
 
-## Getting Started
 
 First, run the development server:
 
@@ -18,17 +52,40 @@ You can start editing the page by modifying `pages/index.tsx`. The page auto-upd
 
 The `pages/api` directory is mapped to `/api/*`. Files in this directory are treated as [API routes](https://nextjs.org/docs/api-routes/introduction) instead of React pages.
 
-## Learn More
 
-To learn more about Next.js, take a look at the following resources:
+## Server Side Debugging
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+For debugging on the server you need to run the project using
+```bash
+yarn dev-debug
+```
+### Using Chrome inspector:
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
+After that you can open a new tab in Google Chrome and go to `chrome://inspect`, you should see your Next.js application inside the "Remote Target" section. Now click "inspect" to open a screen that will be your debugging environment from now on. 
 
-## Deploy on Vercel
+Another way to open the dedicated DevTools for node is having the DevTools opened and then clicking on the "node button" that is next to the "toggle device button".
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+### Using VSCode
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
+We will be using the `attach` mode of VS Code to attach the VS Code inspector to our running project started with `yarn dev-debug`.
+
+You need to create a `launch.json` file inside the `.vscode` folder with this content:
+
+```json
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "type": "pwa-node",
+      "request": "attach",
+      "name": "Attach Nodejs",
+      "skipFiles": ["<node_internals>/**"],
+      "sourceMaps": true,
+      "port": 9229
+    }
+  ]
+}
+```
+For more info about debugging Next.js applications you can visit https://nextjs.org/docs/advanced-features/debugging
+
+------------------

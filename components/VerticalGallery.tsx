@@ -9,12 +9,13 @@ type VerticalGallery = StackProps & {
 };
 
 const VerticalGallery = ({ images }: VerticalGallery) => {
+
   return (
      <VStack w={'100%'} h={'100%'}>
       {images &&
         images.map(({ alt, src, width, height} , index) => {
            return(
-           <Box key={index} position="relative" width={800}>
+           <Box key={index} position="relative" width={{base: 500, lg: 800}}>
              <Image
               src={src}
               width={width}

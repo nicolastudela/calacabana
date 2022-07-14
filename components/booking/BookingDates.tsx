@@ -22,7 +22,7 @@ import { useRouter } from "next/router";
 import {
   flattenDateRanges,
   isBookingDateRangeAvailable,
-  validateAndFormatDefaultDates,
+  validateAndFormatBookingDates,
 } from "@/utils/dateRanges";
 import { updateQueryStringWithBookingDates } from "@/utils/queryStringHandler";
 
@@ -149,7 +149,7 @@ function BookingDates(
     const validDefaultDates =
       defaultDates &&
       defaultDates.length == 2 &&
-      validateAndFormatDefaultDates(defaultDates);
+      validateAndFormatBookingDates(defaultDates);
     if (validDefaultDates) {
       if (
         !excludeDatesRanges ||

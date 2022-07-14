@@ -21,6 +21,7 @@
       "@/config/*": ["config/*"],
       "@/utils/*": ["utils/*"],
       "@/types/*": ["types/*"],
+      "@/shared/*": ["shared/*"],
     }
   },
   "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx"],

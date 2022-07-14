@@ -1,8 +1,13 @@
-
 import { calendar_v3, google } from "googleapis";
 import { GaxiosPromise } from "googleapis-common";
-import { BookingsInfoResponseStatus, IAparmentBookingsResponseError } from "../types/api";
+import {
+  BookingsInfoResponseStatus,
+  IAparmentBookingsResponseError,
+  IAparmentBookingsResponseSuccessful,
+} from "../types/api";
 import { APARMENTS_NAME } from "../types/shared";
+
+import stubEvents from "../shared/mocks/calendarEventStubber";
 
 const jwtClient = new google.auth.JWT(
   process.env.GOOGLE_CLIENT_EMAIL,
@@ -18,7 +23,7 @@ const calendar = google.calendar({
 });
 
 const sanitizeBookingPeriods = (periods?: calendar_v3.Schema$Event[]) => {
-  const initValue: Date[][] = [];
+  const initValue: [Date, Date][] = [];
   if (!periods) {
     return initValue;
   }
@@ -36,39 +41,46 @@ const sanitizeEventListResponse = (
   promise: GaxiosPromise<calendar_v3.Schema$Events>
 ) =>
   promise
-    .then((resp) => ({
-      status: BookingsInfoResponseStatus.SUCCESFUL,
-      statusText: resp.statusText,
-      bookedPeriods: sanitizeBookingPeriods(resp.data?.items),
-    }))
-    .catch(
-      (error) => {
-        console.error(error.response)
-        return ({
-          status: BookingsInfoResponseStatus.ERROR,
-          errorCode: error.response.data.error,
-          statusText: error.response.status,
-          errorsDetails:
-            error?.response?.data.error_description && (JSON.stringify(error.response.data.error_description) as string),
-        } as IAparmentBookingsResponseError)
-      }
-    );
-
+    .then(
+      (resp) =>
+        ({
+          status: BookingsInfoResponseStatus.SUCCESFUL,
+          statusText: resp.statusText,
+          bookedPeriods: sanitizeBookingPeriods(resp.data?.items),
+        } as IAparmentBookingsResponseSuccessful)
+    )
+    .catch((error) => {
+      console.error(error.response);
+      return {
+        status: BookingsInfoResponseStatus.ERROR,
+        errorCode: error.response.data.error.code,
+        statusText: error.response.status,
+        errorsDetails: error.response.data.error.message,
+      } as IAparmentBookingsResponseError;
+    });
 
 const fetchBookings = (apartment: APARMENTS_NAME) => {
-  let calendarId = apartment === APARMENTS_NAME.CABANA ? process.env.CABANA_GOOGLE_CALENDAR_ID : process.env.CALA_GOOGLE_CALENDAR_ID  ;
-  
-  return sanitizeEventListResponse(
-    calendar.events.list({
-      calendarId: calendarId,
-      timeMin: new Date().toISOString(),
-      //TODO: remove to enable all events
-      maxResults: 10,
-      // don't know what this is
-      singleEvents: true,
-      orderBy: "startTime",
-    })
-  );
-}
-  
+  let calendarId =
+    apartment === APARMENTS_NAME.CABANA
+      ? process.env.CABANA_GOOGLE_CALENDAR_ID
+      : process.env.CALA_GOOGLE_CALENDAR_ID;
+
+  //TODO (#23) REMOVE THIS, IT'S JUST TO NOT TO CALL CALENDAR_API ON EACH CALL
+  if (process.env.MOCK_CALENDAR_API) {
+    return stubEvents(apartment);
+  } else {
+    return sanitizeEventListResponse(
+      calendar.events.list({
+        calendarId: calendarId,
+        timeMin: new Date().toISOString(),
+        //TODO: remove to enable all events
+        maxResults: 10,
+        // don't know what this is
+        singleEvents: true,
+        orderBy: "startTime",
+      })
+    );
+  }
+};
+
 export default fetchBookings;

@@ -29,7 +29,12 @@ interface IAparmentBookingsResponse {
 
 export interface IAparmentBookingsResponseSuccessful extends IAparmentBookingsResponse {
   status: BookingsInfoResponseStatus.SUCCESFUL;
-  bookedPeriods: Date[][];
+  bookedPeriods: [Date,Date][];
+}
+
+export interface IAparmentBookingsResponseSerializedSuccessful extends IAparmentBookingsResponse {
+  status: BookingsInfoResponseStatus.SUCCESFUL;
+  bookedPeriods: [string, string][];
 }
 
 export interface IAparmentBookingsResponseError extends IAparmentBookingsResponse {
