@@ -32,6 +32,7 @@ import { getBookingDatesFromQueryString } from  "@/utils/queryStringHandler"
 
 import useSWR from 'swr'
 import aparmentBookingsFetcher from "@/shared/fetchers/aparmentBookingsFetcher"
+import usePageDefaultDates, { EPageDefaultDatesErrorType } from "@/shared/hooks/usePageDefaultDates";
 
 const VerticalGrid = dynamic(() => import("../components/VerticalGallery"));
 
@@ -48,14 +49,19 @@ const BookingDates = dynamic(
 
 export type IApartmentProps = IApartmentData
 
+enum EApartmentPageErrorType {
+  SELECTED_DATES_NOT_AVAILABLE = "SELECTED_DATES_NOT_AVAILABLE",
+}
+
+
 const Page = (apartmentData: IApartmentProps) => {
   const { amenities, description, images, displayName, name } = apartmentData;
   const isMobile = useBreakpointValue({ base: true, md: false });
   const [isClient, setClient] = useState(false);
   const [datesSelected, setSelectedDates] = useState<Date[] | null>(null);
-  const [defaultDates, setDefaultDates] = useState<[string, string]>();
-  const { data: excludedDateRanges, error } = useSWR(`/api/bookings/${name}`, aparmentBookingsFetcher, { revalidateOnFocus: false});
-
+  const { data: excludedDatesRanges, error } = useSWR(`/api/bookings/${name}`, aparmentBookingsFetcher, { revalidateOnFocus: false});
+  const {defaultDates, pageDefaultDatesError}  = usePageDefaultDates({excludedDatesRanges})
+  const [pageError, setPageError] = useState<EApartmentPageErrorType | null>(null);
   const datePickerRef = useRef<HTMLDivElement>(null);
 
   // use reducer to get dispachers to be used on CTAs, where some CTAs will update whats shown on the PageDrawer
@@ -103,16 +109,27 @@ const Page = (apartmentData: IApartmentProps) => {
 
   useEffect(() => {
     setClient(true);
-
-    const defaultBookingDates = getBookingDatesFromQueryString(window.location.search)
-    if (defaultBookingDates) {
-        setDefaultDates([defaultBookingDates.checkInStr,defaultBookingDates.checkOutStr])
-    }
   },[]);
 
   const onDatesSelected = useCallback((dates: Date[] | null) => {      
     setSelectedDates(dates);
+        // TODO think this better
+        setPageError(null);
   }, []);
+
+  /** 
+   * - Invalid dates (not existent, not valid booking date) => remove them from url (TODO)
+   * - Valid Date but period already taken. Sets the page prop error to subseccions "SELECTED_DATES_NOT_AVAILABLE"
+   */
+  useEffect(() => {
+    if (defaultDates) {
+      onDatesSelected(defaultDates)
+    }
+    if (pageDefaultDatesError) {
+      console.log("ERROR")
+      setPageError(EApartmentPageErrorType.SELECTED_DATES_NOT_AVAILABLE)
+    }
+  }, [defaultDates, pageDefaultDatesError, onDatesSelected]);
 
   return (
       <Box>
@@ -218,23 +235,24 @@ const Page = (apartmentData: IApartmentProps) => {
                     shadow={{base:"none", md: "brand"}}
                     minWidth="350px"
                   >
-                    {excludedDateRanges && excludedDateRanges != null  && ! error && <BookingDates
+                    {excludedDatesRanges && excludedDatesRanges != null  && ! error && <BookingDates
                       ref={datePickerRef}
                       m={"auto"}
                       width="fit-content"
                       apartmentName={displayName}
                       forceInline={!!isMobile}
                       onDatesSelected={onDatesSelected}
-                      excludeDatesRanges={excludedDateRanges}
+                      excludeDatesRanges={excludedDatesRanges}
                       defaultDates={defaultDates}
+                      defaultDatesError={pageDefaultDatesError}
                     />}
-                    {!excludedDateRanges && !error && <div>Loading</div>}  
+                    {!excludedDatesRanges && !error && <div>Loading</div>}  
 
                     {!isMobile && (
                       <>
                         <Divider my={4} width="75%" />
                         <BookingButton
-                          enabled={!!datesSelected}
+                          enabled={!!datesSelected && !pageError}
                           onBookingAction={() => {}}
                         />
                       </>
@@ -258,7 +276,7 @@ const Page = (apartmentData: IApartmentProps) => {
               display={"flex"}
             >
               {/* Fix these buttons, are styled very poorly */}
-              {datesSelected && datesSelected.length == 2 ? (
+              {!pageError && datesSelected && datesSelected.length == 2 ? (
                 <BookingButton onBookingAction={() => {}} />
               ) : (
                 <Button
@@ -266,7 +284,7 @@ const Page = (apartmentData: IApartmentProps) => {
                   bg="tomato"
                   onClick={() => datePickerRef.current?.scrollIntoView()}
                 >
-                  Consultar disponibilidad
+                  { !!pageError ? "Cambiar fechas" : "Consultar disponibilidad"}
                 </Button>
               )}
             </Box>

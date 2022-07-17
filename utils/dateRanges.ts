@@ -29,7 +29,7 @@ const validateAndFormatBookingDates = (defaultDates: [string, string]): [Date, D
   if (range && isValidBookingDateRange(range)) {
     return range
   }
-  return range;
+  return null;
 }
 
 const formatStringDateRange = (stringRange: [string, string]): [Date, Date] | null => {
