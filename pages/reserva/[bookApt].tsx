@@ -1,17 +1,17 @@
 import { GetStaticPaths, GetStaticProps } from "next/types";
 import aparmentsData, { APARTMENTS_BUILD } from "@/shared/apartmentsData";
-import Apartment, { IApartmentProps } from "pages/[apartment]";
 import { IApartmentData } from "@/types/shared";
 import Head from "next/head";
 import Layout from "@/components/Layout";
-import { baseStyle, Box, Flex } from "@chakra-ui/react";
+import { Box, Flex, Heading, IconButton } from "@chakra-ui/react";
 import aparmentBookingsFetcher from "@/shared/fetchers/aparmentBookingsFetcher";
-import { flattenDateRanges, validateAndFormatBookingDates, isBookingDateRangeAvailable } from "@/utils/dateRanges";
-import { useMemo, useEffect, useState, useCallback } from "react";
+import { useEffect, useState, useCallback } from "react";
 import useSWR from "swr";
-import { getBookingDatesFromQueryString } from "@/utils/queryStringHandler";
 import usePageDefaultDates, { EPageDefaultDatesErrorType } from "@/shared/hooks/usePageDefaultDates";
 import { useRouter } from "next/router";
+import { BookeableValidPeriod } from "@/types/types";
+import createBookeableValidPeriod from "@/shared/model/BookingValidPeriod";
+import { ArrowBackIcon } from "@chakra-ui/icons";
 
 export type IBookingApartmentProps = IApartmentData;
 
@@ -21,19 +21,23 @@ enum EApartmentBookingErrorType {
 
 const Page = (apartmentData: IBookingApartmentProps) => {
   const { amenities, description, images, displayName, name } = apartmentData;
-  const [isClient, setClient] = useState(false);
   const router = useRouter()
-  const { data: excludedDatesRanges, error: excludedDatesRangesError } = useSWR(`/api/bookings/${name}`, aparmentBookingsFetcher, { revalidateOnFocus: false});
+  const { data: excludedDatesRanges,  error: excludedDatesRangesError } = useSWR(`/api/bookings/${name}`, aparmentBookingsFetcher, { revalidateOnFocus: false});
+  const [isPageProcessing, setIsPageProcessing] = useState(false);
   
-  const [datesSelected, setSelectedDates] = useState<Date[] | null>(null);
+  const [datesSelected, setSelectedDates] = useState<BookeableValidPeriod | null>(null);
   const [pageError, setPageError] = useState<EApartmentBookingErrorType | null>(null);
-  const {defaultDates, pageDefaultDatesError}  = usePageDefaultDates({excludedDatesRanges})
+  const {defaultDates, pageDefaultDatesError}  = usePageDefaultDates({excludedDatesRanges});
+  
 
-  const onDatesSelected = useCallback((dates: Date[] | null) => {      
+  const onDatesSelected = useCallback((dates: BookeableValidPeriod | null) => {      
     setSelectedDates(dates);
-    // TODO think this better
-    setPageError(null);
-  }, []);
+
+    if (dates && pageError === EApartmentBookingErrorType.SELECTED_DATES_NOT_AVAILABLE) {
+      // TODO think this better
+      setPageError(null);
+    }
+  }, [pageError]);
   
     /** 
      * ISSUE: #6 
@@ -41,26 +45,41 @@ const Page = (apartmentData: IBookingApartmentProps) => {
      * - Valid Date but period already taken. Sets the page prop error to subseccions "already booked error status"
      */
     useEffect(() => {
-      if (defaultDates) {
-        onDatesSelected(defaultDates)
+      if (defaultDates && !pageDefaultDatesError) {
+        onDatesSelected(createBookeableValidPeriod(defaultDates))
       }
       if (pageDefaultDatesError) {
         setPageError(EApartmentBookingErrorType.SELECTED_DATES_NOT_AVAILABLE)
         if (pageDefaultDatesError=== EPageDefaultDatesErrorType.DEFAULT_DATES_INVALID) {
-          router.push(`/${name}`);
+          router.push(`/apartamento/${name}`);
           return;
         }
       }
     }, [defaultDates, pageDefaultDatesError, onDatesSelected, router, name]);
 
-
-    useEffect(() => {
-      setClient(true);
-    },[]);
-  
   return (
     <Box>
       <Layout>
+        <Flex w={"full"} alignContent="center" gap={4} mt={2}>
+          <IconButton
+            size="sm"
+            variant="ghost"
+            aria-label="Atras"
+            isLoading={isPageProcessing}
+            onClick={() => {
+              setIsPageProcessing(true);
+              //removes param bookApt that comes into query
+              const {bookApt, ...restQuery} = router.query
+              router.push({
+                pathname: `/apartamento/${name}`,
+                query: restQuery,
+              })
+            }}
+            _focus={{ boxShadow: "none" }}
+            icon={<ArrowBackIcon />}
+          />
+          <Heading size="lg">Envia tu consulta</Heading>
+        </Flex>
         <Flex
           mt={4}
           alignItems={"flex-start"}
@@ -79,7 +98,7 @@ const Page = (apartmentData: IBookingApartmentProps) => {
               {pageError ? pageError : "good"}
               </Box>
             <Box bgColor={"pink"} w="100%" height={"500px"}>
-              {datesSelected ? `checkin ${datesSelected[0]} checkout ${datesSelected[1]}`  : null}
+              {datesSelected ? `checkin ${datesSelected.startDate} checkout ${datesSelected.endDate}`  : null}
               </Box>
           </Flex>
           <Box
@@ -114,8 +133,8 @@ const BookingApartment = (apartmentData: IBookingApartmentProps) => {
 
 // Fetch Apartment data during build phase
 // NextJS API Middleware is not available here
-const getStaticProps: GetStaticProps<IApartmentProps> = async ({ params }) => {
-  let props: IApartmentProps | null = null;
+const getStaticProps: GetStaticProps<IBookingApartmentProps> = async ({ params }) => {
+  let props: IBookingApartmentProps | null = null;
   if (params?.bookApt) {
     props = aparmentsData[params?.bookApt as "cala" | "cabana"];
   }

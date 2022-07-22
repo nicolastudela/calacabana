@@ -1,5 +1,6 @@
 
 import { BookingsInfoResponseStatus, IAparmentBookingsResponseSerializedSuccessful, IAparmentBookingsResponseSuccessful } from "@/types/api";
+import { BookingPeriod } from "@/types/types";
 import { toYYYYMMDD } from "@/utils/date";
 import type { NextApiRequest, NextApiResponse } from "next";
 import nc from "next-connect";
@@ -8,7 +9,7 @@ import { APARMENTS_NAME } from "../../../types/shared";
 
 
 const serializeBookingPeriods = (bookings: IAparmentBookingsResponseSuccessful) => {
-  const serializedDates: [string, string][] = bookings.bookedPeriods.map((period: [Date, Date]) => (
+  const serializedDates: [string, string][] = bookings.bookedPeriods.map((period: BookingPeriod) => (
     [toYYYYMMDD(period[0]), toYYYYMMDD(period[1])]
   ))
   return {

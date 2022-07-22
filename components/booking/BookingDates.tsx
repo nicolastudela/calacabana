@@ -22,10 +22,11 @@ import { useRouter } from "next/router";
 import {
   flattenDateRanges,
   isBookingDateRangeAvailable,
-  validateAndFormatBookingDates,
 } from "@/utils/dateRanges";
 import { updateQueryStringWithBookingDates } from "@/utils/queryStringHandler";
 import { EPageDefaultDatesErrorType } from "@/shared/hooks/usePageDefaultDates";
+import createBookeableValidPeriod from "@/shared/model/BookingValidPeriod";
+import { BookingPeriod, BookeableValidPeriod } from "@/types/types";
 
 const DatesInput = ({
   startDate,
@@ -105,8 +106,8 @@ const DatesInput = ({
 interface IBookingDatesProps extends BoxProps {
   apartmentName: string;
   forceInline: boolean;
-  onDatesSelected: (dates: Date[] | null) => void;
-  defaultDates?: [Date, Date];
+  onDatesSelected: (dates: BookeableValidPeriod | null) => void;
+  defaultDates?: BookingPeriod;
   excludeDatesRanges?: Date[][];
   defaultDatesError: EPageDefaultDatesErrorType | null | undefined;
 }
@@ -133,6 +134,13 @@ function BookingDates(
   useEffect(() => {
     setError(!!defaultDatesError)
   },[defaultDatesError])
+
+  useEffect(() => {
+    if (defaultDates) {
+      setStartDate(defaultDates[0]);
+      setEndDate(defaultDates[1]);
+    }
+  },[defaultDates])
 
   /**
    * Flattens excluded dates (not availbe for booking)
@@ -163,7 +171,7 @@ function BookingDates(
         if (!forceInline) {
           setPickerOpen(false);
         }
-        onDatesSelected([start, end]);
+        onDatesSelected(createBookeableValidPeriod([start, end]));
         setError(false);
       } else { // range selection invalid
         updateQueryStringWithBookingDates(router,null);

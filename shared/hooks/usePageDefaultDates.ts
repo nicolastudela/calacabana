@@ -1,3 +1,4 @@
+import { BookingPeriod } from "@/types/types";
 import {
   isBookingDateRangeAvailable,
   validateAndFormatBookingDates,
@@ -11,13 +12,13 @@ export enum EPageDefaultDatesErrorType {
 }
 
 interface IUsePageDefaultDatesProps {
-  excludedDatesRanges: [Date, Date][] | undefined;
+  excludedDatesRanges: BookingPeriod[] | undefined;
 }
 
 const usePageDefaultDates = ({
   excludedDatesRanges,
 }: IUsePageDefaultDatesProps) => {
-  const [defaultDates, setDefaultDates] = useState<[Date, Date] | undefined>(
+  const [defaultDates, setDefaultDates] = useState<BookingPeriod | undefined>(
     undefined
   );
   const [pageDefaultDatesError, setPageDefaultDatesError] = useState<
@@ -29,6 +30,7 @@ const usePageDefaultDates = ({
     const defaultBookingDates = getBookingDatesFromQueryString(
       window.location.search
     );
+
     if (defaultBookingDates) {
       setQueryDefaultDates([
         defaultBookingDates.checkInStr,
@@ -50,6 +52,7 @@ const usePageDefaultDates = ({
       if (validDefaultDates) {
         const [defaultStartDate, defaultEndDate] = validDefaultDates;
 
+        setPageDefaultDatesError(null);
         setDefaultDates([defaultStartDate, defaultEndDate]);
         if (
           excludedDatesRanges &&

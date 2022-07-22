@@ -7,12 +7,12 @@ const NAV_LINKS: INav[] = [
     items: [
       {
         label: "Departamento Cala",
-        link: "/cala",
+        link: "/apartamento/cala",
         isMenu: false,
       },
       {
         label: "Departamento Cabana",
-        link: "/cabana",
+        link: "/apartamento/cabana",
         isMenu: false,
       },
       {

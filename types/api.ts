@@ -1,3 +1,5 @@
+import { BookingPeriod } from "./types";
+
 export enum BookingsInfoResponseStatus {
   SUCCESFUL = "OK",
   PARTIAL = "PARTIAL",
@@ -12,7 +14,7 @@ interface IBookingsInfoResponse  {
 
 export interface IBookingsInfoResponseSuccessful extends IBookingsInfoResponse {
   status: BookingsInfoResponseStatus.SUCCESFUL;
-  fullBookedPeriods: Date[][];
+  fullBookedPeriods: BookingPeriod[][];
 }
 
 export interface IBookingsInfoResponsePartial extends IBookingsInfoResponse {
@@ -29,7 +31,7 @@ interface IAparmentBookingsResponse {
 
 export interface IAparmentBookingsResponseSuccessful extends IAparmentBookingsResponse {
   status: BookingsInfoResponseStatus.SUCCESFUL;
-  bookedPeriods: [Date,Date][];
+bookedPeriods: BookingPeriod[];
 }
 
 export interface IAparmentBookingsResponseSerializedSuccessful extends IAparmentBookingsResponse {
