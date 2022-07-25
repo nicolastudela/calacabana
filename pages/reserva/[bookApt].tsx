@@ -57,6 +57,14 @@ const Page = (apartmentData: IBookingApartmentProps) => {
       }
     }, [defaultDates, pageDefaultDatesError, onDatesSelected, router, name]);
 
+  //sets the page prop error to subseccions "SELECTED_DATES_NOT_AVAILABLE"
+  useEffect(() => {
+    if (pageDefaultDatesError) {
+      setPageError(EApartmentBookingErrorType.SELECTED_DATES_NOT_AVAILABLE);
+    }
+
+  },[pageDefaultDatesError]);
+    
   return (
     <Box>
       <Layout>

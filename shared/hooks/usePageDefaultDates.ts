@@ -1,10 +1,11 @@
-import { BookingPeriod } from "@/types/types";
+import { BookeableValidPeriod, BookingPeriod } from "@/types/types";
 import {
   isBookingDateRangeAvailable,
   validateAndFormatBookingDates,
 } from "@/utils/dateRanges";
 import { getBookingDatesFromQueryString } from "@/utils/queryStringHandler";
 import { useEffect, useState } from "react";
+import createBookeableValidPeriod from "@/shared/model/BookingValidPeriod";
 
 export enum EPageDefaultDatesErrorType {
   DEFAULT_DATES_INVALID = "DEFAULT_DATES_INVALID",
@@ -19,6 +20,9 @@ const usePageDefaultDates = ({
   excludedDatesRanges,
 }: IUsePageDefaultDatesProps) => {
   const [defaultDates, setDefaultDates] = useState<BookingPeriod | undefined>(
+    undefined
+  );
+  const [bookeableDefaultDates, setBookeableDefaultDates] = useState<BookeableValidPeriod | undefined | null>(
     undefined
   );
   const [pageDefaultDatesError, setPageDefaultDatesError] = useState<
@@ -61,6 +65,8 @@ const usePageDefaultDates = ({
           setPageDefaultDatesError(
             EPageDefaultDatesErrorType.DEFAULT_DATES_ALREADY_TAKEN
           );
+        } else {
+          setBookeableDefaultDates(createBookeableValidPeriod(validDefaultDates))
         }
       } else {
         setPageDefaultDatesError(
@@ -70,7 +76,7 @@ const usePageDefaultDates = ({
     }
   }, [queryDefaultDates, excludedDatesRanges]);
 
-  return { defaultDates, pageDefaultDatesError };
+  return { defaultDates, bookeableDefaultDates, pageDefaultDatesError };
 };
 
 export default usePageDefaultDates;

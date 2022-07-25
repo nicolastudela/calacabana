@@ -30,7 +30,7 @@ const isBookingDateRangeAvailable = (
  */
 const isValidBookingDateRange  = (range: [Date, Date] | null) => {
   if (range && range.length == 2) {
-    return isBefore(range[0],range[1]) && isBefore(FIRST_BOOKING_DAY, range[0])
+    return isBefore(range[0],range[1]) && !isAfter(FIRST_BOOKING_DAY, range[0])
   }
 }
 

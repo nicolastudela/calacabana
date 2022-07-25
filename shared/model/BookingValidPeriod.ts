@@ -3,7 +3,7 @@ import { isValidBookingDateRange } from "@/utils/dateRanges";
 
 function createBookeableValidPeriod(period: BookingPeriod| null) {
   let _period: BookingPeriod;
-
+  
   if (period && isValidBookingDateRange(period)) {
     _period = [period[0], period[1]];
     return {

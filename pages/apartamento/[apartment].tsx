@@ -32,7 +32,7 @@ import PageDrawer from "@/components/PageDrawer";
 import useSWR from "swr";
 import aparmentBookingsFetcher from "@/shared/fetchers/aparmentBookingsFetcher";
 import usePageDefaultDates from "@/shared/hooks/usePageDefaultDates";
-import createBookeableValidPeriod from "@/shared/model/BookingValidPeriod";
+
 import { useRouter } from "next/router";
 
 const VerticalGrid = dynamic(() => import("../../components/VerticalGallery"));
@@ -48,7 +48,7 @@ const BookingDates = dynamic(
   }
 );
 
-export type IApartmentProps = IApartmentData;
+export type IApartmentProps = IApartmentData & { key: string };
 
 enum EApartmentPageErrorType {
   SELECTED_DATES_NOT_AVAILABLE = "SELECTED_DATES_NOT_AVAILABLE",
@@ -67,9 +67,13 @@ const Page = (apartmentData: IApartmentProps) => {
     aparmentBookingsFetcher,
     { revalidateOnFocus: false }
   );
-  const { defaultDates, pageDefaultDatesError } = usePageDefaultDates({
+  const { defaultDates, bookeableDefaultDates,  pageDefaultDatesError } = usePageDefaultDates({
     excludedDatesRanges,
   });
+
+  // const defaultDates = undefined; 
+  // const pageDefaultDatesError = null;
+
   const [pageError, setPageError] = useState<EApartmentPageErrorType | null>(
     null
   );
@@ -128,7 +132,6 @@ const Page = (apartmentData: IApartmentProps) => {
   const onDatesSelected = useCallback(
     (dates: BookeableValidPeriod | null) => {
       setSelectedDates(dates);
-
       if (
         dates &&
         pageError === EApartmentPageErrorType.SELECTED_DATES_NOT_AVAILABLE
@@ -141,16 +144,21 @@ const Page = (apartmentData: IApartmentProps) => {
 
   /**
    * - Invalid dates (not existent, not valid booking date) => remove them from url (//TODO)
-   * - Valid Date but period already taken. Sets the page prop error to subseccions "SELECTED_DATES_NOT_AVAILABLE"
+   * - Bookeable dates will be set as valid date.
    */
   useEffect(() => {
-    if (defaultDates && !pageDefaultDatesError) {
-      onDatesSelected(createBookeableValidPeriod(defaultDates));
+    if (bookeableDefaultDates && !pageDefaultDatesError) {
+      onDatesSelected(bookeableDefaultDates);
     }
+  }, [bookeableDefaultDates, pageDefaultDatesError, onDatesSelected]);
+
+  //sets the page prop error to subseccions "SELECTED_DATES_NOT_AVAILABLE"
+  useEffect(() => {
     if (pageDefaultDatesError) {
       setPageError(EApartmentPageErrorType.SELECTED_DATES_NOT_AVAILABLE);
     }
-  }, [defaultDates, pageDefaultDatesError, onDatesSelected]);
+
+  },[pageDefaultDatesError]);
 
 
   const gotToBookApt = useCallback(() => {
@@ -374,8 +382,10 @@ const getStaticPaths: GetStaticPaths = async () => {
 const getStaticProps: GetStaticProps<IApartmentProps> = async ({ params }) => {
   let props: IApartmentProps | null = null;
   if (params?.apartment) {
-    props = aparmentsData[params?.apartment as "cala" | "cabana"];
+    props = { key: params?.apartment as string,  ...aparmentsData[params?.apartment as "cala" | "cabana"]};
   }
+
+  // const caca = { key: params?.apartment,  ...aparmentsData[params?.apartment as "cala" | "cabana"]};
 
   if (!props) {
     return { notFound: true };

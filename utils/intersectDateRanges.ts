@@ -1,9 +1,9 @@
 
 
 interface RangesIterator {
-  allRanges: Date[][];
+  allRanges: [Date, Date][];
   move: () => void;
-  range: () => Date[];
+  range: () => [Date, Date];
 }
 
 /**
@@ -11,9 +11,9 @@ interface RangesIterator {
  * @param {sorted ranges. Ai[n]<Ai[n+1] && Ai[n]<Ai+1[n]} A Array
  * @param {sorted ranges. Bi[n]<Bi[n+1] && Bi[n]<Bi+1[n]} B Array
  */
-const intersectDateRanges = (A: Date[][] = [], B: Date[][] = []) => {
+const intersectDateRanges = (A: [Date, Date][] = [], B: [Date, Date][] = []) => {
 
-  const buildRangeObj = (allRanges : Date[][]) => (
+  const buildRangeObj = (allRanges : [Date, Date][]) => (
     { allRanges, 
       move() {
         this.allRanges = this.allRanges.slice(1);
@@ -51,8 +51,8 @@ const intersectDateRanges = (A: Date[][] = [], B: Date[][] = []) => {
 
     const [rangeStart, rangeEnd] = rangeOrder.ranges;
     
-    const P = rangeStart.range();
-    const Q = rangeEnd.range();
+    const P: [Date, Date] = rangeStart.range();
+    const Q: [Date, Date] = rangeEnd.range();
 
     if (P[0] > Q[1]) {
       rangeEnd.move();
@@ -75,7 +75,7 @@ const intersectDateRanges = (A: Date[][] = [], B: Date[][] = []) => {
     rangeOrder = calculateRangesOrder(rangeStart,rangeEnd);
   }
   
-  return intersectons;
+  return intersectons as [Date, Date][];
 
 };
 

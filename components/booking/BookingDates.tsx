@@ -124,9 +124,9 @@ function BookingDates(
   }: IBookingDatesProps,
   ref: React.ForwardedRef<HTMLDivElement>
 ) {
-  const [startDate, setStartDate] = useState<Date | null>(defaultDates ? defaultDates[0] : null);
+  const [startDate, setStartDate] = useState<Date | null>(null);
   const [pickerOpen, setPickerOpen] = useState(forceInline);
-  const [endDate, setEndDate] = useState<Date | null>(defaultDates ? defaultDates[1] : null);
+  const [endDate, setEndDate] = useState<Date | null>(null);
   const [error, setError] = useState<boolean>(false);
   //TODO(#19) no visuals are not shown on the component yet
   const router = useRouter();

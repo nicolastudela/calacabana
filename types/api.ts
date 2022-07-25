@@ -14,7 +14,7 @@ interface IBookingsInfoResponse  {
 
 export interface IBookingsInfoResponseSuccessful extends IBookingsInfoResponse {
   status: BookingsInfoResponseStatus.SUCCESFUL;
-  fullBookedPeriods: BookingPeriod[][];
+  fullBookedPeriods: BookingPeriod[];
 }
 
 export interface IBookingsInfoResponsePartial extends IBookingsInfoResponse {
