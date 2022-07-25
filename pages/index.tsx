@@ -26,103 +26,98 @@ const VerticalGrid = dynamic(() => import("../components/VerticalGallery"));
 
 const images = [
   {
-    src: '/images/homepage/1-homepage.jpeg',
+    src: "/images/homepage/1-homepage.jpeg",
     alt: "Servicio de hospedaje Calacabana - vista noche pileta",
     width: 1280,
     height: 853,
   },
   {
-    src: '/images/homepage/2-homepage.jpeg',
+    src: "/images/homepage/2-homepage.jpeg",
     alt: "Servicio de hospedaje Calacabana - vista solarium pileta",
     width: 1280,
     height: 853,
   },
   {
-    src: '/images/homepage/3-homepage.jpeg',
+    src: "/images/homepage/3-homepage.jpeg",
     alt: "Servicio de hospedaje Calacabana - vista desde cascada pileta",
     width: 1280,
     height: 853,
   },
   {
-    src: '/images/homepage/4-homepage.jpeg',
+    src: "/images/homepage/4-homepage.jpeg",
     alt: "Servicio de hospedaje Calacabana - cochera bajo techo de noche",
     width: 1280,
     height: 853,
   },
   {
-    src: '/images/homepage/9-homepage.jpeg',
+    src: "/images/homepage/9-homepage.jpeg",
     alt: "Servicio de hospedaje Calacabana - camino de noche",
     width: 1280,
     height: 853,
   },
   {
-    src: '/images/homepage/6-homepage.jpeg',
+    src: "/images/homepage/6-homepage.jpeg",
     alt: "Servicio de hospedaje Calacabana - vista hacia los apartamntos con jardin",
     width: 1280,
     height: 853,
   },
   {
-    src: '/images/homepage/7-homepage.jpeg',
+    src: "/images/homepage/7-homepage.jpeg",
     alt: "Servicio de hospedaje Calacabana - cochera vista a la entrada de dia",
     width: 1280,
     height: 853,
   },
   {
-    src: '/images/homepage/8-homepage.jpeg',
+    src: "/images/homepage/8-homepage.jpeg",
     alt: "Servicio de hospedaje Calacabana - jardin",
     width: 1280,
     height: 853,
   },
   {
-    src: '/images/homepage/9-homepage.jpeg',
+    src: "/images/homepage/9-homepage.jpeg",
     alt: "Servicio de hospedaje Calacabana - camino de noche",
     width: 1280,
     height: 853,
   },
   {
-    src: '/images/homepage/5-homepage.jpeg',
+    src: "/images/homepage/5-homepage.jpeg",
     alt: "Servicio de hospedaje Calacabana - pileta de noche efectos",
     width: 1280,
     height: 853,
   },
   {
-    src: '/images/homepage/10-homepage.jpeg',
+    src: "/images/homepage/10-homepage.jpeg",
     alt: "Servicio de hospedaje Calacabana - madera",
     width: 1280,
     height: 853,
-  }
+  },
 ];
-
 
 const Home: NextPage = () => {
   const isMobile = useBreakpointValue({ base: true, md: false });
-  const {
-    isOpen: isDrawerOpen,
-    onOpen: onDrawerOpen,
-    onClose: onDrawerClose,
-  } = useDisclosure();
-  const [isDrawerMounted, setDrawerMounted] = useState(false);
 
-     // use reducer to get dispachers to be used on CTAs, where some CTAs will update whats shown on the drawer
-  const reducer = useCallback((state: any, action: { type: any; payload?: any }) => {
-    switch (action.type) {
-      case IDrawerActionTypes.SHOW_ALL_PICS: {
-        if (!state) {
-          return {
-            title: "Todas las fotos",
-            component: <VerticalGrid images={images} />,
-          };
+  // use reducer to get dispachers to be used on CTAs, where some CTAs will update whats shown on the drawer
+  const reducer = useCallback(
+    (state: any, action: { type: any; payload?: any }) => {
+      switch (action.type) {
+        case IDrawerActionTypes.SHOW_ALL_PICS: {
+          if (!state) {
+            return {
+              title: "Todas las fotos",
+              component: <VerticalGrid images={images} />,
+            };
+          }
+          return null;
         }
-        return null;
+        case "hide":
+          return null;
+        default:
+          return null;
       }
-      case "hide":
-        return null;
-      default:
-        return null;
-    }
-  },[])
-   const [componentToShow, dispatch] = useReducer(reducer, null);
-
+    },
+    []
+  );
+  const [componentToShow, dispatch] = useReducer(reducer, null);
 
   return (
     <>
@@ -136,17 +131,23 @@ const Home: NextPage = () => {
       </Head>
       <Layout>
         {isMobile ? (
-            <Carousel aptName="cala" images={images} />
-          ) : (
-            <HeroGrid
-              onShowAllPicks={() => {
-                // onOpen();
-                // openDrawerAndDispatch({ type: "showAllPics" });
-                dispatch({ type: IDrawerActionTypes.SHOW_ALL_PICS });
-              }}
-              images={images}
-            />
-          )}
+          <a
+            onClick={() => {
+              dispatch({ type: IDrawerActionTypes.SHOW_ALL_PICS });
+            }}
+          >
+            <Carousel images={images} />
+          </a>
+        ) : (
+          <HeroGrid
+            onShowAllPicks={() => {
+              // onOpen();
+              // openDrawerAndDispatch({ type: "showAllPics" });
+              dispatch({ type: IDrawerActionTypes.SHOW_ALL_PICS });
+            }}
+            images={images}
+          />
+        )}
         {isMobile && (
           <Heading
             as="h2"
@@ -166,13 +167,20 @@ const Home: NextPage = () => {
           gap={4}
           my="4"
         >
-         <AparmentCard {...aparmentsData[APARMENTS_NAME.CABANA]} images={images} />
-         <AparmentCard {...aparmentsData[APARMENTS_NAME.CALA]} images={images} marginInlineStart={'0px !important'}/>
+          <AparmentCard
+            {...aparmentsData[APARMENTS_NAME.CABANA]}
+            images={images}
+          />
+          <AparmentCard
+            {...aparmentsData[APARMENTS_NAME.CALA]}
+            images={images}
+            marginInlineStart={"0px !important"}
+          />
         </HStack>
 
         <Container w={{ base: "100%", md: "container.xl" }} mt={1} px="0">
           <AspectRatio ratio={16 / 9}>
-          {/* //TODO (#23) UNCOMENT THIS, IT'S JUST TO NOT TO CALL MAPS ON TESTING*/}
+            {/* //TODO (#23) UNCOMENT THIS, IT'S JUST TO NOT TO CALL MAPS ON TESTING*/}
             {/* <iframe
                 loading="lazy"
                 allowFullScreen
@@ -182,7 +190,10 @@ const Home: NextPage = () => {
             <Box w="100%" bgColor="lightBlue" />
           </AspectRatio>
         </Container>
-        <PageDrawer componentToShow={componentToShow} onHide={() => dispatch({ type: "hide" })} />
+        <PageDrawer
+          componentToShow={componentToShow}
+          onHide={() => dispatch({ type: "hide" })}
+        />
       </Layout>
     </>
   );

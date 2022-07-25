@@ -8,6 +8,8 @@ import {
 import { APARMENTS_NAME } from "../types/shared";
 
 import stubEvents from "../shared/mocks/calendarEventStubber";
+import { BookingPeriod } from "@/types/types";
+import isBefore from "date-fns/isBefore";
 
 const jwtClient = new google.auth.JWT(
   process.env.GOOGLE_CLIENT_EMAIL,
@@ -23,7 +25,7 @@ const calendar = google.calendar({
 });
 
 const sanitizeBookingPeriods = (periods?: calendar_v3.Schema$Event[]) => {
-  const initValue: [Date, Date][] = [];
+  const initValue: BookingPeriod[] = [];
   if (!periods) {
     return initValue;
   }
@@ -31,7 +33,10 @@ const sanitizeBookingPeriods = (periods?: calendar_v3.Schema$Event[]) => {
     const startDate = actual?.start?.date;
     const endDate = actual?.end?.date;
     if (startDate && endDate) {
-      acc.push([new Date(startDate), new Date(endDate)]);
+      const period: BookingPeriod = [new Date(startDate), new Date(endDate)]
+      if (isBefore(period[0], period[1])) {
+        acc.push(period)
+      } 
     }
     return acc;
   }, initValue);

@@ -1,6 +1,12 @@
-import { addDays, isBefore } from "date-fns";
+import { BookingPeriod } from "@/types/types";
+import { addDays, isBefore, isAfter} from "date-fns";
 import { FIRST_BOOKING_DAY } from "./dates";
 
+
+/**
+ * This checks if a Booking period is available to be bookable, 
+ * this means is a sematically valid Period and is not included on other bookings
+ */
 const isBookingDateRangeAvailable = (
   rangeToCompare: [Date, Date],
   excludedDateRanges?: Date[][]
@@ -11,25 +17,33 @@ const isBookingDateRangeAvailable = (
   return (
     excludedDateRanges.findIndex((range) => {
       return (
-        isBefore(rangeToCompare[0], range[1]) &&
-        isBefore(range[0], rangeToCompare[1])
+        !isAfter(rangeToCompare[0],range[1]) &&
+        !isAfter(range[0],rangeToCompare[1])
       );
     }) < 0
   );
 };
 
+/**
+ * This checks if a BookingPeriod is valid. 
+ * Meaning is a sematically valid period and startDate is after FIRST_BOOKING_DAY.
+ */
 const isValidBookingDateRange  = (range: [Date, Date] | null) => {
   if (range && range.length == 2) {
-    return isBefore(range[0],range[1]) && isBefore(FIRST_BOOKING_DAY, range[0])
+    return isBefore(range[0],range[1]) && !isAfter(FIRST_BOOKING_DAY, range[0])
   }
 }
 
-const validateAndFormatBookingDates = (defaultDates: [string, string]): [Date, Date] | null => {
+/**
+ * This converts a string formatted period into a BookingPeriod if possible 
+ * Will parse strings dates and validates if sematically valid period and start date is after FIRST_BOOKING_DAY.
+ */
+const validateAndFormatBookingDates = (defaultDates: [string, string]): BookingPeriod | null => {
   const range = formatStringDateRange(defaultDates)
   if (range && isValidBookingDateRange(range)) {
     return range
   }
-  return range;
+  return null;
 }
 
 const formatStringDateRange = (stringRange: [string, string]): [Date, Date] | null => {
@@ -61,4 +75,4 @@ const flattenDateRanges = (excludeDatesRanges: Date[][] | undefined) => {
   }
 };
 
-export { isBookingDateRangeAvailable, isValidBookingDateRange, validateAndFormatBookingDates, flattenDateRanges };
+export { isBookingDateRangeAvailable, isValidBookingDateRange, formatStringDateRange, validateAndFormatBookingDates, flattenDateRanges };

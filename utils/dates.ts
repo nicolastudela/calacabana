@@ -1,6 +1,6 @@
-import { addDays, format } from "date-fns"
+import { addDays,startOfToday } from "date-fns"
 
-const FIRST_BOOKING_DAY = addDays(new Date(), 2)
+const FIRST_BOOKING_DAY = addDays(startOfToday(), 2)
 
 const toYYYYMMDD = (date: Date) => {
   if (Number.isNaN(date.getFullYear())) {

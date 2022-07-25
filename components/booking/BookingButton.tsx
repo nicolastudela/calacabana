@@ -3,12 +3,13 @@ import { FlexProps, Flex, Button, Text } from "@chakra-ui/react"
 
 export interface BookingButtonProps extends FlexProps{
   onBookingAction: () => void;
-  enabled?: boolean
+  enabled?: boolean;
+  isLoading?: boolean;
 }
 
-const BookingButton = ({onBookingAction, enabled = true, ...props}: BookingButtonProps) => (
+const BookingButton = ({onBookingAction, enabled = true, isLoading = false, ...props}: BookingButtonProps) => (
   <Flex alignItems={"center"} direction="column" {...props} m="auto">
-    <Button disabled={!enabled} bg="tomato" onClick={onBookingAction} mb={2}>Reservar</Button>
+    <Button disabled={!enabled} bg="tomato" isLoading={isLoading} onClick={onBookingAction} mb={2}>Reservar</Button>
     <Text fontSize="xs">{enabled ? "No vamos a cobrarte ningún cargo por el momento" : "Seleccione alguna fecha"}</Text>
   </Flex>
 )

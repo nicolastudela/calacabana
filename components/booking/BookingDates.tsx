@@ -22,18 +22,22 @@ import { useRouter } from "next/router";
 import {
   flattenDateRanges,
   isBookingDateRangeAvailable,
-  validateAndFormatBookingDates,
 } from "@/utils/dateRanges";
 import { updateQueryStringWithBookingDates } from "@/utils/queryStringHandler";
+import { EPageDefaultDatesErrorType } from "@/shared/hooks/usePageDefaultDates";
+import createBookeableValidPeriod from "@/shared/model/BookingValidPeriod";
+import { BookingPeriod, BookeableValidPeriod } from "@/types/types";
 
 const DatesInput = ({
   startDate,
   endDate,
   onExpand,
+  onError = false,
 }: {
   onExpand: () => void;
   startDate: Date | null;
   endDate: Date | null;
+  onError?: boolean
 }) => {
   const startDateInputRef = useRef<HTMLInputElement>(null);
   const endDateInputRef = useRef<HTMLInputElement>(null);
@@ -73,6 +77,7 @@ const DatesInput = ({
           autoComplete="off"
           value={startDate ? format(startDate, "dd-MM-yyyy") : ""}
           readOnly
+          borderColor={onError ? "red" : "unset"}
         />
       </FormControl>
       <FormControl>
@@ -91,6 +96,7 @@ const DatesInput = ({
           autoComplete="off"
           value={endDate ? format(endDate, "dd-MM-yyyy") : ""}
           readOnly
+          borderColor={onError ? "red" : "unset"}
         />
       </FormControl>
     </Flex>
@@ -100,17 +106,10 @@ const DatesInput = ({
 interface IBookingDatesProps extends BoxProps {
   apartmentName: string;
   forceInline: boolean;
-  onDatesSelected: (dates: Date[] | null) => void;
-  defaultDates?: [string, string];
+  onDatesSelected: (dates: BookeableValidPeriod | null) => void;
+  defaultDates?: BookingPeriod;
   excludeDatesRanges?: Date[][];
-}
-
-enum IBookingDatesErrorType {
-  SELECTED_DATES_NOT_AVAILABLE,
-}
-
-interface IBookingDatesError {
-  type: IBookingDatesErrorType;
+  defaultDatesError: EPageDefaultDatesErrorType | null | undefined;
 }
 
 function BookingDates(
@@ -120,6 +119,7 @@ function BookingDates(
     onDatesSelected,
     defaultDates,
     excludeDatesRanges,
+    defaultDatesError,
     ...props
   }: IBookingDatesProps,
   ref: React.ForwardedRef<HTMLDivElement>
@@ -127,9 +127,20 @@ function BookingDates(
   const [startDate, setStartDate] = useState<Date | null>(null);
   const [pickerOpen, setPickerOpen] = useState(forceInline);
   const [endDate, setEndDate] = useState<Date | null>(null);
+  const [error, setError] = useState<boolean>(false);
   //TODO(#19) no visuals are not shown on the component yet
-  const [error, setError] = useState<IBookingDatesErrorType | null>(null);
   const router = useRouter();
+
+  useEffect(() => {
+    setError(!!defaultDatesError)
+  },[defaultDatesError])
+
+  useEffect(() => {
+    if (defaultDates) {
+      setStartDate(defaultDates[0]);
+      setEndDate(defaultDates[1]);
+    }
+  },[defaultDates])
 
   /**
    * Flattens excluded dates (not availbe for booking)
@@ -138,34 +149,6 @@ function BookingDates(
     () => flattenDateRanges(excludeDatesRanges),
     [excludeDatesRanges]
   );
-
-  /**
-   * Handles passed default dates:
-   * - validates date range format and if its valid range
-   * - validates if date range is bookeable
-   * - set dates on component state and call callback to notify the selection.
-   */
-  useEffect(() => {
-    const validDefaultDates =
-      defaultDates &&
-      defaultDates.length == 2 &&
-      validateAndFormatBookingDates(defaultDates);
-    if (validDefaultDates) {
-      if (
-        !excludeDatesRanges ||
-        isBookingDateRangeAvailable(validDefaultDates, excludeDatesRanges)
-      ) {
-        const [defaultStartDate, defaultEndDate] = validDefaultDates;
-        setStartDate(defaultStartDate);
-        setEndDate(defaultEndDate);
-
-        onDatesSelected
-  ([defaultStartDate, defaultEndDate]);
-      } else {
-        setError(IBookingDatesErrorType.SELECTED_DATES_NOT_AVAILABLE);
-      }
-    }
-  }, [defaultDates, excludeDatesRanges, onDatesSelected]);
 
   const onChange = useCallback(
     (dates: [Date | null, Date | null]) => {
@@ -188,7 +171,8 @@ function BookingDates(
         if (!forceInline) {
           setPickerOpen(false);
         }
-        onDatesSelected([start, end]);
+        onDatesSelected(createBookeableValidPeriod([start, end]));
+        setError(false);
       } else { // range selection invalid
         updateQueryStringWithBookingDates(router,null);
         setStartDate(null);
@@ -214,6 +198,7 @@ function BookingDates(
     setStartDate(null);
     setEndDate(null);
     onDatesSelected(null);
+    setError(false);
     if (router) {
       updateQueryStringWithBookingDates(router,null);
     }
@@ -236,6 +221,8 @@ function BookingDates(
           startDate={startDate}
           endDate={endDate}
           onExpand={() => setPickerOpen(true)}
+          onError={error}
+
         />
       )}
 
