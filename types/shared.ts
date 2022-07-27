@@ -3,6 +3,11 @@ export enum APARMENTS_NAME {
   CABANA = "cabana",
 }
 
+export enum APARMENTS_TYPE {
+  APARTAMENT = "Apartamento",
+  COMPOUND = "Complejo",
+}
+
 export interface IApartmentImage {
   alt: string;
   height: number;
@@ -22,6 +27,7 @@ export interface IApartmentData {
   name: string;
   displayName: string;
   rooms: string;
+  type: APARMENTS_TYPE.APARTAMENT;
 }
 
 export enum AMENITIES_GROUP {
