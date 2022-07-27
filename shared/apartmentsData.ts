@@ -1,4 +1,4 @@
-import { AMENITIES_GROUP, AMENITY, APARMENTS_NAME, IAparmentAmenitiesGroup, IApartmentData } from "../types/shared";
+import { AMENITIES_GROUP, AMENITY, APARMENTS_NAME, APARMENTS_TYPE, IAparmentAmenitiesGroup, IApartmentData } from "../types/shared";
 
 const sharedAparmentAmenities: IAparmentAmenitiesGroup[] = [
   {
@@ -229,6 +229,7 @@ const APARMENTS_DATA = {
     displayName: APARMENTS_NAME.CABANA.charAt(0).toUpperCase() + APARMENTS_NAME.CABANA.slice(1),
     maxPeople: "6",
     rooms: "3",
+    type: APARMENTS_TYPE.APARTAMENT,
   } as IApartmentData,
   [APARMENTS_NAME.CALA]: {
     amenities: sharedAparmentAmenities,
@@ -291,6 +292,7 @@ const APARMENTS_DATA = {
     displayName: APARMENTS_NAME.CALA.charAt(0).toUpperCase() + APARMENTS_NAME.CALA.slice(1),
     maxPeople: "4",
     rooms: "2",
+    type: APARMENTS_TYPE.APARTAMENT,
   } as IApartmentData,
 }
 
