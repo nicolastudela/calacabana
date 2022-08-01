@@ -37,7 +37,7 @@ const DatesInput = ({
   onExpand: () => void;
   startDate: Date | null;
   endDate: Date | null;
-  onError?: boolean
+  onError?: boolean;
 }) => {
   const startDateInputRef = useRef<HTMLInputElement>(null);
   const endDateInputRef = useRef<HTMLInputElement>(null);
@@ -103,16 +103,24 @@ const DatesInput = ({
   );
 };
 
-interface IBookingDatesProps extends BoxProps {
+export interface IBookingDatesProps extends BoxProps {
   apartmentName: string;
   forceInline: boolean;
   onDatesSelected: (dates: BookeableValidPeriod | null) => void;
   defaultDates?: BookingPeriod;
   excludeDatesRanges?: Date[][];
-  defaultDatesError: EPageDefaultDatesErrorType | null | undefined;
+  defaultDatesError?: EPageDefaultDatesErrorType | null | undefined;
+  selectWithButtonFlow?: boolean;
 }
 
 function BookingDates(
+  props: IBookingDatesProps,
+) {
+  return BookingDatesWithRef(props, null);
+}
+
+
+function BookingDatesWithRef(
   {
     apartmentName,
     forceInline,
@@ -120,6 +128,7 @@ function BookingDates(
     defaultDates,
     excludeDatesRanges,
     defaultDatesError,
+    selectWithButtonFlow = false,
     ...props
   }: IBookingDatesProps,
   ref: React.ForwardedRef<HTMLDivElement>
@@ -132,15 +141,15 @@ function BookingDates(
   const router = useRouter();
 
   useEffect(() => {
-    setError(!!defaultDatesError)
-  },[defaultDatesError])
+    setError(!!defaultDatesError);
+  }, [defaultDatesError]);
 
   useEffect(() => {
     if (defaultDates) {
       setStartDate(defaultDates[0]);
       setEndDate(defaultDates[1]);
     }
-  },[defaultDates])
+  }, [defaultDates]);
 
   /**
    * Flattens excluded dates (not availbe for booking)
@@ -150,37 +159,55 @@ function BookingDates(
     [excludeDatesRanges]
   );
 
+  const onDatesPicked = useCallback((start: Date | null, end: Date | null) => {
+    if (start && end) {
+      // TODO: maybe move this to some useEffect. It closes/hide date picker when dates are properly selected
+      if (!forceInline) {
+        setPickerOpen(false);
+      }
+      onDatesSelected(createBookeableValidPeriod([start, end]));
+      setError(false);
+    }
+  },[forceInline, onDatesSelected]);
+
   const onChange = useCallback(
     (dates: [Date | null, Date | null]) => {
       const [start, end] = dates;
       if (start && !end) {
         // valid start date
         setStartDate(start);
-        if (router) {
-          updateQueryStringWithBookingDates(router,[start, null]);
+        if (!selectWithButtonFlow) {
+          if (router) {
+            updateQueryStringWithBookingDates(router, [start, null]);
+          }
         }
         setEndDate(null);
-      // valid range selection
-      } else if (start && end && isBookingDateRangeAvailable([start, end], excludeDatesRanges)) {
+        // valid range selection
+      } else if (
+        start &&
+        end &&
+        isBookingDateRangeAvailable([start, end], excludeDatesRanges)
+      ) {
         setStartDate(start);
         setEndDate(end);
-        if (router) {
-          updateQueryStringWithBookingDates(router,[start, end]);
+        if (!selectWithButtonFlow) {
+          if (router) {
+            updateQueryStringWithBookingDates(router, [start, end]);
+          }
+          onDatesPicked(start, end);
         }
-        // TODO: maybe move this to some useEffect. It closes/hide date picker when dates are properly selected
-        if (!forceInline) {
-          setPickerOpen(false);
-        }
-        onDatesSelected(createBookeableValidPeriod([start, end]));
-        setError(false);
-      } else { // range selection invalid
-        updateQueryStringWithBookingDates(router,null);
+      } else {
+        // range selection invalid
+        updateQueryStringWithBookingDates(router, null);
         setStartDate(null);
         setEndDate(null);
       }
     },
-    [excludeDatesRanges, forceInline, router, onDatesSelected]
+    [excludeDatesRanges, onDatesPicked, router, selectWithButtonFlow]
   );
+
+
+
 
   const dateSelectionText = useMemo(() => {
     if (startDate) {
@@ -200,7 +227,7 @@ function BookingDates(
     onDatesSelected(null);
     setError(false);
     if (router) {
-      updateQueryStringWithBookingDates(router,null);
+      updateQueryStringWithBookingDates(router, null);
     }
   }, [onDatesSelected, router]);
 
@@ -222,7 +249,6 @@ function BookingDates(
           endDate={endDate}
           onExpand={() => setPickerOpen(true)}
           onError={error}
-
         />
       )}
 
@@ -235,19 +261,38 @@ function BookingDates(
         />
       )}
       {(startDate || endDate) && (
-        <Button
-          variant={"link"}
-          textDecoration="underline"
-          size="sm"
-          onClick={onClearDates}
-        >
-          Borrar fechas
-        </Button>
+        <Flex>
+          <Button
+            variant={"link"}
+            textDecoration="underline"
+            size="sm"
+            onClick={onClearDates}
+          >
+            Borrar fechas
+          </Button>
+
+          {selectWithButtonFlow && (
+            <Button
+              variant={"solid"}
+              colorScheme={"brand"}
+              // textDecoration="underline"
+              size="md"
+              disabled={!startDate || !endDate}
+              onClick={() => onDatesPicked(startDate, endDate)}
+              ml={"32"}
+            >
+              Guardar
+            </Button>
+          )}
+        </Flex>
       )}
     </Flex>
   );
 }
 
-export default React.forwardRef<HTMLDivElement, IBookingDatesProps>(
-  BookingDates
-);
+export default BookingDates;
+
+export { BookingDatesWithRef };
+
+
+

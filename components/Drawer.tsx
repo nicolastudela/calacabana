@@ -28,6 +28,7 @@ const CustomDrawer = ({isOpen, onClose, title, children}: CustomDrawerProps) => 
           icon={<ArrowBackIcon />}
         />
         <Spacer />
+        <Spacer />
         {title && <Heading as="h3" display={"inline-block"} size="lg">{title}</Heading>}
         <Spacer />
         <Spacer/>

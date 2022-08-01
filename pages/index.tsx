@@ -16,7 +16,7 @@ import Carousel from "@/components/Carousel";
 import aparmentsData from "../shared/apartmentsData";
 import { APARMENTS_NAME } from "@/types/shared";
 import HeroGrid from "@/components/HeroGrid";
-import { useState, useCallback, useEffect, useReducer } from "react";
+import { useCallback, useReducer } from "react";
 import { IDrawerActionTypes } from "@/types/types";
 import dynamic from "next/dynamic";
 
