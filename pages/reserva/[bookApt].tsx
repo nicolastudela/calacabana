@@ -17,6 +17,7 @@ import { BookeableValidPeriod } from "@/types/types";
 import createBookeableValidPeriod from "@/shared/model/BookingValidPeriod";
 import ListingCard from "@/components/apartment/ListingCard";
 import DiscountsInformation from "@/components/DiscountsInformation";
+import TripSection from "@/components/TripSeccion";
 
 export type IBookingApartmentProps = IApartmentData & { key: string };
 
@@ -31,6 +32,7 @@ const Page = (apartmentData: IBookingApartmentProps) => {
     displayName,
     name,
     mainFeature,
+    maxPeople,
     type: apartmentType,
   } = apartmentData;
   const isMobile = useBreakpointValue({ base: true, md: false });
@@ -47,24 +49,32 @@ const Page = (apartmentData: IBookingApartmentProps) => {
   const [pageError, setPageError] = useState<EApartmentBookingErrorType | null>(
     null
   );
-  const { defaultDates, pageDefaultDatesError } = usePageDefaultDates({
+  const { defaultDates, bookeableDefaultDates, pageDefaultDatesError } = usePageDefaultDates({
     excludedDatesRanges,
   });
 
   const onDatesSelected = useCallback(
     (dates: BookeableValidPeriod | null) => {
       setSelectedDates(dates);
-
-      if (
-        dates &&
-        pageError === EApartmentBookingErrorType.SELECTED_DATES_NOT_AVAILABLE
-      ) {
-        // TODO think this better
-        setPageError(null);
-      }
     },
-    [pageError]
+    []
   );
+
+  useEffect(() => {
+    if (
+      datesSelected &&
+      pageError === EApartmentBookingErrorType.SELECTED_DATES_NOT_AVAILABLE
+    ) {
+      // TODO think this better
+      setPageError(null);
+    }
+  },[datesSelected, setPageError, pageError])
+
+  useEffect(() => {
+    if (bookeableDefaultDates !== undefined) {
+      onDatesSelected(bookeableDefaultDates);
+    }
+  }, [bookeableDefaultDates, pageDefaultDatesError, onDatesSelected]);
 
   /**
    * ISSUE: #6
@@ -72,9 +82,6 @@ const Page = (apartmentData: IBookingApartmentProps) => {
    * - Valid Date but period already taken. Sets the page prop error to subseccions "already booked error status"
    */
   useEffect(() => {
-    if (defaultDates && !pageDefaultDatesError) {
-      onDatesSelected(createBookeableValidPeriod(defaultDates));
-    }
     if (pageDefaultDatesError) {
       setPageError(EApartmentBookingErrorType.SELECTED_DATES_NOT_AVAILABLE);
       if (
@@ -85,14 +92,7 @@ const Page = (apartmentData: IBookingApartmentProps) => {
         return;
       }
     }
-  }, [defaultDates, pageDefaultDatesError, onDatesSelected, router, name]);
-
-  //sets the page prop error to subseccions "SELECTED_DATES_NOT_AVAILABLE"
-  useEffect(() => {
-    if (pageDefaultDatesError) {
-      setPageError(EApartmentBookingErrorType.SELECTED_DATES_NOT_AVAILABLE);
-    }
-  }, [pageDefaultDatesError]);
+  }, [pageDefaultDatesError, router, name]);
 
   return (
     <Box>
@@ -115,7 +115,7 @@ const Page = (apartmentData: IBookingApartmentProps) => {
             _focus={{ boxShadow: "none" }}
             icon={<ArrowBackIcon />}
           />
-          <Heading size="lg">Envia tu consulta</Heading>
+          <Heading as="h2" size="lg">Envia tu consulta</Heading>
         </Flex>
         <Flex
           mt={4}
@@ -131,9 +131,9 @@ const Page = (apartmentData: IBookingApartmentProps) => {
             alignItems={"flex-start"}
             direction="column"
           >
-            <Box bgColor={"lightblue"} w="100%" height={"500px"}>
-              {pageError ? pageError : "good"}
-            </Box>
+            <TripSection w={"full"} numGuests={maxPeople}
+              bookingPeriod={datesSelected ? [datesSelected.startDate, datesSelected.endDate] : defaultDates}
+              onEditDates={() => {} } invalidDates={pageError === EApartmentBookingErrorType.SELECTED_DATES_NOT_AVAILABLE}/>
             <Box bgColor={"pink"} w="100%" height={"500px"}>
               {datesSelected
                 ? `checkin ${datesSelected.startDate} checkout ${datesSelected.endDate}`
@@ -153,13 +153,8 @@ const Page = (apartmentData: IBookingApartmentProps) => {
               width={"fit-content"}
               margin="auto"
               padding={{ base: "unset", md: "24px" }}
-              // borderTop="0"
-              // borderLeft="0"
-              // borderBottom={{ base: "none", md: "2px solid" }}
-              // borderRight={{ base: "none", md: "2px solid" }}
               border={{base: "none", md:"1px solid"}}
               borderColor="brand.500"
-              // shadow={{ base: "none", md: "brand" }}
               minWidth="350px"
             >
               <ListingCard

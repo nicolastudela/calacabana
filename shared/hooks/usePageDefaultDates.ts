@@ -62,6 +62,7 @@ const usePageDefaultDates = ({
           excludedDatesRanges &&
           !isBookingDateRangeAvailable(validDefaultDates, excludedDatesRanges)
         ) {
+          setBookeableDefaultDates(null);
           setPageDefaultDatesError(
             EPageDefaultDatesErrorType.DEFAULT_DATES_ALREADY_TAKEN
           );

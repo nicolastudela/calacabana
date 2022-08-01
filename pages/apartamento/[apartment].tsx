@@ -132,22 +132,25 @@ const Page = (apartmentData: IApartmentProps) => {
   const onDatesSelected = useCallback(
     (dates: BookeableValidPeriod | null) => {
       setSelectedDates(dates);
-      if (
-        dates &&
-        pageError === EApartmentPageErrorType.SELECTED_DATES_NOT_AVAILABLE
-      ) {
-        setPageError(null);
-      }
     },
-    [pageError]
+    []
   );
+
+  useEffect(() => {
+    if (
+      datesSelected &&
+      pageError === EApartmentPageErrorType.SELECTED_DATES_NOT_AVAILABLE
+    ) {
+      setPageError(null);
+    }
+  },[datesSelected, setPageError, pageError])
 
   /**
    * - Invalid dates (not existent, not valid booking date) => remove them from url (//TODO)
    * - Bookeable dates will be set as valid date.
    */
   useEffect(() => {
-    if (bookeableDefaultDates && !pageDefaultDatesError) {
+    if (bookeableDefaultDates !== undefined) {
       onDatesSelected(bookeableDefaultDates);
     }
   }, [bookeableDefaultDates, pageDefaultDatesError, onDatesSelected]);
