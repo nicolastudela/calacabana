@@ -41,8 +41,10 @@ const AllAmenities = dynamic(
   () => import("../../components/amenities/AllAmenities")
 );
 
+const BookingDatesLoader = () => import("../../components/booking/BookingDatesWithRef")
+
 const BookingDates = dynamic(
-  () => import("../../components/booking/BookingDates"),
+  BookingDatesLoader,
   {
     suspense: true,
   }
@@ -71,13 +73,10 @@ const Page = (apartmentData: IApartmentProps) => {
     excludedDatesRanges,
   });
 
-  // const defaultDates = undefined; 
-  // const pageDefaultDatesError = null;
-
   const [pageError, setPageError] = useState<EApartmentPageErrorType | null>(
     null
   );
-  const datePickerRef = useRef<HTMLDivElement>(null);
+  const datePickerRef = useRef<HTMLDivElement | null>(null);
 
   // use reducer to get dispachers to be used on CTAs, where some CTAs will update whats shown on the PageDrawer
   const reducer = useCallback(
@@ -326,7 +325,7 @@ const Page = (apartmentData: IApartmentProps) => {
             display={"flex"}
           >
             {/* Fix these buttons, are styled very poorly */}
-            {!pageError && datesSelected ? (
+            {!pageError && !!datesSelected ? (
               <BookingButton
                 onBookingAction={gotToBookApt}
                 isLoading={isPageProcessing}
@@ -337,7 +336,7 @@ const Page = (apartmentData: IApartmentProps) => {
                 bg="tomato"
                 onClick={() => datePickerRef.current?.scrollIntoView()}
               >
-                {!!pageError ? "Cambiar fechas" : "Consultar disponibilidad"}
+                {datesSelected ? "Cambiar fechas" : "Consultar disponibilidad"}
               </Button>
             )}
           </Box>
