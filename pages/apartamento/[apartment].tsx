@@ -333,7 +333,7 @@ const Page = (apartmentData: IApartmentProps) => {
             ) : (
               <Button
                 margin={"auto"}
-                bg="tomato"
+                variant="action"
                 onClick={() => datePickerRef.current?.scrollIntoView()}
               >
                 {datesSelected ? "Cambiar fechas" : "Consultar disponibilidad"}

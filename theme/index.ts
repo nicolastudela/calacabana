@@ -1,4 +1,5 @@
 import { extendTheme, ThemeConfig } from '@chakra-ui/react'
+import Button from './components/Button';
 import DatePicker from './components/DatePicker';
 
 import Link from './components/Link'
@@ -32,7 +33,8 @@ const overrides = {
   shadows,
   components: {
     Link,
-    DatePicker
+    DatePicker,
+    Button,
   }
 }
 
