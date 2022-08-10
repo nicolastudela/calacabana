@@ -36,3 +36,16 @@ export type BookeableValidPeriod = {
  * This type represents a period that is ready sematically valid
  */
 export type BookingPeriod = [Date, Date]
+
+export type UserContact = {
+  firstName: string | null;
+  lastName: string | null;
+  email: string | null;
+  phone: number | null;
+  body: string | null;
+};
+
+export type ContactRequest = {
+  period: BookeableValidPeriod;
+  userContact: UserContact;
+}

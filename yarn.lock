@@ -3098,6 +3098,11 @@
     "use-callback-ref" "^1.3.0"
     "use-sidecar" "^1.1.2"
 
+"react-hook-form@^7.34.0":
+  "integrity" "sha512-s0/TJ09NVlEk2JPp3yit1WnMuPNBXFmUKEQPulgDi9pYBw/ZmmAFHe6AXWq73Y+kp8ye4OcMf0Jv+i/qLPektg=="
+  "resolved" "https://registry.npmjs.org/react-hook-form/-/react-hook-form-7.34.0.tgz"
+  "version" "7.34.0"
+
 "react-icons@^4.3.1":
   "integrity" "sha512-cB10MXLTs3gVuXimblAdI71jrJx8njrJZmNMEMC+sQu5B/BIOmlsAjskdqpn81y8UBVEGuHODd7/ci5DvoSzTQ=="
   "resolved" "https://registry.npmjs.org/react-icons/-/react-icons-4.3.1.tgz"

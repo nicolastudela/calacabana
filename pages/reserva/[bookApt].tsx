@@ -6,6 +6,7 @@ import { useRouter } from "next/router";
 import { ArrowBackIcon } from "@chakra-ui/icons";
 import {
   Box,
+  Button,
   Divider,
   Flex,
   Heading,
@@ -20,13 +21,14 @@ import aparmentBookingsFetcher from "@/shared/fetchers/aparmentBookingsFetcher";
 import usePageDefaultDates, {
   EPageDefaultDatesErrorType,
 } from "@/shared/hooks/usePageDefaultDates";
-import { BookeableValidPeriod, IDrawerActionTypes } from "@/types/types";
+import { BookeableValidPeriod, IDrawerActionTypes, UserContact } from "@/types/types";
 import ListingCard from "@/components/apartment/ListingCard";
 import DiscountsInformation from "@/components/DiscountsInformation";
 import TripSection from "@/components/TripSeccion";
 import PageDrawer from "@/components/PageDrawer";
 import dynamic from "next/dynamic";
 import { updateQueryStringWithBookingDates } from "@/utils/queryStringHandler";
+import ContactUs from "@/components/ContactUs";
 
 export type IBookingApartmentProps = IApartmentData & { key: string };
 
@@ -37,6 +39,7 @@ const BookingDates = dynamic(
 
 enum EApartmentBookingErrorType {
   SELECTED_DATES_NOT_AVAILABLE = "SELECTED_DATES_NOT_AVAILABLE",
+  USER_CONTACT_DATA_NOT_AVAILABLE = "USER_CONTACT_DATA_NOT_AVAILABLE",
 }
 
 const Page = (apartmentData: IBookingApartmentProps) => {
@@ -60,8 +63,10 @@ const Page = (apartmentData: IBookingApartmentProps) => {
 
   const [datesSelected, setSelectedDates] =
     useState<BookeableValidPeriod | null>(null);
-  const [pageError, setPageError] = useState<EApartmentBookingErrorType | null>(
-    null
+  const [userContactData, setUserContactData] = useState<UserContact | null>(null);
+
+  const [pageErrors, setPageErrors] = useState<EApartmentBookingErrorType[]>(
+    []
   );
   const { defaultDates, bookeableDefaultDates, pageDefaultDatesError } =
     usePageDefaultDates({
@@ -71,6 +76,28 @@ const Page = (apartmentData: IBookingApartmentProps) => {
   const onDatesSelected = useCallback((dates: BookeableValidPeriod | null) => {
     setSelectedDates(dates);
   }, []);
+
+  const onUserConctactChange = useCallback((userContactData: UserContact | null) => {
+    setUserContactData(userContactData);
+  },[]);
+
+  useEffect(() => {
+    if (
+      datesSelected &&
+      pageErrors.includes(EApartmentBookingErrorType.SELECTED_DATES_NOT_AVAILABLE)
+    ) {
+      // TODO think this better
+      setPageErrors((prev) => prev.filter((err) => err !== EApartmentBookingErrorType.SELECTED_DATES_NOT_AVAILABLE));
+    }
+  }, [datesSelected, pageErrors]);
+
+  useEffect(() => {
+    if (!userContactData) {
+      setPageErrors((prev) => prev.concat(EApartmentBookingErrorType.USER_CONTACT_DATA_NOT_AVAILABLE))
+    } else {
+      setPageErrors((prev) => prev.filter((err) => err !== EApartmentBookingErrorType.USER_CONTACT_DATA_NOT_AVAILABLE));
+    }
+  }, [userContactData])
 
   const selectDatesAndCloseDrawer = useCallback((dates: BookeableValidPeriod | null) => {
     onDatesSelected(dates);
@@ -106,20 +133,10 @@ const Page = (apartmentData: IBookingApartmentProps) => {
   const [componentToShow, dispatch] = useReducer(reducer, null);
 
   useEffect(() => {
-    if (
-      datesSelected &&
-      pageError === EApartmentBookingErrorType.SELECTED_DATES_NOT_AVAILABLE
-    ) {
-      // TODO think this better
-      setPageError(null);
-    }
-  }, [datesSelected, setPageError, pageError]);
-
-  useEffect(() => {
     if (bookeableDefaultDates !== undefined) {
       onDatesSelected(bookeableDefaultDates);
     }
-  }, [bookeableDefaultDates, pageDefaultDatesError, onDatesSelected]);
+  }, [bookeableDefaultDates, onDatesSelected]);
 
   /**
    * ISSUE: #6
@@ -128,7 +145,7 @@ const Page = (apartmentData: IBookingApartmentProps) => {
    */
   useEffect(() => {
     if (pageDefaultDatesError) {
-      setPageError(EApartmentBookingErrorType.SELECTED_DATES_NOT_AVAILABLE);
+      setPageErrors((prev) => prev.concat(EApartmentBookingErrorType.SELECTED_DATES_NOT_AVAILABLE));
       if (
         pageDefaultDatesError ===
         EPageDefaultDatesErrorType.DEFAULT_DATES_INVALID
@@ -138,6 +155,7 @@ const Page = (apartmentData: IBookingApartmentProps) => {
       }
     }
   }, [pageDefaultDatesError, router, name]);
+
 
   return (
     <Box>
@@ -178,6 +196,7 @@ const Page = (apartmentData: IBookingApartmentProps) => {
             alignItems={"flex-start"}
             direction="column"
           >
+            {!isMobile && <Divider mb={4}/> }
             <TripSection
               w={"full"}
               numGuests={maxPeople}
@@ -193,15 +212,13 @@ const Page = (apartmentData: IBookingApartmentProps) => {
                 })
               }
               invalidDates={
-                pageError ===
-                EApartmentBookingErrorType.SELECTED_DATES_NOT_AVAILABLE
+                !!pageErrors.find((err) => err ===EApartmentBookingErrorType.SELECTED_DATES_NOT_AVAILABLE)
               }
             />
-            <Box bgColor={"pink"} w="100%" height={"500px"}>
-              {datesSelected
-                ? `checkin ${datesSelected.startDate} checkout ${datesSelected.endDate}`
-                : null}
-            </Box>
+            <Divider my={6}/>
+            <ContactUs onChange={onUserConctactChange} />
+            <Divider my={6}/>
+            <Button size={"lg"} alignSelf={{base: "center", md: "flex-start"}} variant="action" disabled={pageErrors.length !== 0} mb={4}>Envia tu consulta</Button>
           </Flex>
           <Box
             w={{ base: "100%", md: "35%" }}

@@ -9,7 +9,7 @@ export interface BookingButtonProps extends FlexProps{
 
 const BookingButton = ({onBookingAction, enabled = true, isLoading = false, ...props}: BookingButtonProps) => (
   <Flex alignItems={"center"} direction="column" {...props} m="auto">
-    <Button disabled={!enabled} bg="tomato" isLoading={isLoading} onClick={onBookingAction} mb={2}>Reservar</Button>
+    <Button variant="action" disabled={!enabled} isLoading={isLoading} onClick={onBookingAction} mb={2}>Reservar</Button>
     <Text fontSize="xs">{enabled ? "No vamos a cobrarte ningún cargo por el momento" : "Seleccione alguna fecha"}</Text>
   </Flex>
 )
