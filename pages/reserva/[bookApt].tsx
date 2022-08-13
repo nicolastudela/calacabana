@@ -15,13 +15,13 @@ import {
 } from "@chakra-ui/react";
 
 import aparmentsData, { APARTMENTS_BUILD } from "@/shared/apartmentsData";
-import { IApartmentData } from "@/types/shared";
+import { BookeableValidPeriod, IApartmentData, UserInquiry, UserInquiryRequest } from "@/types/shared";
 import Layout from "@/components/Layout";
 import aparmentBookingsFetcher from "@/shared/fetchers/aparmentBookingsFetcher";
 import usePageDefaultDates, {
   EPageDefaultDatesErrorType,
 } from "@/shared/hooks/usePageDefaultDates";
-import { BookeableValidPeriod, IDrawerActionTypes, UserContact } from "@/types/types";
+import { IDrawerActionTypes } from "@/types/types";
 import ListingCard from "@/components/apartment/ListingCard";
 import DiscountsInformation from "@/components/DiscountsInformation";
 import TripSection from "@/components/TripSeccion";
@@ -29,6 +29,8 @@ import PageDrawer from "@/components/PageDrawer";
 import dynamic from "next/dynamic";
 import { updateQueryStringWithBookingDates } from "@/utils/queryStringHandler";
 import ContactUs from "@/components/ContactUs";
+import { post } from "@/shared/services/fetch";
+import postUserInquiry from "@/shared/services/postUserInquiry";
 
 export type IBookingApartmentProps = IApartmentData & { key: string };
 
@@ -63,7 +65,7 @@ const Page = (apartmentData: IBookingApartmentProps) => {
 
   const [datesSelected, setSelectedDates] =
     useState<BookeableValidPeriod | null>(null);
-  const [userContactData, setUserContactData] = useState<UserContact | null>(null);
+  const [userContactData, setUserContactData] = useState<UserInquiry | null>(null);
 
   const [pageErrors, setPageErrors] = useState<EApartmentBookingErrorType[]>(
     []
@@ -77,7 +79,7 @@ const Page = (apartmentData: IBookingApartmentProps) => {
     setSelectedDates(dates);
   }, []);
 
-  const onUserConctactChange = useCallback((userContactData: UserContact | null) => {
+  const onUserConctactChange = useCallback((userContactData: UserInquiry | null) => {
     setUserContactData(userContactData);
   },[]);
 
@@ -156,6 +158,17 @@ const Page = (apartmentData: IBookingApartmentProps) => {
     }
   }, [pageDefaultDatesError, router, name]);
 
+  const postInquiry = useCallback(() => {
+      if (datesSelected && name && userContactData && pageErrors.length === 0) {
+        setIsPageProcessing(true);
+        postUserInquiry({
+          apartment: name,
+          period: datesSelected,
+          userContact: userContactData
+        } as UserInquiryRequest).then(() => {setIsPageProcessing(false)})
+      }
+  }, [datesSelected, name, pageErrors.length, userContactData])
+
 
   return (
     <Box>
@@ -218,7 +231,7 @@ const Page = (apartmentData: IBookingApartmentProps) => {
             <Divider my={6}/>
             <ContactUs onChange={onUserConctactChange} />
             <Divider my={6}/>
-            <Button size={"lg"} alignSelf={{base: "center", md: "flex-start"}} variant="action" disabled={pageErrors.length !== 0} mb={4}>Envia tu consulta</Button>
+            <Button isLoading={isPageProcessing} size={"lg"} alignSelf={{base: "center", md: "flex-start"}} variant="action" disabled={pageErrors.length !== 0} mb={4} onClick={postInquiry}>Envia tu consulta</Button>
           </Flex>
           <Box
             w={{ base: "100%", md: "35%" }}

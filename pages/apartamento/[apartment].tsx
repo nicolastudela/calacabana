@@ -26,7 +26,7 @@ import ApartmentFeatures, {
 import { IAparmentAmenitiesGroup, IApartmentData } from "@/types/shared";
 import HiglightAmenities from "@/components/amenities/HiglightAmenities";
 import BookingButton from "@/components/booking/BookingButton";
-import { BookeableValidPeriod, IDrawerActionTypes } from "@/types/types";
+import { BookeableValidPeriod } from "@/types/shared";
 import PageDrawer from "@/components/PageDrawer";
 
 import useSWR from "swr";
@@ -34,6 +34,7 @@ import aparmentBookingsFetcher from "@/shared/fetchers/aparmentBookingsFetcher";
 import usePageDefaultDates from "@/shared/hooks/usePageDefaultDates";
 
 import { useRouter } from "next/router";
+import { IDrawerActionTypes } from "@/types/types";
 
 const VerticalGrid = dynamic(() => import("../../components/VerticalGallery"));
 

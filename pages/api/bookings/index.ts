@@ -5,10 +5,10 @@ import {
   IBookingsInfoResponseError,
   IBookingsInfoResponsePartial,
   IBookingsInfoResponseSuccessful,
-} from "../../../types/api";
-import intersectDateRanges from "../../../utils/intersectDateRanges";
-import fetchBookings from "../../../services/fetchBookings";
-import { APARMENTS_NAME } from "../../../types/shared";
+} from "@/types/api";
+import intersectDateRanges from "@/utils/intersectDateRanges";
+import fetchBookings from "../../../api-services/fetchBookings";
+import { APARMENTS_NAME } from "@/types/shared";
 
 
 const BUENOS_AIRES_ISO_TIME = "T15:00:00-03:00";

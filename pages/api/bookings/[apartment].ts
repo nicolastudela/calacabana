@@ -1,17 +1,14 @@
 
 import { BookingsInfoResponseStatus, IAparmentBookingsResponseSerializedSuccessful, IAparmentBookingsResponseSuccessful } from "@/types/api";
-import { BookingPeriod } from "@/types/types";
-import { toYYYYMMDD } from "@/utils/date";
+import { bookingPeriodSerialize } from "@/utils/serializers/bookingPeriodSerializer";
 import type { NextApiRequest, NextApiResponse } from "next";
 import nc from "next-connect";
-import fetchBookings from "../../../services/fetchBookings";
-import { APARMENTS_NAME } from "../../../types/shared";
+import fetchBookings from "../../../api-services/fetchBookings";
+import { APARMENTS_NAME } from "@/types/shared";
 
 
 const serializeBookingPeriods = (bookings: IAparmentBookingsResponseSuccessful) => {
-  const serializedDates: [string, string][] = bookings.bookedPeriods.map((period: BookingPeriod) => (
-    [toYYYYMMDD(period[0]), toYYYYMMDD(period[1])]
-  ))
+  const serializedDates: [string, string][] = bookings.bookedPeriods.map(bookingPeriodSerialize)
   return {
     status: bookings.status,
     bookedPeriods: serializedDates,

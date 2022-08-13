@@ -1,9 +1,19 @@
-import { BookingPeriod } from "./types";
+import { APARMENTS_NAME, BookingPeriod, UserInquiry } from "@/types/shared";
 
 export enum BookingsInfoResponseStatus {
   SUCCESFUL = "OK",
   PARTIAL = "PARTIAL",
   ERROR = "ERROR",
+}
+
+export enum GenericResponseStatus {
+  SUCCESFUL = "OK",
+  ERROR = "ERROR",
+}
+
+export interface IGenericResponse<Payload> { 
+  status: GenericResponseStatus;
+  data?: Payload;
 }
 
 interface IBookingsInfoResponse  {
@@ -12,6 +22,7 @@ interface IBookingsInfoResponse  {
   cabana: IAparmentBookingsResponse;
 }
 
+// TODO (#44) : These three types shouldn't exist anymore.
 export interface IBookingsInfoResponseSuccessful extends IBookingsInfoResponse {
   status: BookingsInfoResponseStatus.SUCCESFUL;
   fullBookedPeriods: BookingPeriod[];
@@ -25,13 +36,13 @@ export interface IBookingsInfoResponseError  {
   status: BookingsInfoResponseStatus.ERROR;
 }
 
-interface IAparmentBookingsResponse {
+export interface IAparmentBookingsResponse {
   status: BookingsInfoResponseStatus;
 }
 
 export interface IAparmentBookingsResponseSuccessful extends IAparmentBookingsResponse {
   status: BookingsInfoResponseStatus.SUCCESFUL;
-bookedPeriods: BookingPeriod[];
+  bookedPeriods: BookingPeriod[];
 }
 
 export interface IAparmentBookingsResponseSerializedSuccessful extends IAparmentBookingsResponse {
@@ -45,3 +56,13 @@ export interface IAparmentBookingsResponseError extends IAparmentBookingsRespons
   errorStatusText?: string;
   errorsDetails?: string | undefined
 }
+
+export interface IUserInquiryRequestSerialized {
+  apartment: APARMENTS_NAME;
+  period: [string, string];
+  userContact: UserInquiry;
+}
+
+export interface IUserInquiryResposePayload {}
+
+export type IUserInquiryRespose = IGenericResponse<IUserInquiryResposePayload>;

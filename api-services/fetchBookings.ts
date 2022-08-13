@@ -5,10 +5,9 @@ import {
   IAparmentBookingsResponseError,
   IAparmentBookingsResponseSuccessful,
 } from "../types/api";
-import { APARMENTS_NAME } from "../types/shared";
+import { APARMENTS_NAME, BookingPeriod } from "@/types/shared";
 
-import stubEvents from "../shared/mocks/calendarEventStubber";
-import { BookingPeriod } from "@/types/types";
+import stubEvents from "@/shared/mocks/calendarEventStubber";
 import isBefore from "date-fns/isBefore";
 
 const jwtClient = new google.auth.JWT(
@@ -71,7 +70,7 @@ const fetchBookings = (apartment: APARMENTS_NAME) => {
       : process.env.CALA_GOOGLE_CALENDAR_ID;
 
   //TODO (#23) REMOVE THIS, IT'S JUST TO NOT TO CALL CALENDAR_API ON EACH CALL
-  if (process.env.MOCK_CALENDAR_API) {
+  if (process.env.MOCK_CALENDAR_API && process.env.MOCK_CALENDAR_API === "true") {
     return stubEvents(apartment);
   } else {
     return sanitizeEventListResponse(
