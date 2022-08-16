@@ -17,11 +17,20 @@ const jwtClient = new google.auth.JWT(
   process.env.GOOGLE_CALENDAR_SCOPES_READ_ONLY
 );
 
+console.info(`jwtClient: ${jwtClient}`);
+
+console.info(`process.env: ${process.env}`);
+console.info(`GOOGLE_CLIENT_EMAIL: ${process.env.GOOGLE_CLIENT_EMAIL}`);
+console.info(`GOOGLE_PRIVATE_KEY: ${process.env.GOOGLE_PRIVATE_KEY}`);
+console.info(`GOOGLE_CALENDAR_SCOPES_READ_ONLY: ${process.env.GOOGLE_CALENDAR_SCOPES_READ_ONLY}`);
+
 const calendar = google.calendar({
   version: "v3",
   // project: process.env.GOOGLE_PROJECT_NUMBER,
   auth: jwtClient,
 });
+
+console.info(`calendar: ${calendar}`);
 
 const sanitizeBookingPeriods = (periods?: calendar_v3.Schema$Event[]) => {
   const initValue: BookingPeriod[] = [];
