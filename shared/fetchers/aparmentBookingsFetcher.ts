@@ -1,9 +1,10 @@
-import { BookingsInfoResponseStatus, IAparmentBookingsResponseSerializedSuccessful, IAparmentBookingsResponseError } from "@/types/api";
+import { IAparmentBookingsResponseSerializedSuccessful, IAparmentBookingsResponseError, BookingsInfoResponseStatus } from "@/types/api";
 import { formatStringDateRange } from "@/utils/dateRanges";
 
 
 const fetcher = async (url:string) => {
   const response = await fetch(url);
+
   if (response.status === 200) {
     const data = await response.json();
     if (data.status === BookingsInfoResponseStatus.SUCCESFUL) {

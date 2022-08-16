@@ -1,4 +1,4 @@
-import { BookeableValidPeriod, BookingPeriod } from "@/types/types";
+import { BookeableValidPeriod, BookingPeriod } from "@/types/shared";
 import {
   isBookingDateRangeAvailable,
   validateAndFormatBookingDates,

@@ -1,6 +1,7 @@
 export enum APARMENTS_NAME {
   CALA = "cala",
   CABANA = "cabana",
+  CALACABANA = "calacabana",
 }
 
 export enum APARMENTS_TYPE {
@@ -91,8 +92,41 @@ export interface IAparmentAmenity {
   priority?: number;
 }
 
+
 export interface IAparmentAmenitiesGroup {
   name: AMENITIES_GROUP;
   amenities: IAparmentAmenity[];
   priority?: number;
+}
+
+/**
+ * This type represents a period that is ready and valid to be bookeable.
+ * Meaning that a period is sematically valid, startDate is after FIRST_BOOKING_DAY. And period not intersect in other booking periods.
+ */
+ export type BookeableValidPeriod = {
+  startDate: Date,
+  endDate: Date,
+}
+
+/**
+ * This type represents a period that is ready sematically valid
+ */
+export type BookingPeriod = [Date, Date]
+
+
+export type UserData = {
+  firstName: string;
+  lastName: string;
+  email: string;
+  phone: number;
+};
+
+export type UserInquiry = UserData & {
+  body: string;
+};
+
+export type UserInquiryRequest = {
+  apartment: APARMENTS_NAME;
+  period: BookeableValidPeriod;
+  userContact: UserInquiry;
 }

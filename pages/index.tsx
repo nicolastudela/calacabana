@@ -5,7 +5,6 @@ import {
   Heading,
   HStack,
   useBreakpointValue,
-  useDisclosure,
 } from "@chakra-ui/react";
 import type { NextPage } from "next";
 import Head from "next/head";
@@ -185,7 +184,7 @@ const Home: NextPage = () => {
                 loading="lazy"
                 allowFullScreen
                 referrerPolicy="no-referrer-when-downgrade"
-                src="https://www.google.com/maps/embed/v1/place?key=AIzaSyAX9vJdjZqkxsS1p9VO1NUPAHv40MQu28U&q=Cala+Cabana,Tanti,Cordoba"
+                src="https://www.google.com/maps/embed/v1/place?key=AIzaSyCTg9tYXSO3iRg3_f-qVqpQhsDtRiOyR_Y&q=Cala+Cabana,Tanti,Cordoba"
               ></iframe> */}
             <Box w="100%" bgColor="lightBlue" />
           </AspectRatio>

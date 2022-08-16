@@ -1,5 +1,5 @@
-import { UserContact } from "@/types/types";
-import EMAIL_REGEX  from "@/utils/validation";
+import { UserInquiry } from "@/types/shared";
+import { EMAIL_REGEX } from "@/utils/validation";
 import {
   Flex,
 } from "@chakra-ui/react";
@@ -33,31 +33,31 @@ type FormValues = {
 };
 
 export interface ContactUsProps {
-  onChange: (values: UserContact | null) => void;
+  onChange: (values: UserInquiry | null) => void;
 }
 
 const ContactUs = ({ onChange }: ContactUsProps) => {
   const {
     register,
-    handleSubmit,
     getValues,
     formState: { isValidating, isValid, errors },
-  } = useForm<UserContact>({
+  } = useForm<FormValues>({
     mode: "onChange",
     defaultValues: {
-      firstName: null,
-      lastName: null,
-      phone: null,
-      body: null,
+      firstName: "asdcasdf",
+      lastName: "asdcasdf",
+      email: "niasdfas@asdfas.com",
+      phone: 234234234234234,
+      body: "niasdfas@asdfas.comasdfasdfasd asdfasdf",
     },
   });
 
   useEffect(() => {
     if (isValid && !isValidating) {
-      console.log("not satisfied?");
-      onChange(getValues());
-    } else {
-      console.log("not satisfied FUCK");
+      const formValues = getValues();
+      if (formValues.body && formValues.firstName && formValues.lastName && formValues.email && formValues.phone )
+        onChange(formValues as UserInquiry);
+    } else if (!isValid && !isValidating)  {
       onChange(null);
     }
   }, [getValues, isValid, isValidating, onChange]);

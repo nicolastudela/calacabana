@@ -1,4 +1,4 @@
-import { useEffect, useState, useCallback, useReducer } from "react";
+import { useEffect, useState, useCallback, useReducer, useMemo } from "react";
 import useSWR from "swr";
 import { GetStaticPaths, GetStaticProps } from "next/types";
 import Head from "next/head";
@@ -15,13 +15,13 @@ import {
 } from "@chakra-ui/react";
 
 import aparmentsData, { APARTMENTS_BUILD } from "@/shared/apartmentsData";
-import { IApartmentData } from "@/types/shared";
+import { BookeableValidPeriod, IApartmentData, UserInquiry, UserInquiryRequest } from "@/types/shared";
 import Layout from "@/components/Layout";
 import aparmentBookingsFetcher from "@/shared/fetchers/aparmentBookingsFetcher";
 import usePageDefaultDates, {
   EPageDefaultDatesErrorType,
 } from "@/shared/hooks/usePageDefaultDates";
-import { BookeableValidPeriod, IDrawerActionTypes, UserContact } from "@/types/types";
+import { IDrawerActionTypes } from "@/types/types";
 import ListingCard from "@/components/apartment/ListingCard";
 import DiscountsInformation from "@/components/DiscountsInformation";
 import TripSection from "@/components/TripSeccion";
@@ -29,17 +29,20 @@ import PageDrawer from "@/components/PageDrawer";
 import dynamic from "next/dynamic";
 import { updateQueryStringWithBookingDates } from "@/utils/queryStringHandler";
 import ContactUs from "@/components/ContactUs";
+import postUserInquiry from "@/shared/services/postUserInquiry";
+import NotificationSection, { NOTIFICATION } from "@/components/booking/NotificationSection";
+import { GenericResponseStatus } from "@/types/api";
 
 export type IBookingApartmentProps = IApartmentData & { key: string };
-
 
 const BookingDates = dynamic(
   () => import("../../components/booking/BookingDates"),
 );
 
-enum EApartmentBookingErrorType {
+export enum EApartmentBookingErrorType {
+  USER_INQUIRY_NOT_AVAILABLE = "USER_INQUIRY_NOT_AVAILABLE",
+  INQUIRY_ACTION_FAILED = "INQUIRY_ACTION_FAILED",
   SELECTED_DATES_NOT_AVAILABLE = "SELECTED_DATES_NOT_AVAILABLE",
-  USER_CONTACT_DATA_NOT_AVAILABLE = "USER_CONTACT_DATA_NOT_AVAILABLE",
 }
 
 const Page = (apartmentData: IBookingApartmentProps) => {
@@ -60,11 +63,10 @@ const Page = (apartmentData: IBookingApartmentProps) => {
     { revalidateOnFocus: false }
   );
   const [isPageProcessing, setIsPageProcessing] = useState(false);
-
+  const [userInquiryRequestSent, setUserInquiryRequestSent] = useState(false);
   const [datesSelected, setSelectedDates] =
     useState<BookeableValidPeriod | null>(null);
-  const [userContactData, setUserContactData] = useState<UserContact | null>(null);
-
+  const [userContactData, setUserContactData] = useState<UserInquiry | null>(null);
   const [pageErrors, setPageErrors] = useState<EApartmentBookingErrorType[]>(
     []
   );
@@ -77,10 +79,11 @@ const Page = (apartmentData: IBookingApartmentProps) => {
     setSelectedDates(dates);
   }, []);
 
-  const onUserConctactChange = useCallback((userContactData: UserContact | null) => {
+  const onUserConctactChange = useCallback((userContactData: UserInquiry | null) => {
     setUserContactData(userContactData);
   },[]);
 
+  // cleans or set error depending date_selected data
   useEffect(() => {
     if (
       datesSelected &&
@@ -91,11 +94,12 @@ const Page = (apartmentData: IBookingApartmentProps) => {
     }
   }, [datesSelected, pageErrors]);
 
+  // cleans or set error depending user_inquiry data
   useEffect(() => {
     if (!userContactData) {
-      setPageErrors((prev) => prev.concat(EApartmentBookingErrorType.USER_CONTACT_DATA_NOT_AVAILABLE))
+      setPageErrors((prev) => prev.concat(EApartmentBookingErrorType.USER_INQUIRY_NOT_AVAILABLE))
     } else {
-      setPageErrors((prev) => prev.filter((err) => err !== EApartmentBookingErrorType.USER_CONTACT_DATA_NOT_AVAILABLE));
+      setPageErrors((prev) => prev.filter((err) => err !== EApartmentBookingErrorType.USER_INQUIRY_NOT_AVAILABLE));
     }
   }, [userContactData])
 
@@ -106,6 +110,22 @@ const Page = (apartmentData: IBookingApartmentProps) => {
     }
     dispatch({ type: "hide" });
   },[onDatesSelected, router]);
+
+  // handles Notification component content
+  const notification = useMemo(() => {
+    if (userInquiryRequestSent) {
+      return NOTIFICATION.SUCCESS_INQUIRY_ACTION;
+    }
+    const errorToNotify = pageErrors.find((error) => (error === EApartmentBookingErrorType.INQUIRY_ACTION_FAILED) || (error === EApartmentBookingErrorType.SELECTED_DATES_NOT_AVAILABLE));
+    if (errorToNotify) {
+      if (errorToNotify === EApartmentBookingErrorType.INQUIRY_ACTION_FAILED) {
+        return NOTIFICATION.FAILED_INQUIRY_ACTION;
+      } else {
+        return NOTIFICATION.FAILED_SELECTED_DATES_NOT_AVAILABLE;
+      }
+    }
+    return null
+  },[pageErrors, userInquiryRequestSent])
   
   // use reducer to get dispachers to be used on CTAs, where some CTAs will update whats shown on the PageDrawer
   const reducer = useCallback(
@@ -155,6 +175,24 @@ const Page = (apartmentData: IBookingApartmentProps) => {
       }
     }
   }, [pageDefaultDatesError, router, name]);
+
+  // callback to post user_inqury. Checks for no errors and data should be available
+  const postInquiry = useCallback(() => {
+      if (datesSelected && name && userContactData && pageErrors.length === 0) {
+        setIsPageProcessing(true);
+        postUserInquiry({
+          apartment: name,
+          period: datesSelected,
+          userContact: userContactData
+        } as UserInquiryRequest).then((resp) => { 
+          if (resp.isError || resp.status === GenericResponseStatus.ERROR) {
+            setPageErrors((prev) => prev.concat(EApartmentBookingErrorType.INQUIRY_ACTION_FAILED));
+          } else {
+            setUserInquiryRequestSent(true);
+          }
+        }).finally(() =>  setIsPageProcessing(false))
+      }
+  }, [datesSelected, name, pageErrors, userContactData])
 
 
   return (
@@ -216,9 +254,10 @@ const Page = (apartmentData: IBookingApartmentProps) => {
               }
             />
             <Divider my={6}/>
-            <ContactUs onChange={onUserConctactChange} />
+            {notification ? <NotificationSection notification={notification} m="auto" maxWidth={"sm"} minHeight={72} /> : <ContactUs onChange={onUserConctactChange} /> }
+      
             <Divider my={6}/>
-            <Button size={"lg"} alignSelf={{base: "center", md: "flex-start"}} variant="action" disabled={pageErrors.length !== 0} mb={4}>Envia tu consulta</Button>
+            {!userInquiryRequestSent && <Button isLoading={isPageProcessing} size={"lg"} alignSelf={{base: "center", md: "flex-start"}} variant="action" disabled={pageErrors.length !== 0 || userInquiryRequestSent} mb={4} onClick={postInquiry}>Envia tu consulta</Button>}
           </Flex>
           <Box
             w={{ base: "100%", md: "35%" }}
