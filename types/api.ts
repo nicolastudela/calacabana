@@ -12,8 +12,20 @@ export enum GenericResponseStatus {
 }
 
 export interface IGenericResponse<Payload> { 
+  isError: boolean;
   status: GenericResponseStatus;
-  data?: Payload;
+  data?: Payload
+}
+
+export interface IGenericErrorRes extends IGenericResponse<null> {
+  isError: true
+  error?: string | unknown
+  data: null
+}
+
+export interface ISuccessGenericRes<Payload> extends IGenericResponse<Payload>{
+  isError: false;
+  data: Payload;
 }
 
 interface IBookingsInfoResponse  {
@@ -63,6 +75,4 @@ export interface IUserInquiryRequestSerialized {
   userContact: UserInquiry;
 }
 
-export interface IUserInquiryResposePayload {}
-
-export type IUserInquiryRespose = IGenericResponse<IUserInquiryResposePayload>;
+export type IUserInquiryResposePayload  = null

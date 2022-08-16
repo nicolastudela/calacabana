@@ -1,4 +1,11 @@
-import { GenericResponseStatus, IUserInquiryRequestSerialized, IUserInquiryRespose } from "@/types/api";
+import {
+  GenericResponseStatus,
+  IGenericErrorRes,
+  ISuccessGenericRes,
+  IUserInquiryRequestSerialized,
+  IUserInquiryResposePayload,
+} from "@/types/api";
+import { UserInquiryRequest } from "@/types/shared";
 import type { NextApiRequest, NextApiResponse } from "next";
 import nc from "next-connect";
 
@@ -11,17 +18,34 @@ const handler = nc<NextApiRequest, NextApiResponse>({
     res.status(404).send("Request can't be resolved");
   },
 }).post(async (req, res) => {
-  const userInquiryReq = req.body as IUserInquiryRequestSerialized
-  
+  try {
+    const userInquiryReq = req.body as IUserInquiryRequestSerialized
 
-  // TODO(#41): replace this with real implementation (emails)
-  console.log(userInquiryReq)
-  setTimeout(() => res
-  .status(200)
-  .json({
-    status: userInquiryReq.userContact.firstName === "error" ? GenericResponseStatus.ERROR : GenericResponseStatus.SUCCESFUL,
-    data: {}
-  } as IUserInquiryRespose), 1000)
+
+    // TODO(#41): replace this with real implementation (emails)
+    setTimeout(function timeout() {
+      let resp
+      if (userInquiryReq.userContact.firstName === "error") {
+        resp = {
+          status: GenericResponseStatus.ERROR,
+          isError: true,
+          data: null,
+          error: "bad mail",
+        } as IGenericErrorRes
+      } else {
+        resp = {
+          status: GenericResponseStatus.SUCCESFUL,
+          isError: false,
+          data: null,
+        } as ISuccessGenericRes<IUserInquiryResposePayload>
+      }
+      res
+        .status(200)
+        .json(resp)
+    }, 1000);
+  } catch (error) {
+    res.status(200).json({ isError: true, data: null, error} as IGenericErrorRes)
+  }
 });
 
 export default handler;

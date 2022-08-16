@@ -44,10 +44,11 @@ const ContactUs = ({ onChange }: ContactUsProps) => {
   } = useForm<FormValues>({
     mode: "onChange",
     defaultValues: {
-      firstName: null,
-      lastName: null,
-      phone: null,
-      body: null,
+      firstName: "asdcasdf",
+      lastName: "asdcasdf",
+      email: "niasdfas@asdfas.com",
+      phone: 234234234234234,
+      body: "niasdfas@asdfas.comasdfasdfasd asdfasdf",
     },
   });
 
@@ -56,7 +57,7 @@ const ContactUs = ({ onChange }: ContactUsProps) => {
       const formValues = getValues();
       if (formValues.body && formValues.firstName && formValues.lastName && formValues.email && formValues.phone )
         onChange(formValues as UserInquiry);
-    } else {
+    } else if (!isValid && !isValidating)  {
       onChange(null);
     }
   }, [getValues, isValid, isValidating, onChange]);

@@ -1,11 +1,5 @@
-export interface Error {
-  error?: string | unknown
-  isError: true
-}
+import { IGenericErrorRes, IGenericResponse, ISuccessGenericRes } from "@/types/api"
 
-export interface GenericRes {
-  isError: false
-}
 
 export type BaseResponse = Pick<
   Response,
@@ -31,7 +25,7 @@ export const get = async <Payload, Res>(
   url: string,
   payload?: Payload,
   reqHeaders?: HeadersInit
-): Promise<Res | Error> => {
+): Promise<ISuccessGenericRes<Res> | IGenericErrorRes> => {
   try {
     const headers = {
       ...reqHeaders,
@@ -60,9 +54,9 @@ export const get = async <Payload, Res>(
     return {
       error: err || 'There was a problem with the server',
       isError: true,
-    }
+    } as IGenericErrorRes
   } catch (err) {
-    return { error: 'There was a problem with the server', isError: true }
+    return { error: 'There was a problem with the server', isError: true } as IGenericErrorRes
   }
 }
 
@@ -70,34 +64,38 @@ export const post = async <Payload, Res>(
   url: string,
   payload: Payload,
   reqHeaders?: HeadersInit
-): Promise<Res | Error> => {
+): Promise<IGenericResponse<Res> | IGenericErrorRes> => {
   try {
     const headers = {
-      'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8',
+      'Content-Type': 'application/json; charset=UTF-8',
       ...reqHeaders,
     }
 
-    const res = await (
-      await fetch(url, {
+    const doFetch = async () => {
+      const response = await fetch(url, {
         method: 'POST',
         headers,
         body: typeof payload === 'string' ? payload : JSON.stringify(payload),
       })
-    ).json()
+      return {
+        ...parseResponseProperties(response),
+        data: await response.json(),
+      }
+    }
+    const res = await doFetch()
 
-    const err = res?.data?.error || res?.error
+    const err = res?.data?.error
 
-    // TODO: remove 'res.queued' from the condition once the endpoint be fixed
-    if ((res.status >= 200 && res.status < 300 && !err) || res.queued) {
-      return res?.data?.data || res?.data || res
+    if ((res.status >= 200 && res.status < 300 && !err)) {
+      return res?.data
     }
 
     return {
       error: err || 'There was a problem with the server',
       isError: true,
-    }
+    } as IGenericErrorRes
   } catch (err) {
-    return { error: 'There was a problem with the server', isError: true }
+    return { error: 'There was a problem with the server', isError: true } as IGenericErrorRes
   }
 }
 
