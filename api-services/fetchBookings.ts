@@ -23,6 +23,8 @@ const calendar = google.calendar({
   auth: jwtClient,
 });
 
+console.info(`calendar: ${calendar}`);
+
 const sanitizeBookingPeriods = (periods?: calendar_v3.Schema$Event[]) => {
   const initValue: BookingPeriod[] = [];
   if (!periods) {
@@ -46,20 +48,22 @@ const sanitizeEventListResponse = (
 ) =>
   promise
     .then(
-      (resp) =>
-        ({
+      (resp) =>{
+        console.error(`response from google api: ${resp}`);
+        return ({
           status: BookingsInfoResponseStatus.SUCCESFUL,
           statusText: resp.statusText,
           bookedPeriods: sanitizeBookingPeriods(resp.data?.items),
         } as IAparmentBookingsResponseSuccessful)
+      }
     )
     .catch((error) => {
-      console.error(error.response);
+      console.error(error)
       return {
         status: BookingsInfoResponseStatus.ERROR,
-        errorCode: error.response.data.error.code,
-        statusText: error.response.status,
-        errorsDetails: error.response.data.error.message,
+        errorCode: error?.response?.data?.error?.code,
+        statusText: error?.response?.status || error,
+        errorsDetails: error?.response?.data?.error?.message,
       } as IAparmentBookingsResponseError;
     });
 

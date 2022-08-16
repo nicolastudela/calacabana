@@ -17,6 +17,7 @@ const serializeBookingPeriods = (bookings: IAparmentBookingsResponseSuccessful) 
 
 const handler = nc<NextApiRequest, NextApiResponse>({ 
   onError: (err, _req, res) => {
+    console.error(err.stack);
     res.status(500).json({ error: err });
   },
   attachParams: true 
@@ -27,7 +28,6 @@ const handler = nc<NextApiRequest, NextApiResponse>({
   res
   .status(200)
   .json(serializedResponse)
-  
 
   // res.send(`Hello ${req.query?.apartment}`);
 });
