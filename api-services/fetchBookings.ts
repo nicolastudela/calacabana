@@ -17,13 +17,6 @@ const jwtClient = new google.auth.JWT(
   process.env.GOOGLE_CALENDAR_SCOPES_READ_ONLY
 );
 
-console.info(`jwtClient: ${jwtClient}`);
-
-console.info(`process.env: ${process.env}`);
-console.info(`GOOGLE_CLIENT_EMAIL: ${process.env.GOOGLE_CLIENT_EMAIL}`);
-console.info(`GOOGLE_PRIVATE_KEY: ${process.env.GOOGLE_PRIVATE_KEY}`);
-console.info(`GOOGLE_CALENDAR_SCOPES_READ_ONLY: ${process.env.GOOGLE_CALENDAR_SCOPES_READ_ONLY}`);
-
 const calendar = google.calendar({
   version: "v3",
   // project: process.env.GOOGLE_PROJECT_NUMBER,
@@ -65,13 +58,12 @@ const sanitizeEventListResponse = (
       }
     )
     .catch((error) => {
-      console.error(`catch error on google-api error: ${error}`);
-      console.error(error.response);
+      console.error(error)
       return {
         status: BookingsInfoResponseStatus.ERROR,
-        errorCode: error.response.data.error.code,
-        statusText: error.response.status,
-        errorsDetails: error.response.data.error.message,
+        errorCode: error?.response?.data?.error?.code,
+        statusText: error?.response?.status || error,
+        errorsDetails: error?.response?.data?.error?.message,
       } as IAparmentBookingsResponseError;
     });
 

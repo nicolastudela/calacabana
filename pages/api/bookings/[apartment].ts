@@ -22,21 +22,12 @@ const handler = nc<NextApiRequest, NextApiResponse>({
   },
   attachParams: true 
 }).get(async (req, res) => {
-  try {
   const bookingsResponse = await fetchBookings(req.query.apartment as APARMENTS_NAME);
   const serializedResponse = bookingsResponse.status === BookingsInfoResponseStatus.SUCCESFUL ? serializeBookingPeriods(bookingsResponse) : bookingsResponse;
 
   res
   .status(200)
   .json(serializedResponse)
-  
-  } catch(error) {
-    console.error(error);
-    res
-    .status(500)
-    .json(error)
-    throw error;
-  }
 
   // res.send(`Hello ${req.query?.apartment}`);
 });
