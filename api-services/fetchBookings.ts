@@ -55,14 +55,17 @@ const sanitizeEventListResponse = (
 ) =>
   promise
     .then(
-      (resp) =>
-        ({
+      (resp) =>{
+        console.error(`response from google api: ${resp}`);
+        return ({
           status: BookingsInfoResponseStatus.SUCCESFUL,
           statusText: resp.statusText,
           bookedPeriods: sanitizeBookingPeriods(resp.data?.items),
         } as IAparmentBookingsResponseSuccessful)
+      }
     )
     .catch((error) => {
+      console.error(`catch error on google-api error: ${error}`);
       console.error(error.response);
       return {
         status: BookingsInfoResponseStatus.ERROR,
