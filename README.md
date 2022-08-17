@@ -8,9 +8,13 @@ __Debugging pourposes__
 
 `MOCK_CALENDAR_API=true` Will return stubbed results from calendar API. Won't hit real GoogleAPI.
 
-
+`MAINTENANCE_MODE=1` Will redirect all trafic to a static maintenance page
 
 __Required__
+
+*Sengrid api key*
+
+`SENDGRID_KEY`
 
 *GoogleCalendar API related*
 
