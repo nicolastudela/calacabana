@@ -10,8 +10,12 @@ import type { NextApiRequest, NextApiResponse } from "next";
 import nc from "next-connect";
 import sgMail from "@sendgrid/mail";
 import { toErrorWithMessage } from "@/utils/genericErrorsHandler";
+import { toDDMMYYYY } from "@/utils/dates";
 
 export type EmailData = string|{ name?: string; email: string; }
+
+
+const formatFromYYYYMMDDtoDDMMYYYY = (datStr: string) => toDDMMYYYY(new Date(datStr))
 
 const handleSengridError = (maybeError: unknown) => {
   const error = toErrorWithMessage(maybeError); 
@@ -34,7 +38,9 @@ const handler = nc<NextApiRequest, NextApiResponse>({
   },
 }).post(async (req, res) => {
   try {
-    const { apartment,  period, userContact: {firstName, lastName, email, phone, body } } = req.body as IUserInquiryRequestSerialized
+    const { apartment,  period, apartmentLink, userContact: {firstName, lastName, email, phone, body } } = req.body as IUserInquiryRequestSerialized
+
+    const periodStr = [formatFromYYYYMMDDtoDDMMYYYY(period[0]), formatFromYYYYMMDDtoDDMMYYYY(period[1])];
 
     let cc: EmailData[] | undefined;
     if (process.env.OTHER_NOTICE_EMAIL_RECIPENTS as string) {
@@ -57,8 +63,8 @@ const handler = nc<NextApiRequest, NextApiResponse>({
           email,
           phone,
           apartment,
-          startDate: period[0],
-          endDate: period[1],
+          startDate: periodStr[0],
+          endDate: periodStr[1],
           body
         }
       });
@@ -73,9 +79,10 @@ const handler = nc<NextApiRequest, NextApiResponse>({
             firstName,
             lastName,
             apartment,
-            startDate: period[0],
-            endDate: period[1],
+            startDate: periodStr[0],
+            endDate: periodStr[1],
             body,
+            apartmentLink
           }
         })
 
@@ -100,7 +107,7 @@ const handler = nc<NextApiRequest, NextApiResponse>({
         res
         .status(200)
         .json(resp)
-        console.error(`[CONTACT-US-OP] Can't send email to the user who made inquiry. Error message: ${toErrorWithMessage(error)}. Errror ${error}`);
+        console.error(`[CONTACT-US-OP] Can't send the notice email to the owner. Error message: ${toErrorWithMessage(error)}. Errror ${error}`);
     }
 
   } catch (error) {

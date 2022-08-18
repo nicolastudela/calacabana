@@ -23,8 +23,6 @@ const calendar = google.calendar({
   auth: jwtClient,
 });
 
-console.info(`calendar: ${calendar}`);
-
 const sanitizeBookingPeriods = (periods?: calendar_v3.Schema$Event[]) => {
   const initValue: BookingPeriod[] = [];
   if (!periods) {
@@ -74,7 +72,7 @@ const fetchBookings = (apartment: APARMENTS_NAME) => {
       : process.env.CALA_GOOGLE_CALENDAR_ID;
 
   //TODO (#23) REMOVE THIS, IT'S JUST TO NOT TO CALL CALENDAR_API ON EACH CALL
-  if (process.env.MOCK_CALENDAR_API && process.env.MOCK_CALENDAR_API === "true") {
+  if (process.env.MOCK_CALENDAR_API && process.env.MOCK_CALENDAR_API === "1") {
     return stubEvents(apartment);
   } else {
     return sanitizeEventListResponse(

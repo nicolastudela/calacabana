@@ -6,11 +6,19 @@
 
 __Debugging pourposes__  
 
-`MOCK_CALENDAR_API=true` Will return stubbed results from calendar API. Won't hit real GoogleAPI.
+`MOCK_CALENDAR_API=1` Will return stubbed results from calendar API. Won't hit real GoogleAPI.
 
 `MAINTENANCE_MODE=1` Will redirect all trafic to a static maintenance page
 
+`NEXT_PUBLIC_MOCK_MAPS=1` Will show an empty box instead of the real map
+
 __Required__
+
+*Email addresses*
+
+`OWNER_NOTICE_EMAIL_RECIPIENT` Email address where the apartment manager wants to be notified about some event.
+
+`OTHER_NOTICE_EMAIL_RECIPENTS` Email addresses list (csv formatted) of people that wants to susbribe to notifications.
 
 *Sengrid api key*
 

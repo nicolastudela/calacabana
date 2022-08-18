@@ -14,8 +14,8 @@ import { ReactNode } from "react";
 
 type CustomDrawerProps = DrawerProps & { children: ReactNode, title?: string }
 
-const CustomDrawer = ({isOpen, onClose, title, children}: CustomDrawerProps) => (
-  <Drawer placement={"bottom"} onClose={onClose} isOpen={isOpen} size={"full"}>
+const CustomDrawer = ({isOpen, onClose, title, children, ...rest}: CustomDrawerProps) => (
+  <Drawer  onClose={onClose} isOpen={isOpen} {...rest}>
     <DrawerOverlay />
     <DrawerContent>
       <DrawerHeader p="0" display={"flex"} justifyContent="space-around" alignItems= "center">

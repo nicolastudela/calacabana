@@ -1,7 +1,4 @@
 import {
-  AspectRatio,
-  Box,
-  Container,
   Heading,
   HStack,
   useBreakpointValue,
@@ -11,6 +8,7 @@ import Head from "next/head";
 import Layout from "@/components/Layout";
 import AparmentCard from "@/components/apartment/AparmentCard";
 import Carousel from "@/components/Carousel";
+import Map from "@/components/Map";
 
 import aparmentsData from "../shared/apartmentsData";
 import { APARMENTS_NAME } from "@/types/shared";
@@ -176,19 +174,7 @@ const Home: NextPage = () => {
             marginInlineStart={"0px !important"}
           />
         </HStack>
-
-        <Container w={{ base: "100%", md: "container.xl" }} mt={1} px="0">
-          <AspectRatio ratio={16 / 9}>
-            {/* //TODO (#23) UNCOMENT THIS, IT'S JUST TO NOT TO CALL MAPS ON TESTING*/}
-            {/* <iframe
-                loading="lazy"
-                allowFullScreen
-                referrerPolicy="no-referrer-when-downgrade"
-                src="https://www.google.com/maps/embed/v1/place?key=AIzaSyCTg9tYXSO3iRg3_f-qVqpQhsDtRiOyR_Y&q=Cala+Cabana,Tanti,Cordoba"
-              ></iframe> */}
-            <Box w="100%" bgColor="lightBlue" />
-          </AspectRatio>
-        </Container>
+        <Map />
         <PageDrawer
           componentToShow={componentToShow}
           onHide={() => dispatch({ type: "hide" })}

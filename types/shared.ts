@@ -129,4 +129,5 @@ export type UserInquiryRequest = {
   apartment: APARMENTS_NAME;
   period: BookeableValidPeriod;
   userContact: UserInquiry;
+  apartmentLink: string;
 }

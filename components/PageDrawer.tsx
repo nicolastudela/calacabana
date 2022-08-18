@@ -41,7 +41,7 @@ const PageDrawer = ({componentToShow, onHide}: IPageDrawerProps) => {
 
     return isDrawerMounted ? (
         <Drawer
-          placement={"bottom"}
+          placement={"top"}
           // onClose={() => dispatch({ type: "hide" })}
           onClose={onHide}
           isOpen={isDrawerOpen}
