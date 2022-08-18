@@ -2,10 +2,10 @@ import {
   GenericResponseStatus,
   IGenericErrorRes,
   IGenericResponse,
-  ISuccessGenericRes,
   IUserInquiryRequestSerialized,
   IUserInquiryResposePayload,
 } from "@/types/api";
+
 import type { NextApiRequest, NextApiResponse } from "next";
 import nc from "next-connect";
 import sgMail from "@sendgrid/mail";
