@@ -73,6 +73,7 @@ export interface IUserInquiryRequestSerialized {
   apartment: APARMENTS_NAME;
   period: [string, string];
   userContact: UserInquiry;
+  apartmentLink: string
 }
 
 export type IUserInquiryResposePayload  = null

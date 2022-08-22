@@ -44,11 +44,11 @@ const ContactUs = ({ onChange }: ContactUsProps) => {
   } = useForm<FormValues>({
     mode: "onChange",
     defaultValues: {
-      firstName: "asdcasdf",
-      lastName: "asdcasdf",
-      email: "niasdfas@asdfas.com",
-      phone: 234234234234234,
-      body: "niasdfas@asdfas.comasdfasdfasd asdfasdf",
+      firstName: null,
+      lastName: null,
+      email: null,
+      phone: null,
+      body: null,
     },
   });
 

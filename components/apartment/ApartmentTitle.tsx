@@ -19,19 +19,19 @@ const ApartmentTitle = ({
   ...rest
 }: IApartmentTitleProps & BoxProps) => (
   
-  <Box {...rest}>
-    <HStack justifyContent="space-between" width={"100%"}>
+  <Box {...rest} width={"100%"}>
+    <Flex direction="row" justifyContent="space-between" width={"100%"}>
       <Heading
         display="inline-block"
         ml={-0.5}
         size={"lg"}
       >{`Departamento ${displayName}`}</Heading>
-      <Flex>
-        <Heading size={"sm"}>5.0</Heading>
+      <Flex alignItems="center">
+        <Heading size={"md"}>5.0</Heading>
         <StarIcon ml={1} />
       </Flex>
-    </HStack>
-    <Flex wrap={"wrap"} alignItems="center">
+    </Flex>
+    <Flex wrap={"wrap"} alignItems="center" justifyContent={"flex-start"}>
       <Text>{mainFeature}</Text>
       <Spacer/>
       <Text fontSize="sm">{`${maxPeople} huéspedes - ${rooms} ambientes - ${beds} camas`}</Text>

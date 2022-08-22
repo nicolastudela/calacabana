@@ -1,13 +1,32 @@
 import {
   GenericResponseStatus,
   IGenericErrorRes,
-  ISuccessGenericRes,
+  IGenericResponse,
   IUserInquiryRequestSerialized,
   IUserInquiryResposePayload,
 } from "@/types/api";
-import { UserInquiryRequest } from "@/types/shared";
+
 import type { NextApiRequest, NextApiResponse } from "next";
 import nc from "next-connect";
+import sgMail from "@sendgrid/mail";
+import { toErrorWithMessage } from "@/utils/genericErrorsHandler";
+import { toDDMMYYYY } from "@/utils/dates";
+
+export type EmailData = string|{ name?: string; email: string; }
+
+
+const formatFromYYYYMMDDtoDDMMYYYY = (datStr: string) => toDDMMYYYY(new Date(datStr))
+
+const handleSengridError = (maybeError: unknown) => {
+  const error = toErrorWithMessage(maybeError); 
+
+  return {
+    isError: true,
+    error: error.message
+  } as IGenericErrorRes
+} 
+
+sgMail.setApiKey(process.env.SENDGRID_KEY as string)
 
 const handler = nc<NextApiRequest, NextApiResponse>({
   onError: (err, _req, res) => {
@@ -19,30 +38,78 @@ const handler = nc<NextApiRequest, NextApiResponse>({
   },
 }).post(async (req, res) => {
   try {
-    const userInquiryReq = req.body as IUserInquiryRequestSerialized
+    const { apartment,  period, apartmentLink, userContact: {firstName, lastName, email, phone, body } } = req.body as IUserInquiryRequestSerialized
 
+    const periodStr = [formatFromYYYYMMDDtoDDMMYYYY(period[0]), formatFromYYYYMMDDtoDDMMYYYY(period[1])];
 
-    // TODO(#41): replace this with real implementation (emails)
-    setTimeout(function timeout() {
-      let resp
-      if (userInquiryReq.userContact.firstName === "error") {
-        resp = {
-          status: GenericResponseStatus.ERROR,
-          isError: true,
-          data: null,
-          error: "bad mail",
-        } as IGenericErrorRes
-      } else {
-        resp = {
+    let cc: EmailData[] | undefined;
+    if (process.env.OTHER_NOTICE_EMAIL_RECIPENTS as string) {
+      const otherRecipents = process.env.OTHER_NOTICE_EMAIL_RECIPENTS?.split(",");
+      cc = otherRecipents?.map((recip) => ({ email: recip, name: recip} as EmailData))
+    }
+
+    
+    let resp: IGenericResponse<IUserInquiryResposePayload>;
+    try {
+      const mailToOwnerResp = await sgMail.send({
+        to: process.env.OWNER_NOTICE_EMAIL_RECIPIENT as string,
+        cc,
+        from: {name: "Calacabana", email: "automated@calacabana.ar"},
+        replyTo: email,
+        templateId: "d-7153545f200e42c4a6fd20c53a843228",
+        dynamicTemplateData: {
+          firstName,
+          lastName,
+          email,
+          phone,
+          apartment,
+          startDate: periodStr[0],
+          endDate: periodStr[1],
+          body
+        }
+      });
+
+      try {
+        const mailToUser = await sgMail.send({
+          to: email,
+          from: {name: "Calacabana", email: "automated@calacabana.ar"},
+          replyTo: process.env.OWNER_NOTICE_EMAIL_RECIPIENT,
+          templateId: "d-6af40358672347bc920313f75b507177",
+          dynamicTemplateData: {
+            firstName,
+            lastName,
+            apartment,
+            startDate: periodStr[0],
+            endDate: periodStr[1],
+            body,
+            apartmentLink
+          }
+        })
+
+        res.status(200)
+        .json({
           status: GenericResponseStatus.SUCCESFUL,
           isError: false,
           data: null,
-        } as ISuccessGenericRes<IUserInquiryResposePayload>
+        })
       }
-      res
+      catch(error) {
+        res.status(200)
+        .json({
+          status: GenericResponseStatus.SUCCESFUL,
+          isError: false,
+          data: null,
+        })
+        console.error(`[CONTACT-US-OP] Can't send email to the user who made inquiry. Error message: ${toErrorWithMessage(error)}. Errror ${error}`);
+      }
+    } catch(error) {
+        resp = handleSengridError(error);
+        res
         .status(200)
         .json(resp)
-    }, 1000);
+        console.error(`[CONTACT-US-OP] Can't send the notice email to the owner. Error message: ${toErrorWithMessage(error)}. Errror ${error}`);
+    }
+
   } catch (error) {
     res.status(200).json({ isError: true, data: null, error} as IGenericErrorRes)
   }

@@ -183,7 +183,8 @@ const Page = (apartmentData: IBookingApartmentProps) => {
         postUserInquiry({
           apartment: name,
           period: datesSelected,
-          userContact: userContactData
+          userContact: userContactData,
+          apartmentLink: window.location.href.replace("reserva","apartamento")
         } as UserInquiryRequest).then((resp) => { 
           if (resp.isError || resp.status === GenericResponseStatus.ERROR) {
             setPageErrors((prev) => prev.concat(EApartmentBookingErrorType.INQUIRY_ACTION_FAILED));
