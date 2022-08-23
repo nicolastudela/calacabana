@@ -32,6 +32,7 @@ const CustomCarousel = ({
   const isMobile = useBreakpointValue({ base: true, md: false });
   return (
     <Carousel
+      dragThreshold={0.3}
       renderCenterLeftControls={({ previousSlide }) =>
         isMobile ? (
           <></>
