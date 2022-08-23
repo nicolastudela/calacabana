@@ -164,10 +164,12 @@ const Home: NextPage = () => {
           gap={4}
           my="4"
         >
+          {/* //FIX we should grab aparments from staticProps*/}
           <AparmentCard
             {...aparmentsData[APARMENTS_NAME.CABANA]}
             images={images}
           />
+          {/* //FIX we should grab aparments from staticProps*/}
           <AparmentCard
             {...aparmentsData[APARMENTS_NAME.CALA]}
             images={images}

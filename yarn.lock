@@ -2838,9 +2838,9 @@
     "set-blocking" "~2.0.0"
 
 "nuka-carousel@^5.0.16":
-  "integrity" "sha512-OUMeeb2gQQyez2fYbRe7dx0I4Ow6b3YH4czGVDSpCWjtDbNuj8EXoFEoDgyfkLdK9U+Up7BSrbkHz3vF1r5W2A=="
-  "resolved" "https://registry.npmjs.org/nuka-carousel/-/nuka-carousel-5.0.16.tgz"
-  "version" "5.0.16"
+  "integrity" "sha512-mBMS7eXxsb54L87jPTSMst5Ow53u6Ocf28SDY36+THH7RuZ7aJxo8CQAuO8Bov8MkSTGALV+8P7TcaOqnkPYLA=="
+  "resolved" "https://registry.npmjs.org/nuka-carousel/-/nuka-carousel-5.2.0.tgz"
+  "version" "5.2.0"
 
 "number-is-nan@^1.0.0":
   "integrity" "sha1-CXtgK1NCKlIsGvuHkDGDNpQaAR0="
