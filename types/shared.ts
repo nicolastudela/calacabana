@@ -28,7 +28,7 @@ export interface IApartmentData {
   name: string;
   displayName: string;
   rooms: string;
-  type: APARMENTS_TYPE.APARTAMENT;
+  type: APARMENTS_TYPE;
 }
 
 export enum AMENITIES_GROUP {

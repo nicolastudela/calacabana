@@ -109,7 +109,7 @@ const Page = (apartmentData: IApartmentProps) => {
           if (!state) {
             return {
               title: "Acerca de este alojamiento",
-              component: <Text>{description}</Text>,
+              component: <Text dangerouslySetInnerHTML={{ __html: description}}/>,
             };
           }
           return null;
@@ -183,7 +183,7 @@ const Page = (apartmentData: IApartmentProps) => {
               dispatch({ type: IDrawerActionTypes.SHOW_ALL_PICS });
             }}
           >
-            <Carousel aptName="cala" images={images.wide} />
+            <Carousel aptName="cala" images={images.square} />
           </a>
         ) : (
           <HeroGrid
@@ -231,7 +231,7 @@ const Page = (apartmentData: IApartmentProps) => {
               </ApartmentFeature>
             </ApartmentFeatures>
             <Divider my={4} />
-            <Text noOfLines={[4, 20]}>{description}</Text>
+            <Text noOfLines={[6, 20]} dangerouslySetInnerHTML={{ __html: description}}/>
             <Button
               textDecoration="underline"
               variant="link"
@@ -356,7 +356,7 @@ const Apartment = (apartmentData: IApartmentProps) => {
   return (
     <>
       <Head>
-        <title>{`Departamento ${apartmentData.displayName} - CalaCabana Hospedaje`}</title>
+        <title>{`${apartmentData.displayName} - CalaCabana Hospedaje`}</title>
         <meta
           name="description"
           // TODO(#20) SEO description is needed
@@ -380,15 +380,12 @@ const getStaticPaths: GetStaticPaths = async () => {
   };
 };
 
-// Fetch merchant data during build phase
 // NextJS API Middleware is not available here
 const getStaticProps: GetStaticProps<IApartmentProps> = async ({ params }) => {
   let props: IApartmentProps | null = null;
   if (params?.apartment) {
     props = { key: params?.apartment as string,  ...aparmentsData[params?.apartment as "cala" | "cabana"]};
   }
-
-  // const caca = { key: params?.apartment,  ...aparmentsData[params?.apartment as "cala" | "cabana"]};
 
   if (!props) {
     return { notFound: true };

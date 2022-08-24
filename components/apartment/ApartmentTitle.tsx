@@ -25,7 +25,7 @@ const ApartmentTitle = ({
         display="inline-block"
         ml={-0.5}
         size={"lg"}
-      >{`Departamento ${displayName}`}</Heading>
+      >{displayName}</Heading>
       <Flex alignItems="center">
         <Heading size={"md"}>5.0</Heading>
         <StarIcon ml={1} />

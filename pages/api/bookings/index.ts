@@ -65,47 +65,6 @@ const handler = nc<NextApiRequest, NextApiResponse>({
       ...bookingsReservation,
     } as IBookingsInfoResponseError);
   }
-
-
-
-  /////
-
-  // if (
-  //   calaEventsResponse.status !== BookingsInfoResponseStatus.SUCCESFUL ||
-  //   cabanaEventsResponse.status !== BookingsInfoResponseStatus.SUCCESFUL
-  // ) {
-  //   res
-  //     .status(200)
-  //     .json({
-  //       status: BookingsInfoResponseStatus.PARTIAL,
-  //       ...bookingsReservation,
-  //     } as IBookingsInfoResponsePartial);
-  // } else if (
-  //   calaEventsResponse.status === BookingsInfoResponseStatus.SUCCESFUL ||
-  //   cabanaEventsResponse.status === BookingsInfoResponseStatus.SUCCESFUL
-  // ) {
-  //   res
-  //     .status(200)
-  //     .json({
-  //       status: BookingsInfoResponseStatus.SUCCESFUL,
-  //       fullBookedPeriods: intersectDateRanges(
-  //         calaEventsResponse.bookedPeriods,
-  //         cabanaEventsResponse.bookedPeriods
-  //       ),
-  //       ...bookingsReservation,
-  //     } as IBookingsInfoResponseSuccessful);
-  // } else {
-  //   res
-  //     .status(200)
-  //     .json({
-  //       status: BookingsInfoResponseStatus.ERROR,
-  //       ...bookingsReservation,
-  //     } as IBookingsInfoResponseError);
-  // }
 });
-// .post((req,_post,next) => {
-//   console.log(`1er post: ${req}`);
-//   next();
-// }).post((_req,res) => res.status(404).send("LA CONCHA DE TU MADRE ALBOYS"));
 
 export default handler;
