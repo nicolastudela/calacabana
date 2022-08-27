@@ -422,7 +422,7 @@ const APARMENTS_DATA = {
     images: {
         wide: [
           {
-            src: "/images/homepage/3-homepage.jpeg",
+            src: "/images/homepage/wide/3-homepage.jpeg",
             alt: "Servicio de hospedaje Calacabana - vista desde cascada pileta",
             width: 1280,
             height: 853,
@@ -440,13 +440,13 @@ const APARMENTS_DATA = {
             height: 682,
           },
           {
-            src: "/images/homepage/1-homepage.jpeg",
+            src: "/images/homepage/wide/1-homepage.jpeg",
             alt: "Servicio de hospedaje Calacabana - vista noche pileta",
             width: 1280,
             height: 853,
           },
           {
-            src: "/images/homepage/6-homepage.jpeg",
+            src: "/images/homepage/wide/6-homepage.jpeg",
             alt: "Servicio de hospedaje Calacabana - vista hacia los apartamntos con jardin",
             width: 1280,
             height: 853,
