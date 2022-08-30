@@ -51,11 +51,14 @@ const BookingDates = dynamic(
   }
 );
 
+
+
 export type IApartmentProps = IApartmentData & { key: string };
 
 enum EApartmentPageErrorType {
   SELECTED_DATES_NOT_AVAILABLE = "SELECTED_DATES_NOT_AVAILABLE",
 }
+
 
 const Page = (apartmentData: IApartmentProps) => {
   const { amenities, description, images, displayName, name } = apartmentData;
@@ -353,16 +356,23 @@ const Page = (apartmentData: IApartmentProps) => {
 };
 
 const Apartment = (apartmentData: IApartmentProps) => {
+  const canonicalPath = process.env.NEXT_PUBLIC_ORIGIN_PATH
   return (
     <>
       <Head>
-        <title>{`${apartmentData.displayName} - CalaCabana Hospedaje`}</title>
+        <title>{`${apartmentData.displayName} - ${apartmentData.mainFeature} - Cala Cabana: Servicio de alojamiento y alquileres vacacionales en Tanti, Cordoba`}</title>
         <meta
           name="description"
-          // TODO(#20) SEO description is needed
-          content="Servicio de hospedaje. Mirador de las sierras, en las sierras"
+          content={`El ${apartmentData.displayName} - ${apartmentData.mainFeature} - cuenta con ${apartmentData.rooms} ambientes - Completamente equipado, combinando  naturaleza, confort y calidez - Cala Cabana`}
         />
-        <link rel="icon" href="/favicon.ico" />
+        <meta key="og-title" property="og:title" content={`${apartmentData.displayName} - ${apartmentData.mainFeature} - Cala Cabana: Servicio de alojamiento y alquileres vacacionales en Tanti, Cordoba`} />
+        <meta key="og-url" property="og:url" content={`${canonicalPath}/alojamiento/${apartmentData.name}`} />
+        <meta property="og:image" content={`${canonicalPath}${apartmentData.images.square[0].src}`} />
+        <meta
+          key="og-description"
+          property="og:description"
+          content={`${apartmentData.mainFeature} - cuenta con ${apartmentData.rooms} ambientes - Completamente equipado, combinando  naturaleza, confort y calidez`}
+        />
       </Head>
       <Page {...apartmentData} />
     </>

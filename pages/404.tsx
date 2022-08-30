@@ -1,5 +1,5 @@
 import Layout from "@/components/Layout";
-import { Box, Center, Flex, Heading, Spacer, useBreakpointValue } from "@chakra-ui/react";
+import { Box, Flex, Heading, Spacer, useBreakpointValue } from "@chakra-ui/react";
 import Image from "next/image";
 
 const Page404 = ({}) => {

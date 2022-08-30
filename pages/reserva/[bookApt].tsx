@@ -9,6 +9,7 @@ import {
   Button,
   Divider,
   Flex,
+
   Heading,
   IconButton,
   useBreakpointValue,
@@ -170,7 +171,7 @@ const Page = (apartmentData: IBookingApartmentProps) => {
         pageDefaultDatesError ===
         EPageDefaultDatesErrorType.DEFAULT_DATES_INVALID
       ) {
-        router.push(`/apartamento/${name}`);
+        router.push(`/alojamientos/${name}`);
         return;
       }
     }
@@ -184,7 +185,7 @@ const Page = (apartmentData: IBookingApartmentProps) => {
           apartment: name,
           period: datesSelected,
           userContact: userContactData,
-          apartmentLink: window.location.href.replace("reserva","apartamento")
+          apartmentLink: window.location.href.replace("reserva","alojamiento")
         } as UserInquiryRequest).then((resp) => { 
           if (resp.isError || resp.status === GenericResponseStatus.ERROR) {
             setPageErrors((prev) => prev.concat(EApartmentBookingErrorType.INQUIRY_ACTION_FAILED));
@@ -210,7 +211,7 @@ const Page = (apartmentData: IBookingApartmentProps) => {
               //removes param bookApt that comes into query
               const { bookApt, ...restQuery } = router.query;
               router.push({
-                pathname: `/apartamento/${name}`,
+                pathname: `/alojamiento/${name}`,
                 query: restQuery,
               });
             }}
@@ -303,16 +304,25 @@ const Page = (apartmentData: IBookingApartmentProps) => {
 };
 
 const BookingApartment = (apartmentData: IBookingApartmentProps) => {
+  const canonicalPath = process.env.NEXT_PUBLIC_ORIGIN_PATH
   return (
     <>
       <Head>
-        <title>{`Reserva ${apartmentData.displayName} - CalaCabana Hospedaje`}</title>
+        <title>{`Reserva ${apartmentData.displayName} - Servicio de alojamiento y alquileres vacacionales - Cala Cabana`}</title>
         <meta
           name="description"
-          // TODO(#20) SEO description is needed
-          content="Servicio de hospedaje. Mirador de las sierras, en las sierras"
+          content={`Reserva ${apartmentData.displayName} - ${apartmentData.mainFeature} - ${apartmentData.rooms} ambientes`}
         />
         <link rel="icon" href="/favicon.ico" />
+        <meta key="og-title" property="og:title" content={`Reserva ${apartmentData.displayName} - ${apartmentData.mainFeature} - Cala Cabana: Servicio de alojamiento y alquileres vacacionales en Tanti, Cordoba`} />
+        <meta key="og-url" property="og:url" content={`${canonicalPath}/reserva/${apartmentData.name}`} />
+        <meta property="og:image" content={`${canonicalPath}${apartmentData.images.square[0].src}`} />
+        <meta
+          key="og-description"
+          property="og:description"
+          content={`${apartmentData.mainFeature} - cuenta con ${apartmentData.rooms} ambientes - Completamente equipado, combinando  naturaleza, confort y calidez`}
+        />
+        <meta name="robots" content="noindex" />
       </Head>
       <Page {...apartmentData} />
     </>
