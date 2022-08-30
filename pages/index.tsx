@@ -1,4 +1,4 @@
-import { Flex, Heading, useBreakpointValue } from "@chakra-ui/react";
+import { Divider, Flex, Heading, useBreakpointValue } from "@chakra-ui/react";
 import type { GetStaticProps } from "next";
 import Head from "next/head";
 import Layout from "@/components/Layout";
@@ -220,7 +220,7 @@ const Page = ({ apartments }: IHomePageProps) => {
             py={2}
             textAlign="center"
           >
-            Un mirador en las sierras, en las sierras
+            un mirador de las sierras, en las sierras
           </Heading>
         )}
         <Flex
@@ -235,6 +235,7 @@ const Page = ({ apartments }: IHomePageProps) => {
             <AparmentCard key={apartment.name} {...apartment} />
           ))}
         </Flex>
+        <Divider my={8} mb={4} />
         <Map />
         <PageDrawer
           componentToShow={componentToShow}
@@ -249,10 +250,10 @@ const Home = (props: IHomePageProps) => {
   return (
     <>
       <Head>
-        <title>Cala Cabana</title>
+        <title>Cala Cabana: Servicio de alojamiento y alquileres vacacionales en Tanti, Cordoba</title>
         <meta
           name="description"
-          content="Servicio de hospedaje. Mirador de las sierras, en las sierras"
+          content="Cala Cabana: Servicio de alojamiento y alquileres vacacionales en Tanti, Cordoba - Mirador de las sierras, en las sierras"
         />
         <link rel="icon" href="/favicon.ico" />
       </Head>

@@ -27,7 +27,7 @@ const DesktopHeader = () => {
           fontFamily={"'MonteCarlo', cursive"}
           pb={2}
         >
-          un mirador en las sierras, en las sierras
+          un mirador de las sierras, en las sierras
         </Heading>
       </Center>
       <HStack spacing={8} as="nav">

@@ -17,7 +17,7 @@ const HiglightAmenities = ({ amenities, onExpand} : { amenities: IAparmentAmenit
 
   return (
     <>
-    <ApartmentFeatures h={{base: "100%", md: "7.5rem"}} flexWrap="wrap" w={"full"}>
+    <ApartmentFeatures h={{base: "100%", md: "7.5rem"}} flexWrap="wrap" w={"full"} gap={2}>
       {highlights.map((amenity) => (
         <ApartmentFeature key={amenity.name} title={amenity.name}>
           <ApartmentFeatureIcon as={basicAmenitiesIconMapper(amenity.name)} />
