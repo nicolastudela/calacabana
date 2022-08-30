@@ -27,7 +27,7 @@ const AparmentCard = ({
 }: AparmentCardProps & BoxProps) => {
   const isMobile = useBreakpointValue({ base: true, md: false });
   return (
-    <NextLink href={`/apartamento/${name}`} passHref>
+    <NextLink href={`/alojamiento/${name}`} passHref>
       <Box
         as="a"
         w={{ base: "100%", md: type !== APARMENTS_TYPE.COMPOUND ? "50%" : "auto" }}

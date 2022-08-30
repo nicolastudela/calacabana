@@ -186,10 +186,10 @@ const Page = ({ apartments }: IHomePageProps) => {
   return (
     <>
       <Head>
-        <title>Cala Cabana</title>
+        <title>Cala Cabana - Servicio de alojamiento y alquileres vacacionales</title>
         <meta
           name="description"
-          content="Servicio de hospedaje. Mirador de las sierras, en las sierras"
+          content="Servicio de alojamiento combinando naturaleza, confort y calidez. Mirador de las sierras, en las sierras"
         />
         <link rel="icon" href="/favicon.ico" />
       </Head>
@@ -234,14 +234,6 @@ const Page = ({ apartments }: IHomePageProps) => {
           {apartments.map((apartment) => (
             <AparmentCard key={apartment.name} {...apartment} />
           ))}
-          {/* //FIX we should grab aparments from staticProps*/}
-
-          {/* //FIX we should grab aparments from staticProps*/}
-          {/* <AparmentCard
-            {...aparmentsData[APARMENTS_NAME.CALA]}
-            images={images}
-            marginInlineStart={"0px !important"}
-          /> */}
         </Flex>
         <Map />
         <PageDrawer

@@ -7,6 +7,14 @@ class MyDocument extends Document {
     return (
       <Html lang="es">
         <Head>
+          <meta
+            name="description"
+            content="Servicio de alojamiento combinando naturaleza, confort y calidez. Mirador de las sierras, en las sierras"
+          />
+          <link rel="icon" href="/favicon.ico" />
+          <meta property="og:site_name" content="Cala cabana"/>
+          <meta property="og:locale" content="es_AR"/>
+          <meta property="og:type" content="website"/>
           <link rel="preconnect" href="https://fonts.googleapis.com" />
           <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="true" />
           <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;500&display=swap" rel="stylesheet" />

@@ -7,28 +7,33 @@ const NAV_LINKS: INav[] = [
     items: [
       {
         label: "Departamento Cala",
-        link: "/apartamento/cala",
+        link: "/alojamiento/cala",
         isMenu: false,
       },
       {
         label: "Departamento Cabana",
-        link: "/apartamento/cabana",
+        link: "/alojamiento/cabana",
         isMenu: false,
       },
       {
-        label: "Pileta y espacios verdes",
+        label: "Todo el complejo (Cala + Cabana) ",
+        link: "/alojamiento/calacabana",
+        isMenu: false,
+      },
+      {
+        label: "Sobre el alojamiento",
         link: "/espacios-comunes",
         isMenu: false,
       },
     ],
   },
   {
-    label: "Tanti/Barrio",
-    link: "/tanti-barrio",
+    label: "Ubicacion",
+    link: "/ubicacion",
   } as INavLink,
   {
-    label: "Encontranos",
-    link: "/contacto",
+    label: "Tanti / Cordoba",
+    link: "/tanti-cordoba",
   } as INavLink,
 ];
 

@@ -39,7 +39,7 @@ const CustomCarousel = ({
         ) : (
           <IconButton
             aria-label={
-              aptName ? `anterior-foto-apartamento-${aptName}` : "anterior-foto"
+              aptName ? `anterior-foto-alojamiento-${aptName}` : "anterior-foto"
             }
             icon={<ArrowBackIcon />}
             onClick={preventDefaultClickHandlerWrapper(previousSlide)}
@@ -52,7 +52,7 @@ const CustomCarousel = ({
         ) : (
           <IconButton
             aria-label={
-              aptName ? `proxima-foto-apartamento-${aptName}` : "proxima-foto"
+              aptName ? `proxima-foto-alojamiento-${aptName}` : "proxima-foto"
             }
             icon={<ArrowForwardIcon />}
             onClick={preventDefaultClickHandlerWrapper(nextSlide)}
