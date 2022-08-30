@@ -8,6 +8,7 @@ import {
   Divider,
   Text,
   Button,
+  Spinner,
 } from "@chakra-ui/react";
 import Head from "next/head";
 import Layout from "@/components/Layout";
@@ -32,6 +33,7 @@ import PageDrawer from "@/components/PageDrawer";
 import useSWR from "swr";
 import aparmentBookingsFetcher from "@/shared/fetchers/aparmentBookingsFetcher";
 import usePageDefaultDates from "@/shared/hooks/usePageDefaultDates";
+import Map from "@/components/Map";
 
 import { useRouter } from "next/router";
 import { IDrawerActionTypes } from "@/types/types";
@@ -210,7 +212,7 @@ const Page = (apartmentData: IApartmentProps) => {
             alignItems={"flex-start"}
             direction="column"
           >
-            <ApartmentTitle {...apartmentData} />
+            <ApartmentTitle {...apartmentData} isPageTitle />
             <Divider my={4} />
             <ApartmentFeatures gap={"2"}>
               <ApartmentFeature
@@ -282,6 +284,7 @@ const Page = (apartmentData: IApartmentProps) => {
                   borderColor="brand.500"
                   shadow={{ base: "none", md: "brand" }}
                   minWidth="350px"
+                  minHeight={{base: "xs", md: "auto"}}
                 >
                   {excludedDatesRanges &&
                     excludedDatesRanges != null &&
@@ -298,7 +301,7 @@ const Page = (apartmentData: IApartmentProps) => {
                         defaultDatesError={pageDefaultDatesError}
                       />
                     )}
-                  {!excludedDatesRanges && !error && <div>Loading</div>}
+                  {!excludedDatesRanges && !error && <Spinner margin={"auto"}/>}
 
                   {!isMobile && (
                     <>
@@ -345,7 +348,7 @@ const Page = (apartmentData: IApartmentProps) => {
             )}
           </Box>
         )}
-
+        <Map />
         <PageDrawer
           componentToShow={componentToShow}
           onHide={() => dispatch({ type: "hide" })}

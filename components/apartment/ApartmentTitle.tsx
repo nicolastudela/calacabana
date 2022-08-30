@@ -8,6 +8,7 @@ export interface IApartmentTitleProps {
   maxPeople: string;
   rooms: string;
   beds: string;
+  isPageTitle?: boolean;
 }
 
 const ApartmentTitle = ({
@@ -16,6 +17,7 @@ const ApartmentTitle = ({
   maxPeople,
   rooms,
   beds,
+  isPageTitle = false,
   ...rest
 }: IApartmentTitleProps & BoxProps) => (
   
@@ -25,6 +27,7 @@ const ApartmentTitle = ({
         display="inline-block"
         ml={-0.5}
         size={"lg"}
+        as={isPageTitle ? "h1" : "h2"}
       >{displayName}</Heading>
       <Flex alignItems="center">
         <Heading size={"md"}>5.0</Heading>

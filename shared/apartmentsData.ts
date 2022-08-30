@@ -67,6 +67,7 @@ const sharedAparmentAmenities: IAparmentAmenitiesGroup[] = [
     amenities: [
       {
         name: AMENITY.TV,
+        highlighted: true,
       },
       {
         name: AMENITY.BLUETOOH_SPEAKER,
@@ -82,6 +83,7 @@ const sharedAparmentAmenities: IAparmentAmenitiesGroup[] = [
       },
       {
         name: AMENITY.HEATING,
+        highlighted: true,
       },
     ],
   },
@@ -100,6 +102,7 @@ const sharedAparmentAmenities: IAparmentAmenitiesGroup[] = [
       {
         name: AMENITY.KITCHEN,
         description: "Los huéspedes pueden cocinar en este espacio",
+        highlighted: true,
       },
       {
         name: AMENITY.REFRIGATOR,
