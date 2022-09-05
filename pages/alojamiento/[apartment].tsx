@@ -24,7 +24,11 @@ import ApartmentFeatures, {
   ApartmentFeature,
   ApartmentFeatureIcon,
 } from "@/components/apartment/ApartmentFeatures";
-import { IAparmentAmenitiesGroup, IApartmentData } from "@/types/shared";
+import {
+  IAparmentAmenitiesGroup,
+  IApartmentData,
+  IReview,
+} from "@/types/shared";
 import HiglightAmenities from "@/components/amenities/HiglightAmenities";
 import BookingButton from "@/components/booking/BookingButton";
 import { BookeableValidPeriod } from "@/types/shared";
@@ -37,6 +41,9 @@ import Map from "@/components/Map";
 
 import { useRouter } from "next/router";
 import { IDrawerActionTypes } from "@/types/types";
+import Reviews from "@/components/Reviews";
+import fetchOutstandingReviews from "@/shared/fetchers/fetchOutstandingReviews";
+import useScrollTrigger from "@/shared/hooks/useScrollTrigger";
 
 const VerticalGrid = dynamic(() => import("../../components/VerticalGallery"));
 
@@ -44,26 +51,25 @@ const AllAmenities = dynamic(
   () => import("../../components/amenities/AllAmenities")
 );
 
-const BookingDatesLoader = () => import("../../components/booking/BookingDatesWithRef")
+const BookingDatesLoader = () =>
+  import("../../components/booking/BookingDatesWithRef");
 
-const BookingDates = dynamic(
-  BookingDatesLoader,
-  {
-    suspense: true,
-  }
-);
+const BookingDates = dynamic(BookingDatesLoader, {
+  suspense: true,
+});
 
-
-
-export type IApartmentProps = IApartmentData & { key: string };
+export type IApartmentProps = IApartmentData & {
+  key: string;
+  reviews: IReview[];
+};
 
 enum EApartmentPageErrorType {
   SELECTED_DATES_NOT_AVAILABLE = "SELECTED_DATES_NOT_AVAILABLE",
 }
 
-
 const Page = (apartmentData: IApartmentProps) => {
-  const { amenities, description, images, displayName, name } = apartmentData;
+  const { amenities, description, images, displayName, name, reviews } =
+    apartmentData;
   const [isPageProcessing, setIsPageProcessing] = useState(false);
   const router = useRouter();
   const isMobile = useBreakpointValue({ base: true, md: false });
@@ -75,9 +81,10 @@ const Page = (apartmentData: IApartmentProps) => {
     aparmentBookingsFetcher,
     { revalidateOnFocus: false }
   );
-  const { defaultDates, bookeableDefaultDates,  pageDefaultDatesError } = usePageDefaultDates({
-    excludedDatesRanges,
-  });
+  const { defaultDates, bookeableDefaultDates, pageDefaultDatesError } =
+    usePageDefaultDates({
+      excludedDatesRanges,
+    });
 
   const [pageError, setPageError] = useState<EApartmentPageErrorType | null>(
     null
@@ -114,7 +121,25 @@ const Page = (apartmentData: IApartmentProps) => {
           if (!state) {
             return {
               title: "Acerca de este alojamiento",
-              component: <Text dangerouslySetInnerHTML={{ __html: description}}/>,
+              component: (
+                <Text dangerouslySetInnerHTML={{ __html: description }} />
+              ),
+            };
+          }
+          return null;
+        }
+        case IDrawerActionTypes.SHOW_ALL_REVIEWS: {
+          if (!state) {
+            const reviewsToShow = action.payload as IReview[];
+            return {
+              title: "Opiniones",
+              component: (
+                <Reviews
+                  reviews={reviewsToShow}
+                  overallRating={"5.0"}
+                  reviewsCount={reviewsToShow.length}
+                />
+              ),
             };
           }
           return null;
@@ -134,12 +159,9 @@ const Page = (apartmentData: IApartmentProps) => {
     setClient(true);
   }, []);
 
-  const onDatesSelected = useCallback(
-    (dates: BookeableValidPeriod | null) => {
-      setSelectedDates(dates);
-    },
-    []
-  );
+  const onDatesSelected = useCallback((dates: BookeableValidPeriod | null) => {
+    setSelectedDates(dates);
+  }, []);
 
   useEffect(() => {
     if (
@@ -148,7 +170,7 @@ const Page = (apartmentData: IApartmentProps) => {
     ) {
       setPageError(null);
     }
-  },[datesSelected, setPageError, pageError])
+  }, [datesSelected, setPageError, pageError]);
 
   /**
    * - Invalid dates (not existent, not valid booking date) => remove them from url (//TODO)
@@ -165,19 +187,17 @@ const Page = (apartmentData: IApartmentProps) => {
     if (pageDefaultDatesError) {
       setPageError(EApartmentPageErrorType.SELECTED_DATES_NOT_AVAILABLE);
     }
-
-  },[pageDefaultDatesError]);
-
+  }, [pageDefaultDatesError]);
 
   const gotToBookApt = useCallback(() => {
     setIsPageProcessing(true);
     // not include apartment prop
-    const {apartment, ...restQuery} = router.query
+    const { apartment, ...restQuery } = router.query;
     router.push({
       pathname: `/reserva/${name}`,
-      query:  restQuery,
-    })
-  }, [name, router])
+      query: restQuery,
+    });
+  }, [name, router]);
 
   return (
     <Box>
@@ -236,7 +256,10 @@ const Page = (apartmentData: IApartmentProps) => {
               </ApartmentFeature>
             </ApartmentFeatures>
             <Divider my={4} />
-            <Text noOfLines={[6, 20]} dangerouslySetInnerHTML={{ __html: description}}/>
+            <Text
+              noOfLines={[6, 20]}
+              dangerouslySetInnerHTML={{ __html: description }}
+            />
             <Button
               textDecoration="underline"
               variant="link"
@@ -256,6 +279,18 @@ const Page = (apartmentData: IApartmentProps) => {
                 dispatch({
                   type: IDrawerActionTypes.SHOW_ALL_AMENITIES,
                   payload: amenities,
+                })
+              }
+            />
+            <Divider my={4} />
+            <Reviews
+              reviews={reviews}
+              overallRating={"5.0"}
+              reviewsCount={reviews.length}
+              onExpand={() =>
+                dispatch({
+                  type: IDrawerActionTypes.SHOW_ALL_REVIEWS,
+                  payload: reviews,
                 })
               }
             />
@@ -284,7 +319,7 @@ const Page = (apartmentData: IApartmentProps) => {
                   borderColor="brand.500"
                   shadow={{ base: "none", md: "brand" }}
                   minWidth="350px"
-                  minHeight={{base: "xs", md: "auto"}}
+                  minHeight={{ base: "xs", md: "auto" }}
                 >
                   {excludedDatesRanges &&
                     excludedDatesRanges != null &&
@@ -301,7 +336,9 @@ const Page = (apartmentData: IApartmentProps) => {
                         defaultDatesError={pageDefaultDatesError}
                       />
                     )}
-                  {!excludedDatesRanges && !error && <Spinner margin={"auto"}/>}
+                  {!excludedDatesRanges && !error && (
+                    <Spinner margin={"auto"} />
+                  )}
 
                   {!isMobile && (
                     <>
@@ -330,6 +367,7 @@ const Page = (apartmentData: IApartmentProps) => {
             borderTop={"1px solid black"}
             bg="brand.900"
             display={"flex"}
+            zIndex={1000}
           >
             {/* Fix these buttons, are styled very poorly */}
             {!pageError && !!datesSelected ? (
@@ -359,7 +397,7 @@ const Page = (apartmentData: IApartmentProps) => {
 };
 
 const Apartment = (apartmentData: IApartmentProps) => {
-  const canonicalPath = process.env.NEXT_PUBLIC_ORIGIN_PATH
+  const canonicalPath = process.env.NEXT_PUBLIC_ORIGIN_PATH;
   return (
     <>
       <Head>
@@ -368,9 +406,20 @@ const Apartment = (apartmentData: IApartmentProps) => {
           name="description"
           content={`El ${apartmentData.displayName} - ${apartmentData.mainFeature} - cuenta con ${apartmentData.rooms} ambientes - Completamente equipado, combinando  naturaleza, confort y calidez - Cala Cabana`}
         />
-        <meta key="og-title" property="og:title" content={`${apartmentData.displayName} - ${apartmentData.mainFeature} - Cala Cabana: Servicio de alojamiento y alquileres vacacionales en Tanti, Cordoba`} />
-        <meta key="og-url" property="og:url" content={`${canonicalPath}/alojamiento/${apartmentData.name}`} />
-        <meta property="og:image" content={`${canonicalPath}${apartmentData.images.square[0].src}`} />
+        <meta
+          key="og-title"
+          property="og:title"
+          content={`${apartmentData.displayName} - ${apartmentData.mainFeature} - Cala Cabana: Servicio de alojamiento y alquileres vacacionales en Tanti, Cordoba`}
+        />
+        <meta
+          key="og-url"
+          property="og:url"
+          content={`${canonicalPath}/alojamiento/${apartmentData.name}`}
+        />
+        <meta
+          property="og:image"
+          content={`${canonicalPath}${apartmentData.images.square[0].src}`}
+        />
         <meta
           key="og-description"
           property="og:description"
@@ -396,8 +445,14 @@ const getStaticPaths: GetStaticPaths = async () => {
 // NextJS API Middleware is not available here
 const getStaticProps: GetStaticProps<IApartmentProps> = async ({ params }) => {
   let props: IApartmentProps | null = null;
+
+  const reviews = await fetchOutstandingReviews();
   if (params?.apartment) {
-    props = { key: params?.apartment as string,  ...aparmentsData[params?.apartment as "cala" | "cabana"]};
+    props = {
+      key: params?.apartment as string,
+      ...aparmentsData[params?.apartment as "cala" | "cabana"],
+      reviews,
+    };
   }
 
   if (!props) {

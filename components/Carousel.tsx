@@ -67,7 +67,7 @@ const CustomCarousel = ({
     >
       {images &&
         images.map(({ src, alt, width, height }, index) => (
-          <Image key={index} src={src} alt={alt} layout="responsive" width={"100%"} height={"100%"}/>
+          <Image key={index} src={src} alt={alt} layout="responsive" width={"100%"} height={"100%"} priority={index === 0 ? true : false } />
         ))}
     </Carousel>
   );

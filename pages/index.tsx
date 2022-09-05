@@ -15,6 +15,9 @@ import { IDrawerActionTypes } from "@/types/types";
 import dynamic from "next/dynamic";
 
 import PageDrawer from "@/components/PageDrawer";
+import { IReview } from "@/types/shared";
+import fetchOutstandingReviews from "@/shared/fetchers/fetchOutstandingReviews";
+import Reviews from "@/components/Reviews";
 
 const VerticalGrid = dynamic(() => import("../components/VerticalGallery"));
 
@@ -157,7 +160,7 @@ const images = {
   ],
 };
 
-const Page = ({ apartments }: IHomePageProps) => {
+const Page = ({ apartments, reviews }: IHomePageProps) => {
   const isMobile = useBreakpointValue({ base: true, md: false });
 
   // use reducer to get dispachers to be used on CTAs, where some CTAs will update whats shown on the drawer
@@ -169,6 +172,16 @@ const Page = ({ apartments }: IHomePageProps) => {
             return {
               title: "Todas las fotos",
               component: <VerticalGrid images={images.wide} />,
+            };
+          }
+          return null;
+        }
+        case IDrawerActionTypes.SHOW_ALL_REVIEWS: {
+          if (!state) {
+            const reviewsToShow = action.payload as IReview[]
+            return {
+              title: "Opiniones",
+              component: <Reviews reviews={reviewsToShow} overallRating={"5.0"} reviewsCount={reviewsToShow.length} />,
             };
           }
           return null;
@@ -236,6 +249,12 @@ const Page = ({ apartments }: IHomePageProps) => {
           ))}
         </Flex>
         <Divider my={8} mb={4} />
+        <Reviews reviews={reviews} overallRating={"5.0"} reviewsCount={reviews.length} onExpand={() =>
+                dispatch({
+                  type: IDrawerActionTypes.SHOW_ALL_REVIEWS,
+                  payload: reviews,
+                })} />
+        <Divider my={8} mb={4} />                
         <Map />
         <PageDrawer
           componentToShow={componentToShow}
@@ -262,7 +281,7 @@ const Home = (props: IHomePageProps) => {
   );
 };
 
-export type IHomePageProps = { apartments: AparmentCardProps[] };
+export type IHomePageProps = { apartments: AparmentCardProps[] } & { reviews: IReview[] };
 
 // NextJS API Middleware is not available here
 const getStaticProps: GetStaticProps<IHomePageProps> = async ({}) => {
@@ -291,10 +310,11 @@ const getStaticProps: GetStaticProps<IHomePageProps> = async ({}) => {
   );
 
   let props: IHomePageProps | null = null;
-  props = { apartments: apartments };
+  const reviews = await fetchOutstandingReviews()
+  // props = { apartments: apartments, reviews };
 
   return {
-    props: { apartments: apartments },
+    props: { apartments: apartments, reviews },
     notFound: false,
     // if you want revalidate data of an apartment manually.
     //https://nextjs.org/docs/basic-features/data-fetching/incremental-static-regeneration#on-demand-revalidation

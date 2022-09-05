@@ -1,10 +1,8 @@
-import { APARMENTS_NAME, BookingPeriod, UserInquiry } from "@/types/shared";
+import { APARMENTS_NAME, BookingPeriod, IReview, UserInquiry } from "@/types/shared";
 
-export enum BookingsInfoResponseStatus {
-  SUCCESFUL = "OK",
-  PARTIAL = "PARTIAL",
-  ERROR = "ERROR",
-}
+
+// -----------------------------------------------------
+// Basic/Generic Request/Response types for standard requests GET/POST. 
 
 export enum GenericResponseStatus {
   SUCCESFUL = "OK",
@@ -28,13 +26,22 @@ export interface ISuccessGenericRes<Payload> extends IGenericResponse<Payload>{
   data: Payload;
 }
 
+// -----------------------------------------------------
+
+// IBookingsInfoResponse is used to represent /bookings , where it returns booking info of all apartments and 
+// period where the whole place is full
+
+export enum BookingsInfoResponseStatus {
+  SUCCESFUL = "OK",
+  PARTIAL = "PARTIAL",
+  ERROR = "ERROR",
+}
+
 interface IBookingsInfoResponse  {
   status: BookingsInfoResponseStatus;
   cala: IAparmentBookingsResponse;
   cabana: IAparmentBookingsResponse;
 }
-
-// TODO (#44) : These three types shouldn't exist anymore.
 export interface IBookingsInfoResponseSuccessful extends IBookingsInfoResponse {
   status: BookingsInfoResponseStatus.SUCCESFUL;
   fullBookedPeriods: BookingPeriod[];
@@ -48,6 +55,8 @@ export interface IBookingsInfoResponseError  {
   status: BookingsInfoResponseStatus.ERROR;
 }
 
+// -----------------------------------------------------
+// IAparmentBookingsResponse is used to represent /bookings for an specific Aparment
 export interface IAparmentBookingsResponse {
   status: BookingsInfoResponseStatus;
 }
@@ -69,6 +78,9 @@ export interface IAparmentBookingsResponseError extends IAparmentBookingsRespons
   errorsDetails?: string | undefined
 }
 
+// -----------------------------------------------------
+// IUserInquiry Requests/Responses types are meant to be used through IGenericResponse 
+
 export interface IUserInquiryRequestSerialized {
   apartment: APARMENTS_NAME;
   period: [string, string];
@@ -77,3 +89,6 @@ export interface IUserInquiryRequestSerialized {
 }
 
 export type IUserInquiryResposePayload  = null
+export interface IReviewsResposePayload {
+  reviews: IReview[];
+}
