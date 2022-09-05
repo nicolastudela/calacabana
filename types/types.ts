@@ -18,6 +18,7 @@ export enum IDrawerActionTypes {
   SHOW_ALL_AMENITIES,
   SHOW_DESCRIPTION,
   SHOW_EDIT_DATES,
+  SHOW_ALL_REVIEWS,
   HIDE,
 }
 

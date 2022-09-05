@@ -1,5 +1,5 @@
 
-import { BookingsInfoResponseStatus, IAparmentBookingsResponse, IAparmentBookingsResponseError, IAparmentBookingsResponseSerializedSuccessful, IAparmentBookingsResponseSuccessful } from "@/types/api";
+import { BookingsInfoResponseStatus, IAparmentBookingsResponseError, IAparmentBookingsResponseSerializedSuccessful, IAparmentBookingsResponseSuccessful } from "@/types/api";
 import { bookingPeriodSerialize } from "@/utils/serializers/bookingPeriodSerializer";
 import type { NextApiRequest, NextApiResponse } from "next";
 import nc from "next-connect";

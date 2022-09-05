@@ -1,5 +1,5 @@
 import { StarIcon } from "@chakra-ui/icons";
-import { HStack, Heading, Flex, Text, Spacer, Box, BoxProps } from "@chakra-ui/react";
+import { Heading, Flex, Text, Spacer, Box, BoxProps } from "@chakra-ui/react";
 
 
 export interface IApartmentTitleProps {
