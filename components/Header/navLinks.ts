@@ -20,11 +20,6 @@ const NAV_LINKS: INav[] = [
         link: "/alojamiento/calacabana",
         isMenu: false,
       },
-      {
-        label: "Sobre el alojamiento",
-        link: "/espacios-comunes",
-        isMenu: false,
-      },
     ],
   },
   {
@@ -32,9 +27,10 @@ const NAV_LINKS: INav[] = [
     link: "/ubicacion",
   } as INavLink,
   {
-    label: "Tanti / Cordoba",
-    link: "/tanti-cordoba",
-  } as INavLink,
+    label: "Sobre el alojamiento",
+    link: "/el-alojamiento",
+    isMenu: false,
+  },
 ];
 
 export default NAV_LINKS;
