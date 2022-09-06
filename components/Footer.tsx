@@ -1,5 +1,7 @@
 import { Flex, VStack, Icon, Link, Text } from "@chakra-ui/react";
 import { FaEnvelope, FaInstagram, FaWhatsapp } from "react-icons/fa";
+import NextLink from "next/link"
+
 
 const Footer = () => (
   <Flex
@@ -46,9 +48,10 @@ const Footer = () => (
         rel="noopener noreferrer"
       >
         <Icon as={FaWhatsapp} mr={1} />
-        <Text>11-5325-4124</Text>
+        <Text>11-5060-9152</Text>
       </Link>
-      <Link href={""}>Tanti, Cordoba</Link>
+      <NextLink href={"/el-alojamiento"} passHref><Link>Sobre el alojamiento</Link></NextLink>
+      <NextLink href={"/ubicacion"} passHref><Link>Tanti, Córdoba, Argentina</Link></NextLink>
     </VStack>
   </Flex>
 );
