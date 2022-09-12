@@ -27,6 +27,7 @@ import { updateQueryStringWithBookingDates } from "@/utils/queryStringHandler";
 import { EPageDefaultDatesErrorType } from "@/shared/hooks/usePageDefaultDates";
 import createBookeableValidPeriod from "@/shared/model/BookingValidPeriod";
 import { BookingPeriod, BookeableValidPeriod } from "@/types/shared";
+import { trackEvent } from "@/lib/gtag";
 
 const DatesInput = ({
   startDate,
@@ -165,10 +166,11 @@ function BookingDatesWithRef(
       if (!forceInline) {
         setPickerOpen(false);
       }
+      trackEvent("dates_selected_through_calendar",  { apartment: apartmentName, buttonFlow: !!selectWithButtonFlow })
       onDatesSelected(createBookeableValidPeriod([start, end]));
       setError(false);
     }
-  },[forceInline, onDatesSelected]);
+  },[apartmentName, forceInline, onDatesSelected, selectWithButtonFlow]);
 
   const onChange = useCallback(
     (dates: [Date | null, Date | null]) => {

@@ -12,6 +12,8 @@ __Debugging pourposes__
 
 `NEXT_PUBLIC_MOCK_MAPS=1` Will show an empty box instead of the real map
 
+`MOCK_GOOGLE_PLACES_REVIEWS_API=1` Will mock reviews fetch from place API (outstanding reviews)
+
 __Required__
 
 *Email addresses*
@@ -41,6 +43,18 @@ __Required__
 `CALA_GOOGLE_CALENDAR_ID`
 
 Follow this a explanatory tutorial on [how to configure Google Account](https://www.geeksforgeeks.org/how-to-integrate-google-calendar-in-node-js/)
+
+*GooglePlaces API related*
+
+`GOOGLE_PLACES_API_KEY` 
+
+`GOOGLE_PLACES_ID` (this is the google place id given for calacabana, i.e. where we can fetchreviews and other info about the google place)
+
+`GOOGLE_PLACE_OUTSTANDING_REVIEWS_API_PATH` (this is a google_place url, where we fetch "outstanding" reviews, 5 more relevant. To get all google reviews we would need to access google bussiness apis)
+
+*GoogleAnalytics API*
+
+`NEXT_PUBLIC_GA_ID` Analitics GTAG id used. (We currently using one for production and others envs)
 
 
 ## Next.js How to start app on dev 

@@ -16,7 +16,7 @@ import Carousel from "@/components/Carousel";
 
 import HeroGrid from "@/components/HeroGrid";
 import dynamic from "next/dynamic";
-import { useCallback, useEffect, useReducer, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useReducer, useRef, useState } from "react";
 import ApartmentTitle from "@/components/apartment/ApartmentTitle";
 import { BsFillDoorOpenFill } from "react-icons/bs";
 import { GiCctvCamera, GiHomeGarage } from "react-icons/gi";
@@ -43,7 +43,7 @@ import { useRouter } from "next/router";
 import { IDrawerActionTypes } from "@/types/types";
 import Reviews from "@/components/Reviews";
 import fetchOutstandingReviews from "@/shared/fetchers/fetchOutstandingReviews";
-import useScrollTrigger from "@/shared/hooks/useScrollTrigger";
+import { trackEvent } from "@/lib/gtag";
 
 const VerticalGrid = dynamic(() => import("../../components/VerticalGallery"));
 
@@ -67,6 +67,11 @@ enum EApartmentPageErrorType {
   SELECTED_DATES_NOT_AVAILABLE = "SELECTED_DATES_NOT_AVAILABLE",
 }
 
+interface BookeableValidPeriodState {
+  dateSelected: BookeableValidPeriod | null;
+  error: EApartmentPageErrorType.SELECTED_DATES_NOT_AVAILABLE | null
+}
+
 const Page = (apartmentData: IApartmentProps) => {
   const { amenities, description, images, displayName, name, reviews } =
     apartmentData;
@@ -74,8 +79,8 @@ const Page = (apartmentData: IApartmentProps) => {
   const router = useRouter();
   const isMobile = useBreakpointValue({ base: true, md: false });
   const [isClient, setClient] = useState(false);
-  const [datesSelected, setSelectedDates] =
-    useState<BookeableValidPeriod | null>(null);
+  const [bookeableValidPeriodState, setBookeableValidPeriodState] =
+    useState<BookeableValidPeriodState>({dateSelected: null, error: null});
   const { data: excludedDatesRanges, error } = useSWR(
     `/api/bookings/${name}`,
     aparmentBookingsFetcher,
@@ -86,9 +91,6 @@ const Page = (apartmentData: IApartmentProps) => {
       excludedDatesRanges,
     });
 
-  const [pageError, setPageError] = useState<EApartmentPageErrorType | null>(
-    null
-  );
   const datePickerRef = useRef<HTMLDivElement | null>(null);
 
   // use reducer to get dispachers to be used on CTAs, where some CTAs will update whats shown on the PageDrawer
@@ -160,17 +162,8 @@ const Page = (apartmentData: IApartmentProps) => {
   }, []);
 
   const onDatesSelected = useCallback((dates: BookeableValidPeriod | null) => {
-    setSelectedDates(dates);
+    setBookeableValidPeriodState({dateSelected: dates, error: null})
   }, []);
-
-  useEffect(() => {
-    if (
-      datesSelected &&
-      pageError === EApartmentPageErrorType.SELECTED_DATES_NOT_AVAILABLE
-    ) {
-      setPageError(null);
-    }
-  }, [datesSelected, setPageError, pageError]);
 
   /**
    * - Invalid dates (not existent, not valid booking date) => remove them from url (//TODO)
@@ -178,26 +171,69 @@ const Page = (apartmentData: IApartmentProps) => {
    */
   useEffect(() => {
     if (bookeableDefaultDates !== undefined) {
-      onDatesSelected(bookeableDefaultDates);
+      bookeableDefaultDates && trackEvent("apartment_page_with_default_dates")
+      setBookeableValidPeriodState((prev) => ({...prev, dateSelected: bookeableDefaultDates }))
     }
-  }, [bookeableDefaultDates, pageDefaultDatesError, onDatesSelected]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [JSON.stringify(bookeableDefaultDates)]);
 
-  //sets the page prop error to subseccions "SELECTED_DATES_NOT_AVAILABLE"
+  //sets "SELECTED_DATES_NOT_AVAILABLE" error if checkin_chekout dates are not valid
   useEffect(() => {
     if (pageDefaultDatesError) {
-      setPageError(EApartmentPageErrorType.SELECTED_DATES_NOT_AVAILABLE);
+      trackEvent("invalid_dates_selected_through_url",  { apartment: name })
+      setBookeableValidPeriodState((prev: BookeableValidPeriodState) => ({...prev, error: EApartmentPageErrorType.SELECTED_DATES_NOT_AVAILABLE}));
     }
-  }, [pageDefaultDatesError]);
+  }, [name, pageDefaultDatesError]);
 
   const gotToBookApt = useCallback(() => {
     setIsPageProcessing(true);
     // not include apartment prop
     const { apartment, ...restQuery } = router.query;
+    trackEvent("click_on_booking_button",  { apartment: name })
     router.push({
       pathname: `/reserva/${name}`,
       query: restQuery,
     });
   }, [name, router]);
+
+  const onMobileDatesCheck = useCallback(() => {
+    !!bookeableDefaultDates ? trackEvent("change_dates",  { apartment: name }) : trackEvent("check_availabilty",  { apartment: name })
+    datePickerRef.current?.scrollIntoView()
+  },[bookeableDefaultDates, name])
+
+
+  const onShowExpandedDescription = useCallback(() => {
+    trackEvent("show_expanded_desription",  { apartment: name })
+    dispatch({
+      type: IDrawerActionTypes.SHOW_DESCRIPTION,
+      payload: description,
+    })
+  },[name, description])
+
+
+  const onShowAllAmeninities = useCallback(() => {
+    trackEvent("show_expanded_amenities",  { apartment: name })
+    dispatch({
+      type: IDrawerActionTypes.SHOW_ALL_AMENITIES,
+      payload: amenities,
+    })
+  },[name, amenities])
+
+  const onShowAllReviews = useCallback(() => {
+    trackEvent("show_expanded_reviews",  { apartment: name })
+    dispatch({
+      type: IDrawerActionTypes.SHOW_ALL_REVIEWS,
+      payload: reviews,
+    })
+  },[name, reviews])
+
+  const onShowAllPicks = useCallback(() => {
+    trackEvent("show_expanded_pics",  { apartment: name })
+    dispatch({ type: IDrawerActionTypes.SHOW_ALL_PICS });
+  },[name])
+
+  const userCanBook = useMemo(() => {
+    return bookeableValidPeriodState.dateSelected && !bookeableValidPeriodState.error},[bookeableValidPeriodState.dateSelected, bookeableValidPeriodState.error])
 
   return (
     <Box>
@@ -212,9 +248,7 @@ const Page = (apartmentData: IApartmentProps) => {
           </a>
         ) : (
           <HeroGrid
-            onShowAllPicks={() => {
-              dispatch({ type: IDrawerActionTypes.SHOW_ALL_PICS });
-            }}
+            onShowAllPicks={onShowAllPicks}
             images={images.wide}
           />
         )}
@@ -263,36 +297,21 @@ const Page = (apartmentData: IApartmentProps) => {
             <Button
               textDecoration="underline"
               variant="link"
-              onClick={() =>
-                dispatch({
-                  type: IDrawerActionTypes.SHOW_DESCRIPTION,
-                  payload: description,
-                })
-              }
+              onClick={onShowExpandedDescription}
             >
               Mostrar mas
             </Button>
             <Divider my={4} />
             <HiglightAmenities
               amenities={amenities}
-              onExpand={() =>
-                dispatch({
-                  type: IDrawerActionTypes.SHOW_ALL_AMENITIES,
-                  payload: amenities,
-                })
-              }
+              onExpand={onShowAllAmeninities}
             />
             <Divider my={4} />
             <Reviews
               reviews={reviews}
               overallRating={"5.0"}
               reviewsCount={reviews.length}
-              onExpand={() =>
-                dispatch({
-                  type: IDrawerActionTypes.SHOW_ALL_REVIEWS,
-                  payload: reviews,
-                })
-              }
+              onExpand={onShowAllReviews}
             />
             <Divider my={4} />
           </Flex>
@@ -344,7 +363,7 @@ const Page = (apartmentData: IApartmentProps) => {
                     <>
                       <Divider my={4} width="75%" />
                       <BookingButton
-                        enabled={!!datesSelected && !pageError}
+                        enabled={!!userCanBook}
                         onBookingAction={gotToBookApt}
                         isLoading={isPageProcessing}
                       />
@@ -370,7 +389,7 @@ const Page = (apartmentData: IApartmentProps) => {
             zIndex={1000}
           >
             {/* Fix these buttons, are styled very poorly */}
-            {!pageError && !!datesSelected ? (
+            {!bookeableValidPeriodState.error && !!bookeableValidPeriodState.dateSelected ? (
               <BookingButton
                 onBookingAction={gotToBookApt}
                 isLoading={isPageProcessing}
@@ -379,9 +398,9 @@ const Page = (apartmentData: IApartmentProps) => {
               <Button
                 margin={"auto"}
                 variant="action"
-                onClick={() => datePickerRef.current?.scrollIntoView()}
+                onClick={onMobileDatesCheck}
               >
-                {datesSelected ? "Cambiar fechas" : "Consultar disponibilidad"}
+                {bookeableValidPeriodState.dateSelected ? "Cambiar fechas" : "Consultar disponibilidad"}
               </Button>
             )}
           </Box>

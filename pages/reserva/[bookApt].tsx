@@ -9,14 +9,18 @@ import {
   Button,
   Divider,
   Flex,
-
   Heading,
   IconButton,
   useBreakpointValue,
 } from "@chakra-ui/react";
 
 import aparmentsData, { APARTMENTS_BUILD } from "@/shared/apartmentsData";
-import { BookeableValidPeriod, IApartmentData, UserInquiry, UserInquiryRequest } from "@/types/shared";
+import {
+  BookeableValidPeriod,
+  IApartmentData,
+  UserInquiry,
+  UserInquiryRequest,
+} from "@/types/shared";
 import Layout from "@/components/Layout";
 import aparmentBookingsFetcher from "@/shared/fetchers/aparmentBookingsFetcher";
 import usePageDefaultDates, {
@@ -31,13 +35,18 @@ import dynamic from "next/dynamic";
 import { updateQueryStringWithBookingDates } from "@/utils/queryStringHandler";
 import ContactUs from "@/components/ContactUs";
 import postUserInquiry from "@/shared/services/postUserInquiry";
-import NotificationSection, { NOTIFICATION } from "@/components/booking/NotificationSection";
+import NotificationSection, {
+  NOTIFICATION,
+} from "@/components/booking/NotificationSection";
 import { GenericResponseStatus } from "@/types/api";
+import { trackEvent } from "@/lib/gtag";
+
+import Router from 'next/router';
 
 export type IBookingApartmentProps = IApartmentData & { key: string };
 
 const BookingDates = dynamic(
-  () => import("../../components/booking/BookingDates"),
+  () => import("../../components/booking/BookingDates")
 );
 
 export enum EApartmentBookingErrorType {
@@ -46,9 +55,18 @@ export enum EApartmentBookingErrorType {
   SELECTED_DATES_NOT_AVAILABLE = "SELECTED_DATES_NOT_AVAILABLE",
 }
 
+interface BookeableValidPeriodState {
+  dateSelected: BookeableValidPeriod | null;
+  error: EApartmentBookingErrorType.SELECTED_DATES_NOT_AVAILABLE | null
+}
+
+interface UserInquiryState {
+  userInquiry: UserInquiry | null;
+  error: EApartmentBookingErrorType.USER_INQUIRY_NOT_AVAILABLE | EApartmentBookingErrorType.INQUIRY_ACTION_FAILED | null;
+}
+
 const Page = (apartmentData: IBookingApartmentProps) => {
   const {
-    description,
     images,
     displayName,
     name,
@@ -65,69 +83,85 @@ const Page = (apartmentData: IBookingApartmentProps) => {
   );
   const [isPageProcessing, setIsPageProcessing] = useState(false);
   const [userInquiryRequestSent, setUserInquiryRequestSent] = useState(false);
-  const [datesSelected, setSelectedDates] =
-    useState<BookeableValidPeriod | null>(null);
-  const [userContactData, setUserContactData] = useState<UserInquiry | null>(null);
-  const [pageErrors, setPageErrors] = useState<EApartmentBookingErrorType[]>(
-    []
-  );
+  const [bookeableValidPeriodState, setBookeableValidPeriodState] =
+    useState<BookeableValidPeriodState>({dateSelected: null, error: null});
+  const [userInquiryDataState, setUserInquiryDataState] = useState<UserInquiryState>({
+    userInquiry: null,
+    error: null,
+  });
   const { defaultDates, bookeableDefaultDates, pageDefaultDatesError } =
     usePageDefaultDates({
       excludedDatesRanges,
     });
 
   const onDatesSelected = useCallback((dates: BookeableValidPeriod | null) => {
-    setSelectedDates(dates);
+    setBookeableValidPeriodState({dateSelected: dates, error: null})
   }, []);
 
-  const onUserConctactChange = useCallback((userContactData: UserInquiry | null) => {
-    setUserContactData(userContactData);
-  },[]);
+  const onUserConctactChange = useCallback(
+    (userContactData: UserInquiry | null) => {
+      if (userContactData) {
+        trackEvent("user_contact_filled", {aparment: name})  
+        setUserInquiryDataState({userInquiry: userContactData, error: null});
+      } else {
+        setUserInquiryDataState({userInquiry: null, error: EApartmentBookingErrorType.USER_INQUIRY_NOT_AVAILABLE});
+      }
+    },
+    [name]
+  );
 
-  // cleans or set error depending date_selected data
-  useEffect(() => {
-    if (
-      datesSelected &&
-      pageErrors.includes(EApartmentBookingErrorType.SELECTED_DATES_NOT_AVAILABLE)
-    ) {
-      // TODO think this better
-      setPageErrors((prev) => prev.filter((err) => err !== EApartmentBookingErrorType.SELECTED_DATES_NOT_AVAILABLE));
-    }
-  }, [datesSelected, pageErrors]);
-
-  // cleans or set error depending user_inquiry data
-  useEffect(() => {
-    if (!userContactData) {
-      setPageErrors((prev) => prev.concat(EApartmentBookingErrorType.USER_INQUIRY_NOT_AVAILABLE))
-    } else {
-      setPageErrors((prev) => prev.filter((err) => err !== EApartmentBookingErrorType.USER_INQUIRY_NOT_AVAILABLE));
-    }
-  }, [userContactData])
-
-  const selectDatesAndCloseDrawer = useCallback((dates: BookeableValidPeriod | null) => {
-    onDatesSelected(dates);
-    if (router && dates) {
-      updateQueryStringWithBookingDates(router, [dates.startDate, dates.endDate]);
-    }
-    dispatch({ type: "hide" });
-  },[onDatesSelected, router]);
+  const selectDatesAndCloseDrawer = useCallback(
+    (dates: BookeableValidPeriod | null) => {
+      trackEvent("dates_selected_through_booking",  { apartment: name })
+      onDatesSelected(dates);
+      if (router && dates) {
+        updateQueryStringWithBookingDates(router, [
+          dates.startDate,
+          dates.endDate,
+        ]);
+      }
+      dispatch({ type: "hide" });
+    },
+    [name, onDatesSelected, router]
+  );
 
   // handles Notification component content
   const notification = useMemo(() => {
     if (userInquiryRequestSent) {
       return NOTIFICATION.SUCCESS_INQUIRY_ACTION;
     }
-    const errorToNotify = pageErrors.find((error) => (error === EApartmentBookingErrorType.INQUIRY_ACTION_FAILED) || (error === EApartmentBookingErrorType.SELECTED_DATES_NOT_AVAILABLE));
-    if (errorToNotify) {
-      if (errorToNotify === EApartmentBookingErrorType.INQUIRY_ACTION_FAILED) {
-        return NOTIFICATION.FAILED_INQUIRY_ACTION;
-      } else {
-        return NOTIFICATION.FAILED_SELECTED_DATES_NOT_AVAILABLE;
-      }
+    if (userInquiryDataState.error === EApartmentBookingErrorType.INQUIRY_ACTION_FAILED) {
+      return NOTIFICATION.FAILED_INQUIRY_ACTION; 
+    } 
+
+    if (bookeableValidPeriodState.error === EApartmentBookingErrorType.SELECTED_DATES_NOT_AVAILABLE) {
+      return NOTIFICATION.FAILED_SELECTED_DATES_NOT_AVAILABLE;
     }
-    return null
-  },[pageErrors, userInquiryRequestSent])
-  
+
+    return null;
+  }, [bookeableValidPeriodState.error, userInquiryDataState.error, userInquiryRequestSent]);
+
+  const onBackAction = useCallback(() => {
+    trackEvent("return_to_aparment", { apartment: name });
+    setIsPageProcessing(true);
+    //removes param bookApt that comes into query
+    const { bookApt, ...restQuery } = router.query;
+    router.push({
+      pathname: `/alojamiento/${name}`,
+      query: restQuery,
+    });
+  }, [name, router]);
+
+  const onEditDates = useCallback(
+    () => {
+      trackEvent("edit_dates_on_booking", { apartment: name });
+      dispatch({
+        type: IDrawerActionTypes.SHOW_EDIT_DATES,
+        payload: bookeableValidPeriodState.dateSelected,
+      })
+    },
+    [bookeableValidPeriodState.dateSelected, name]
+  );
   // use reducer to get dispachers to be used on CTAs, where some CTAs will update whats shown on the PageDrawer
   const reducer = useCallback(
     (state: any, action: { type: any; payload?: any }) => {
@@ -135,9 +169,28 @@ const Page = (apartmentData: IBookingApartmentProps) => {
         case IDrawerActionTypes.SHOW_EDIT_DATES: {
           if (!state) {
             return {
-              title: (!isMobile) ? "Selecciona tus fechas de tu viaje" : "Selecciona tus fechas",
-              component: (<Box w={'100%'}><BookingDates m="auto" mt="4" maxWidth={320} excludeDatesRanges={excludedDatesRanges} apartmentName={name} forceInline={true} 
-                selectWithButtonFlow onDatesSelected={selectDatesAndCloseDrawer} defaultDates={datesSelected ? [datesSelected.startDate, datesSelected.endDate] : undefined}/></Box>),
+              title: !isMobile
+                ? "Selecciona tus fechas de tu viaje"
+                : "Selecciona tus fechas",
+              component: (
+                <Box w={"100%"}>
+                  <BookingDates
+                    m="auto"
+                    mt="4"
+                    maxWidth={320}
+                    excludeDatesRanges={excludedDatesRanges}
+                    apartmentName={name}
+                    forceInline={true}
+                    selectWithButtonFlow
+                    onDatesSelected={selectDatesAndCloseDrawer}
+                    defaultDates={
+                      bookeableValidPeriodState.dateSelected
+                        ? [bookeableValidPeriodState.dateSelected.startDate, bookeableValidPeriodState.dateSelected.endDate]
+                        : undefined
+                    }
+                  />
+                </Box>
+              ),
             };
           }
           return null;
@@ -148,16 +201,23 @@ const Page = (apartmentData: IBookingApartmentProps) => {
           return null;
       }
     },
-    [datesSelected, excludedDatesRanges, isMobile, name, selectDatesAndCloseDrawer]
+    [
+      bookeableValidPeriodState.dateSelected,
+      excludedDatesRanges,
+      isMobile,
+      name,
+      selectDatesAndCloseDrawer,
+    ]
   );
 
   const [componentToShow, dispatch] = useReducer(reducer, null);
 
   useEffect(() => {
     if (bookeableDefaultDates !== undefined) {
-      onDatesSelected(bookeableDefaultDates);
+      setBookeableValidPeriodState((prev) => ({...prev, dateSelected: bookeableDefaultDates }))
     }
-  }, [bookeableDefaultDates, onDatesSelected]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [JSON.stringify(bookeableDefaultDates)]);
 
   /**
    * ISSUE: #6
@@ -166,36 +226,43 @@ const Page = (apartmentData: IBookingApartmentProps) => {
    */
   useEffect(() => {
     if (pageDefaultDatesError) {
-      setPageErrors((prev) => prev.concat(EApartmentBookingErrorType.SELECTED_DATES_NOT_AVAILABLE));
+      trackEvent("not_available_dates_selected_through_url",  { apartment: name })
+      setBookeableValidPeriodState((prev: BookeableValidPeriodState) => ({...prev, error: EApartmentBookingErrorType.SELECTED_DATES_NOT_AVAILABLE}));
       if (
         pageDefaultDatesError ===
         EPageDefaultDatesErrorType.DEFAULT_DATES_INVALID
       ) {
-        router.push(`/alojamientos/${name}`);
+        Router.push(`/alojamiento/${name}`);
         return;
       }
     }
-  }, [pageDefaultDatesError, router, name]);
+  }, [pageDefaultDatesError, name]);
+
+  const userCanSubmitInquiry = useMemo(() => {
+    return bookeableValidPeriodState.dateSelected && !bookeableValidPeriodState.error && name && userInquiryDataState.userInquiry && !userInquiryDataState.error;
+  },[bookeableValidPeriodState.dateSelected, bookeableValidPeriodState.error, name, userInquiryDataState.error, userInquiryDataState.userInquiry])
 
   // callback to post user_inqury. Checks for no errors and data should be available
   const postInquiry = useCallback(() => {
-      if (datesSelected && name && userContactData && pageErrors.length === 0) {
-        setIsPageProcessing(true);
-        postUserInquiry({
-          apartment: name,
-          period: datesSelected,
-          userContact: userContactData,
-          apartmentLink: window.location.href.replace("reserva","alojamiento")
-        } as UserInquiryRequest).then((resp) => { 
+    if (userCanSubmitInquiry) {
+      trackEvent("user_requested_info",  { apartment: name })
+      setIsPageProcessing(true);
+      postUserInquiry({
+        apartment: name,
+        period: bookeableValidPeriodState.dateSelected ,
+        userContact: userInquiryDataState.userInquiry,
+        apartmentLink: window.location.href.replace("reserva", "alojamiento"),
+      } as UserInquiryRequest)
+        .then((resp) => {
           if (resp.isError || resp.status === GenericResponseStatus.ERROR) {
-            setPageErrors((prev) => prev.concat(EApartmentBookingErrorType.INQUIRY_ACTION_FAILED));
+            setUserInquiryDataState((prev) => ({...prev, error: EApartmentBookingErrorType.USER_INQUIRY_NOT_AVAILABLE}))
           } else {
             setUserInquiryRequestSent(true);
           }
-        }).finally(() =>  setIsPageProcessing(false))
-      }
-  }, [datesSelected, name, pageErrors, userContactData])
-
+        })
+        .finally(() => setIsPageProcessing(false));
+    }
+  }, [bookeableValidPeriodState, name, userInquiryDataState, userCanSubmitInquiry]);
 
   return (
     <Box>
@@ -206,15 +273,7 @@ const Page = (apartmentData: IBookingApartmentProps) => {
             variant="ghost"
             aria-label="Atras"
             isLoading={isPageProcessing}
-            onClick={() => {
-              setIsPageProcessing(true);
-              //removes param bookApt that comes into query
-              const { bookApt, ...restQuery } = router.query;
-              router.push({
-                pathname: `/alojamiento/${name}`,
-                query: restQuery,
-              });
-            }}
+            onClick={onBackAction}
             _focus={{ boxShadow: "none" }}
             icon={<ArrowBackIcon />}
           />
@@ -236,30 +295,44 @@ const Page = (apartmentData: IBookingApartmentProps) => {
             alignItems={"flex-start"}
             direction="column"
           >
-            {!isMobile && <Divider mb={4}/> }
+            {!isMobile && <Divider mb={4} />}
             <TripSection
               w={"full"}
               numGuests={maxPeople}
               bookingPeriod={
-                datesSelected
-                  ? [datesSelected.startDate, datesSelected.endDate]
+                bookeableValidPeriodState.dateSelected
+                  ? [bookeableValidPeriodState.dateSelected.startDate, bookeableValidPeriodState.dateSelected.endDate]
                   : defaultDates
               }
-              onEditDates={() =>
-                dispatch({
-                  type: IDrawerActionTypes.SHOW_EDIT_DATES,
-                  payload: datesSelected,
-                })
-              }
-              invalidDates={
-                !!pageErrors.find((err) => err ===EApartmentBookingErrorType.SELECTED_DATES_NOT_AVAILABLE)
-              }
+              onEditDates={onEditDates}
+              invalidDates={!!bookeableValidPeriodState.error}
             />
-            <Divider my={6}/>
-            {notification ? <NotificationSection notification={notification} m="auto" maxWidth={"sm"} minHeight={72} /> : <ContactUs onChange={onUserConctactChange} /> }
-      
-            <Divider my={6}/>
-            {!userInquiryRequestSent && <Button isLoading={isPageProcessing} size={"lg"} alignSelf={{base: "center", md: "flex-start"}} variant="action" disabled={pageErrors.length !== 0 || userInquiryRequestSent} mb={4} onClick={postInquiry}>Envia tu consulta</Button>}
+            <Divider my={6} />
+            {notification ? (
+              <NotificationSection
+                notification={notification}
+                m="auto"
+                maxWidth={"sm"}
+                minHeight={72}
+              />
+            ) : (
+              <ContactUs onChange={onUserConctactChange} />
+            )}
+
+            <Divider my={6} />
+            {!userInquiryRequestSent && (
+              <Button
+                isLoading={isPageProcessing}
+                size={"lg"}
+                alignSelf={{ base: "center", md: "flex-start" }}
+                variant="action"
+                disabled={!userCanSubmitInquiry}
+                mb={4}
+                onClick={postInquiry}
+              >
+                Envia tu consulta
+              </Button>
+            )}
           </Flex>
           <Box
             w={{ base: "100%", md: "35%" }}
@@ -304,7 +377,7 @@ const Page = (apartmentData: IBookingApartmentProps) => {
 };
 
 const BookingApartment = (apartmentData: IBookingApartmentProps) => {
-  const canonicalPath = process.env.NEXT_PUBLIC_ORIGIN_PATH
+  const canonicalPath = process.env.NEXT_PUBLIC_ORIGIN_PATH;
   return (
     <>
       <Head>
@@ -314,9 +387,20 @@ const BookingApartment = (apartmentData: IBookingApartmentProps) => {
           content={`Reserva ${apartmentData.displayName} - ${apartmentData.mainFeature} - ${apartmentData.rooms} ambientes`}
         />
         <link rel="icon" href="/favicon.ico" />
-        <meta key="og-title" property="og:title" content={`Reserva ${apartmentData.displayName} - ${apartmentData.mainFeature} - Cala Cabana: Servicio de alojamiento y alquileres vacacionales en Tanti, Cordoba`} />
-        <meta key="og-url" property="og:url" content={`${canonicalPath}/reserva/${apartmentData.name}`} />
-        <meta property="og:image" content={`${canonicalPath}${apartmentData.images.square[0].src}`} />
+        <meta
+          key="og-title"
+          property="og:title"
+          content={`Reserva ${apartmentData.displayName} - ${apartmentData.mainFeature} - Cala Cabana: Servicio de alojamiento y alquileres vacacionales en Tanti, Cordoba`}
+        />
+        <meta
+          key="og-url"
+          property="og:url"
+          content={`${canonicalPath}/reserva/${apartmentData.name}`}
+        />
+        <meta
+          property="og:image"
+          content={`${canonicalPath}${apartmentData.images.square[0].src}`}
+        />
         <meta
           key="og-description"
           property="og:description"

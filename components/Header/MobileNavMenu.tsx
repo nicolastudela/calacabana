@@ -14,11 +14,12 @@ import {
   Text,
 } from "@chakra-ui/react";
 import { NextRouter, useRouter } from "next/router";
-import { useState } from "react";
+import { useCallback, useState } from "react";
 import { INavLink } from "@/types/types";
 import MobileHeadMaster from "@/components/Header/MobileHeadMaster";
 import MENU_LINKS from "@/components/Header/navLinks";
 import theme from "../../theme";
+import { trackEvent } from "@/lib/gtag";
 
 interface NavLinkProps extends LinkProps {
   item: INavLink;
@@ -27,6 +28,10 @@ interface NavLinkProps extends LinkProps {
 
 const NavLink = ({ item, currentPath, ...props }: NavLinkProps) => {
   const [selected, setSelected] = useState(false);
+  const onClickAction = useCallback(() => {
+    trackEvent("mobile_nav",  { link: item.link })
+    setSelected(true)
+  },[item.link])
   const bgColor =
     !!currentPath && currentPath === item.link ? theme.colors.brand[700] : "";
   const filter = selected ? "blur(1px)" : "";
@@ -39,7 +44,7 @@ const NavLink = ({ item, currentPath, ...props }: NavLinkProps) => {
         {...{ bgColor }}
         {...{ filter }}
         {...props}
-        onClick={() => setSelected(true)}
+        onClick={onClickAction}
       >
         {item.label}
       </Link>

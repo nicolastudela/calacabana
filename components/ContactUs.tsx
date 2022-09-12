@@ -7,6 +7,7 @@ import { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { TextAreaFieldWithRef as TextAreaField } from "@/components/TextArea";
 import { TextFieldWithRef as TextField } from "@/components/TextField";
+import { trackEvent } from "@/lib/gtag";
 
 const t = (key: string, args?: Record<string, string>) => {
   switch (key) {
@@ -40,9 +41,9 @@ const ContactUs = ({ onChange }: ContactUsProps) => {
   const {
     register,
     getValues,
-    formState: { isValidating, isValid, errors },
+    formState: { isValidating, isValid, errors, isDirty },
   } = useForm<FormValues>({
-    mode: "onChange",
+    mode: "onBlur",
     defaultValues: {
       firstName: null,
       lastName: null,
@@ -53,14 +54,20 @@ const ContactUs = ({ onChange }: ContactUsProps) => {
   });
 
   useEffect(() => {
-    if (isValid && !isValidating) {
+    if (isDirty && isValid && !isValidating) {
       const formValues = getValues();
       if (formValues.body && formValues.firstName && formValues.lastName && formValues.email && formValues.phone )
         onChange(formValues as UserInquiry);
-    } else if (!isValid && !isValidating)  {
+    } else if (isDirty && !isValid && !isValidating)  {
       onChange(null);
     }
-  }, [getValues, isValid, isValidating, onChange]);
+  }, [getValues, isValid, isDirty, isValidating, onChange]);
+
+  useEffect(() => {
+    if (isDirty) {
+      trackEvent("user_started_filling_inquiry");
+    }
+  },[isDirty])
 
   return (
     <Flex w={"full"} direction="column" gap={4}>
