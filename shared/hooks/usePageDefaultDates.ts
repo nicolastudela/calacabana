@@ -77,7 +77,7 @@ const usePageDefaultDates = ({
     }
   }, [queryDefaultDates, excludedDatesRanges]);
 
-  return { defaultDates, bookeableDefaultDates, pageDefaultDatesError };
+  return { defaultDates, bookeableDefaultDates, pageDefaultDatesError }; 
 };
 
 export default usePageDefaultDates;

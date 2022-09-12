@@ -1,8 +1,29 @@
 // import { ChevronDownIcon } from "@chakra-ui/icons";
-import { Menu, MenuButton, MenuList, MenuItem, Link } from "@chakra-ui/react";
+import { Menu, MenuButton, MenuList, MenuItem, Link, LinkProps } from "@chakra-ui/react";
 import { INavMenu } from "@/types/types";
+import { INavLink } from "@/types/types";
 
 import NextLink from "next/link"
+import { trackEvent } from "@/lib/gtag";
+import { useCallback } from "react";
+
+export interface DesktopNavLinkProps extends LinkProps, INavLink{}
+
+export const DesktopNavLink = ({link, label, isMenu, ...rest}: DesktopNavLinkProps) => {
+  const onClickAction = useCallback(() => {
+    trackEvent("desktop_nav",  { link })
+  },[link])
+  return (
+    <NextLink href={link} passHref>
+      <Link
+        {...rest}
+        onClick={onClickAction}
+      >
+        {label}
+      </Link>
+    </NextLink>
+  );
+}
 
 const DesktopNavMenu: React.FC<{ menu: INavMenu }> = ({ menu }) => (
   //TODO Menu component is INSANLY BIG. weigths like 50kb. Should replace it with some ad-hoc component o just lazy load it when the user hover on the link
@@ -15,11 +36,9 @@ const DesktopNavMenu: React.FC<{ menu: INavMenu }> = ({ menu }) => (
       {menu.label}
     </MenuButton>
     <MenuList>
-      {menu.items.map(({ label, link }) => (
-        <MenuItem key={label}>
-          <NextLink href={link} passHref>
-            <Link>{label}</Link>
-          </NextLink>
+      {menu.items.map((navLink: INavLink) => (
+        <MenuItem key={navLink.label}>
+          <DesktopNavLink {...navLink} />
         </MenuItem>
       ))}
     </MenuList>

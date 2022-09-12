@@ -309,9 +309,7 @@ const getStaticProps: GetStaticProps<IHomePageProps> = async ({}) => {
       } as AparmentCardProps)
   );
 
-  let props: IHomePageProps | null = null;
   const reviews = await fetchOutstandingReviews()
-  // props = { apartments: apartments, reviews };
 
   return {
     props: { apartments: apartments, reviews },

@@ -35,7 +35,7 @@ const HeroGrid = ({ images, onShowAllPicks }: HeroGridProps) => {
               maxW={"1000px"}
               key={alt}
             >
-              <Image src={src} layout="fill" alt={alt} />
+              <Image src={src} layout="fill" alt={alt} priority/>
             </GridItem>
           ) : (
             <GridItem position="relative" display="grid" maxW={"1000px"} key={alt}>
