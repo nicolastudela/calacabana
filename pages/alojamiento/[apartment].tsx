@@ -16,7 +16,7 @@ import Carousel from "@/components/Carousel";
 
 import HeroGrid from "@/components/HeroGrid";
 import dynamic from "next/dynamic";
-import { useCallback, useEffect, useMemo, useReducer, useRef, useState } from "react";
+import { Suspense, useCallback, useEffect, useMemo, useReducer, useRef, useState } from "react";
 import ApartmentTitle from "@/components/apartment/ApartmentTitle";
 import { BsFillDoorOpenFill } from "react-icons/bs";
 import { GiCctvCamera, GiHomeGarage } from "react-icons/gi";
@@ -37,13 +37,14 @@ import PageDrawer from "@/components/PageDrawer";
 import useSWR from "swr";
 import aparmentBookingsFetcher from "@/shared/fetchers/aparmentBookingsFetcher";
 import usePageDefaultDates from "@/shared/hooks/usePageDefaultDates";
-import Map from "@/components/Map";
 
 import { useRouter } from "next/router";
 import { IDrawerActionTypes } from "@/types/types";
 import Reviews from "@/components/Reviews";
 import fetchOutstandingReviews from "@/shared/fetchers/fetchOutstandingReviews";
 import { trackEvent } from "@/lib/gtag";
+import usePageScroll from "@/shared/hooks/usePageScroll";
+import LoadingMapContainer from "@/components/LoadingMapContainer";
 
 const VerticalGrid = dynamic(() => import("../../components/VerticalGallery"));
 
@@ -55,6 +56,11 @@ const BookingDatesLoader = () =>
   import("../../components/booking/BookingDatesWithRef");
 
 const BookingDates = dynamic(BookingDatesLoader, {
+  suspense: true,
+});
+
+const Map = dynamic(
+  () => import("../../components/Map"), {
   suspense: true,
 });
 
@@ -92,6 +98,8 @@ const Page = (apartmentData: IApartmentProps) => {
     });
 
   const datePickerRef = useRef<HTMLDivElement | null>(null);
+
+  const scrollTrigger = usePageScroll();
 
   // use reducer to get dispachers to be used on CTAs, where some CTAs will update whats shown on the PageDrawer
   const reducer = useCallback(
@@ -405,7 +413,7 @@ const Page = (apartmentData: IApartmentProps) => {
             )}
           </Box>
         )}
-        <Map />
+        {scrollTrigger && <Suspense fallback={<LoadingMapContainer/>}><Map /></Suspense>}
         <PageDrawer
           componentToShow={componentToShow}
           onHide={() => dispatch({ type: "hide" })}

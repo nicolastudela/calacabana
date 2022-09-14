@@ -1,4 +1,4 @@
-import { AspectRatio, AspectRatioProps, Box, Flex, Heading } from "@chakra-ui/react";
+import { AspectRatio, AspectRatioProps, Box, Flex, Heading, Spinner } from "@chakra-ui/react";
 
 const Map = ({...rest}: AspectRatioProps) => {
   return (

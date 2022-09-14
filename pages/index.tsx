@@ -6,11 +6,10 @@ import AparmentCard, {
   AparmentCardProps,
 } from "@/components/apartment/AparmentCard";
 import Carousel from "@/components/Carousel";
-import Map from "@/components/Map";
 
 import aparmentsData from "../shared/apartmentsData";
 import HeroGrid from "@/components/HeroGrid";
-import { useCallback, useReducer } from "react";
+import { Suspense, useCallback, useReducer } from "react";
 import { IDrawerActionTypes } from "@/types/types";
 import dynamic from "next/dynamic";
 
@@ -18,6 +17,8 @@ import PageDrawer from "@/components/PageDrawer";
 import { IReview } from "@/types/shared";
 import fetchOutstandingReviews from "@/shared/fetchers/fetchOutstandingReviews";
 import Reviews from "@/components/Reviews";
+import usePageScroll from "@/shared/hooks/usePageScroll";
+import LoadingMapContainer from "@/components/LoadingMapContainer";
 
 const VerticalGrid = dynamic(() => import("../components/VerticalGallery"));
 
@@ -160,6 +161,11 @@ const images = {
   ],
 };
 
+const Map = dynamic(
+  () => import("../components/Map"), {
+  suspense: true,
+});
+
 const Page = ({ apartments, reviews }: IHomePageProps) => {
   const isMobile = useBreakpointValue({ base: true, md: false });
 
@@ -195,6 +201,7 @@ const Page = ({ apartments, reviews }: IHomePageProps) => {
     []
   );
   const [componentToShow, dispatch] = useReducer(reducer, null);
+  const scrollTrigger = usePageScroll();
 
   return (
     <>
@@ -255,7 +262,7 @@ const Page = ({ apartments, reviews }: IHomePageProps) => {
                   payload: reviews,
                 })} />
         <Divider my={8} mb={4} />                
-        <Map />
+        {scrollTrigger && <Suspense fallback={<LoadingMapContainer/>}><Map /></Suspense>}
         <PageDrawer
           componentToShow={componentToShow}
           onHide={() => dispatch({ type: "hide" })}
