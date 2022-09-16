@@ -3,7 +3,6 @@ import {
   FaRegSnowflake,
   FaUtensils,
   FaBed,
-  FaTemperatureHigh,
   FaPumpSoap,
   FaShower,
   FaSwimmingPool,
@@ -16,14 +15,15 @@ import {
   GiPillow,
   GiWaterDrop,
   GiChickenOven,
-  GiGasStove,
+  GiRiceCooker,
   GiRockingChair,
+  GiFireplace,
+  GiCampfire
 } from "react-icons/gi";
 import {
   MdOutlineCoffeeMaker,
-  MdOutdoorGrill,
+  MdPets,
   MdOutlineAir,
-  MdOutlineDinnerDining,
   MdOutlineLocalLaundryService,
   MdLocalParking,
   MdOutlineBeachAccess,
@@ -40,6 +40,12 @@ import {
 } from "react-icons/cg";
 import { BsDoorOpen, BsShieldShaded } from "react-icons/bs";
 
+
+import { RiBuilding3Fill } from "react-icons/ri";
+
+
+
+
 //FIXME: This is increasing bundle with in 100k? NEED to be fixed, it can return files paths (paths icons files)
 const amenityIconMapper = (amenity: AMENITY) => {
   switch (amenity) {
@@ -48,7 +54,7 @@ const amenityIconMapper = (amenity: AMENITY) => {
     case AMENITY.BACKYARD:
       return GiFlowerPot;
     case AMENITY.BBQ_GRILL:
-      return MdOutdoorGrill;
+      return GiCampfire;
     case AMENITY.BED_LINENS:
       return FaBed;
     case AMENITY.BIDET:
@@ -70,7 +76,7 @@ const amenityIconMapper = (amenity: AMENITY) => {
     case AMENITY.HAIR_DRYER:
       return MdOutlineAir;
     case AMENITY.HEATING:
-      return FaTemperatureHigh;
+      return GiFireplace;
     case AMENITY.HOT_WATER:
       return GiWaterDrop;
     case AMENITY.HOT_WATER_KETTLE:
@@ -78,7 +84,7 @@ const amenityIconMapper = (amenity: AMENITY) => {
     case AMENITY.IRON:
       return MdOutlineIron;
     case AMENITY.KITCHEN:
-      return GiGasStove;
+      return GiRiceCooker;
     case AMENITY.OUTDOOR_DINING_AREA:
       return MdOutlineDeck;
     case AMENITY.OUTDOOR_FURNITURE:
@@ -99,6 +105,8 @@ const amenityIconMapper = (amenity: AMENITY) => {
       return FaPumpSoap;
     case AMENITY.SHARED_POOL:
       return FaSwimmingPool;
+    case AMENITY.POOL:
+      return FaSwimmingPool;    
     case AMENITY.SHOWER:
       return FaShower;
     case AMENITY.SIERRAS_VIEW:
@@ -109,6 +117,10 @@ const amenityIconMapper = (amenity: AMENITY) => {
       return CgSmartHomeWashMachine;
     case AMENITY.WIFI:
       return MdWifi;
+    case AMENITY.PET_FRIENDLY:
+      return MdPets;
+    case AMENITY.ALL_PROPERTY:
+      return RiBuilding3Fill;                
     default:
       return null;
   }

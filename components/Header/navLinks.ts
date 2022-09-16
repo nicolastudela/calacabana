@@ -2,7 +2,7 @@ import { INav, INavLink } from "../../types/types";
 
 const NAV_LINKS: INav[] = [
   {
-    label: "Hospedaje",
+    label: "Alojamiento",
     isMenu: true,
     items: [
       {

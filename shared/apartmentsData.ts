@@ -1,3 +1,4 @@
+import { group } from "console";
 import {
   AMENITIES_GROUP,
   AMENITY,
@@ -5,7 +6,7 @@ import {
   APARMENTS_TYPE,
   IAparmentAmenitiesGroup,
   IApartmentData,
-} from "../types/shared";
+} from "@/types/shared";
 
 const sharedAparmentAmenities: IAparmentAmenitiesGroup[] = [
   {
@@ -46,16 +47,10 @@ const sharedAparmentAmenities: IAparmentAmenitiesGroup[] = [
       },
       {
         name: AMENITY.ESSENTIALS,
-      },
-      {
-        name: AMENITY.ESSENTIALS,
         description: "Toallas, sabanas, jabon y papel higienico",
       },
       {
         name: AMENITY.BED_LINENS,
-      },
-      {
-        name: AMENITY.ROOM_DARKENING_SHADES,
       },
       {
         name: AMENITY.ROOM_DARKENING_SHADES,
@@ -169,9 +164,34 @@ const sharedAparmentAmenities: IAparmentAmenitiesGroup[] = [
         description: "Los huéspedes pueden usar la piscina y solarium",
         highlighted: true,
       },
+
     ],
   },
 ];
+
+const calacabana_paking_and_facilities =   {
+  name: AMENITIES_GROUP.PARKING_AND_FACILITIES,
+  amenities: [
+    {
+      name: AMENITY.PARKING,
+      description: "Estacionamiento bajo techo",
+    },
+    {
+      name: AMENITY.POOL,
+      description: "Los huéspedes pueden usar la piscina y solarium",
+      highlighted: true,
+    },
+    {
+      name: AMENITY.PET_FRIENDLY,
+      description: "El alojamiento acepta tus mascotas",
+      highlighted: true,
+    },
+    {
+      name: AMENITY.ALL_PROPERTY,
+      highlighted: true,
+    },
+  ],
+}
 
 export const APARTMENTS_BUILD = [APARMENTS_NAME.CABANA, APARMENTS_NAME.CALA, APARMENTS_NAME.CALACABANA];
 
@@ -415,7 +435,7 @@ const APARMENTS_DATA = {
     beds: "6",
     maxPeople: "10",
     rooms: "5",
-    amenities: sharedAparmentAmenities,
+    amenities: sharedAparmentAmenities.filter(((group) => group.name !== AMENITIES_GROUP.PARKING_AND_FACILITIES)).concat(calacabana_paking_and_facilities),
     description:
       'Cuentas con todo el complejo<br/> ' + 
       '<a style="text-decoration: underline;" href="cala">Alojamiento Cala</a><br/><a style="text-decoration: underline;" href="cabana">Alojamiento Cabana</a><br/><br/>' +

@@ -247,13 +247,15 @@ const Page = (apartmentData: IApartmentProps) => {
     <Box>
       <Layout>
         {isMobile ? (
-          <a
-            onClick={() => {
-              dispatch({ type: IDrawerActionTypes.SHOW_ALL_PICS });
-            }}
-          >
-            <Carousel aptName="cala" images={images.square} />
-          </a>
+          <Box maxHeight={{base: "none", md:"500px"}} maxWidth={{base: "none", md: "500px"}}>
+            <a
+              onClick={() => {
+                dispatch({ type: IDrawerActionTypes.SHOW_ALL_PICS });
+              }}
+            >
+              <Carousel aptName="cala" images={images.square} />
+            </a>
+          </Box>
         ) : (
           <HeroGrid
             onShowAllPicks={onShowAllPicks}
