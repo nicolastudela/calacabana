@@ -3,6 +3,7 @@ import Carousel, { CarouselProps as CustomCarouselProps } from "nuka-carousel";
 import {
   useBreakpointValue,
   IconButton,
+  Box,
 } from "@chakra-ui/react";
 
 import { ArrowBackIcon, ArrowForwardIcon } from "@chakra-ui/icons";
@@ -31,45 +32,45 @@ const CustomCarousel = ({
 }: CarouselProps) => {
   const isMobile = useBreakpointValue({ base: true, md: false });
   return (
-    <Carousel
-      dragThreshold={0.3}
-      renderCenterLeftControls={({ previousSlide }) =>
-        isMobile ? (
-          <></>
-        ) : (
-          <IconButton
-            aria-label={
-              aptName ? `anterior-foto-alojamiento-${aptName}` : "anterior-foto"
-            }
-            icon={<ArrowBackIcon />}
-            onClick={preventDefaultClickHandlerWrapper(previousSlide)}
-          />
-        )
-      }
-      renderCenterRightControls={({ nextSlide }) =>
-        isMobile ? (
-          <></>
-        ) : (
-          <IconButton
-            aria-label={
-              aptName ? `proxima-foto-alojamiento-${aptName}` : "proxima-foto"
-            }
-            icon={<ArrowForwardIcon />}
-            onClick={preventDefaultClickHandlerWrapper(nextSlide)}
-          />
-        )
-      }
-      defaultControlsConfig={{
-        pagingDotsStyle: { fill: "white" },
-      }}
-      wrapAround={true}
-      style={roundedBorder ? { borderRadius: "25px" } : {}}
-    >
-      {images &&
-        images.map(({ src, alt, width, height }, index) => (
-          <Image key={index} src={src} alt={alt} layout="responsive" width={"100%"} height={"100%"} priority={index === 0 ? true : false } />
-        ))}
-    </Carousel>
+      <Carousel
+        dragThreshold={0.3}
+        renderCenterLeftControls={({ previousSlide }) =>
+          isMobile ? (
+            <></>
+          ) : (
+            <IconButton
+              aria-label={
+                aptName ? `anterior-foto-alojamiento-${aptName}` : "anterior-foto"
+              }
+              icon={<ArrowBackIcon />}
+              onClick={preventDefaultClickHandlerWrapper(previousSlide)}
+            />
+          )
+        }
+        renderCenterRightControls={({ nextSlide }) =>
+          isMobile ? (
+            <></>
+          ) : (
+            <IconButton
+              aria-label={
+                aptName ? `proxima-foto-alojamiento-${aptName}` : "proxima-foto"
+              }
+              icon={<ArrowForwardIcon />}
+              onClick={preventDefaultClickHandlerWrapper(nextSlide)}
+            />
+          )
+        }
+        defaultControlsConfig={{
+          pagingDotsStyle: { fill: "white" },
+        }}
+        wrapAround={true}
+        style={roundedBorder ? { borderRadius: "25px" } : {}}
+      >
+        {images &&
+          images.map(({ src, alt, width, height }, index) => (
+            <Image key={index} src={src} alt={alt} layout="responsive" width={width} height={height} priority={index === 0 ? true : false } />
+          ))}
+      </Carousel>
   );
 };
 

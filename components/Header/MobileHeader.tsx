@@ -2,6 +2,8 @@ import { ArrowBackIcon, HamburgerIcon } from "@chakra-ui/icons";
 import {
   useDisclosure,
   IconButton,
+  BoxProps,
+  Box,
 } from "@chakra-ui/react";
 import dynamic from "next/dynamic";
 import React, { useCallback, useState } from "react";
@@ -12,7 +14,7 @@ const MobileNavMenu = dynamic(
 );
 
 
-const MobileHeader = () => {
+const MobileHeader = ({...rest}: BoxProps) => {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [ instanciated, setInstanciated] = useState(false);
 
@@ -24,7 +26,7 @@ const MobileHeader = () => {
   }, [onOpen, instanciated])
 
   return (
-    <>
+    <Box {...rest}>
       { instanciated && <MobileNavMenu isOpen={isOpen} onClose={onClose} onOpen={onClose} />}
       <MobileHeadMaster as="header">
         <IconButton
@@ -36,7 +38,7 @@ const MobileHeader = () => {
           icon={<HamburgerIcon />}
         />
       </MobileHeadMaster>
-    </>
+    </Box>
   );
 };
 

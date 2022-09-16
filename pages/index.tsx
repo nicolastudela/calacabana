@@ -1,4 +1,4 @@
-import { Divider, Flex, Heading, useBreakpointValue } from "@chakra-ui/react";
+import { Box, Divider, Flex, Heading, useBreakpointValue } from "@chakra-ui/react";
 import type { GetStaticProps } from "next";
 import Head from "next/head";
 import Layout from "@/components/Layout";
@@ -39,8 +39,8 @@ const images = {
     {
       src: "/images/homepage/square/3-homepage.jpeg",
       alt: "Servicio de hospedaje Calacabana - vista desde cascada pileta",
-      width: 1280,
-      height: 853,
+      width: 450,
+      height: 450,
     },
     {
       src: "/images/homepage/square/4-homepage.jpeg",
@@ -214,35 +214,36 @@ const Page = ({ apartments, reviews }: IHomePageProps) => {
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <Layout>
-        {isMobile ? (
-          <a
-            onClick={() => {
-              dispatch({ type: IDrawerActionTypes.SHOW_ALL_PICS });
-            }}
-          >
-            <Carousel images={images.square} />
-          </a>
-        ) : (
-          <HeroGrid
-            onShowAllPicks={() => {
-              // onOpen();
-              // openDrawerAndDispatch({ type: "showAllPics" });
-              dispatch({ type: IDrawerActionTypes.SHOW_ALL_PICS });
-            }}
-            images={images.wide}
-          />
-        )}
-        {isMobile && (
+          {isMobile ? (
+            <Box maxHeight={{base: "none", md:"500px"}} maxWidth={{base: "none", md: "500px"}}>
+              <a
+                onClick={() => {
+                  dispatch({ type: IDrawerActionTypes.SHOW_ALL_PICS });
+                }}
+              >
+                <Carousel images={images.square} />
+              </a>
+            </Box>
+          ) : (
+            <HeroGrid
+              onShowAllPicks={() => {
+                // onOpen();
+                // openDrawerAndDispatch({ type: "showAllPics" });
+                dispatch({ type: IDrawerActionTypes.SHOW_ALL_PICS });
+              }}
+              images={images.wide}
+            />
+          )}
           <Heading
             as="h2"
             size="xl"
             fontFamily={"'MonteCarlo', cursive"}
             py={2}
             textAlign="center"
+            display={{base: "block", md:"none"}}
           >
             un mirador de las sierras, en las sierras
           </Heading>
-        )}
         <Flex
           width="100%"
           flexWrap={"wrap"}

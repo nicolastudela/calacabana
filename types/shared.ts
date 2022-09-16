@@ -77,12 +77,15 @@ export enum AMENITY {
   RESORT_ACCESS = "Acceso al complejo turístico",
   REFRIGATOR = "Heladera",
   SHARED_POOL = "Piscina compartida",
+  POOL = "Piscina",
+  PET_FRIENDLY = "Pet friendly",
   SIERRAS_VIEW = "Vistas a las sierras",
   SHOWER = "Ducha",
   SHAMPOO = "Shampoo",
   TV = "Televisor",
   WASHER = "Lavarropas",
   WIFI = "WIFI",
+  ALL_PROPERTY = "Todo el complejo",
 }
 
 export interface IAparmentAmenity {
