@@ -57,11 +57,13 @@ const BookingDatesLoader = () =>
 
 const BookingDates = dynamic(BookingDatesLoader, {
   suspense: true,
+  ssr: false,
 });
 
 const Map = dynamic(
   () => import("../../components/Map"), {
   suspense: true,
+  ssr: false,
 });
 
 export type IApartmentProps = IApartmentData & {
@@ -308,7 +310,7 @@ const Page = (apartmentData: IApartmentProps) => {
               textDecoration="underline"
               variant="link"
               onClick={onShowExpandedDescription}
-            >
+              display={{base:"block", md:"none"}}>
               Mostrar mas
             </Button>
             <Divider my={4} />

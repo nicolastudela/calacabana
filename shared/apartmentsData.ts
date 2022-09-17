@@ -200,7 +200,12 @@ const APARMENTS_DATA = {
     amenities: sharedAparmentAmenities,
     beds: "4",
     description:
-      'Contrary t popular belief, Lorem Ipsum is not simply random text. It has roots in a piece of classical Latin literature from 45 BC, making it over 2000 years old.<br/> Richard McClintock, a Latin professor at Hampden-Sydney College in Virginia, looked up one of the more obscure Latin words, consectetur, from a Lorem Ipsum passage, and going through the cites of the word in classical literature, discovered the undoubtable source. <br/> <br/> Lorem Ipsum comes from sections 1.10.32 and 1.10.33 of "de Finibus Bonorum et Malorum" (The Extremes of Good and Evil) by Cicero, written in 45 BC. This book is a treatise on the theory of ethics, very popular during the Renaissance. The first line of Lorem Ipsum, "Lorem ipsum dolor sit amet..", comes from a line in section 1.10.32. The standard chunk of Lorem Ipsum used since the 1500s is reproduced below for those interested. Sections 1.10.32 and 1.10.33 from "de Finibus Bonorum et Malorum" <br/> by Cicero are also reproduced in their exact original form, accompanied by English versions from the 1914 translation by H. Rackham.',
+      'Ubicado en la planta alta, especial para apreciar las sierras. Cuenta con una hermosa terraza. Especial para apreciar la caida del sol.<br/>' +
+      'Las vistas del apartamento son hermosas, encontraras fascinante poder despertarse y poder apreciar de las sierras<br/><br/>' +
+      'En el living del departamento puedes disfrutar de un comodo sofa donde puedes ver la TV y disfrutar del sistema de sonido.</br>El living comedor cuenta con salamandra en caso de que necesites de un poco de calor . Así como airea-condicionado si hace mucho calor.<br/><br/>' +
+      'Una cocina completa, con maquina de cafe y totalmente equipada para que puedas tener una estancia reconfortante.<br/><br/>' +
+      'Cuenta con 2 habitaciones, una de ellas cuenta con armario, aire-acondicionado. El baño cuenta con ducha y bidet.<br/><br/>' +
+      'Nos esforzamos al detalle, y le dimos terminaciones de calidad para que tu estadia sea lo mas confortable posible',
     images: {
       wide: [
         {
@@ -315,7 +320,12 @@ const APARMENTS_DATA = {
     amenities: sharedAparmentAmenities,
     beds: "2",
     description:
-      'Contrary to popular belief, Lorem Ipsum is not simply random text. It has roots in a piece of classical Latin literature from 45 BC, making it over 2000 years old.<br/> Richard McClintock, a Latin professor at Hampden-Sydney College in Virginia, looked up one of the more obscure Latin words, consectetur, from a Lorem Ipsum passage, and going through the cites of the word in classical literature, discovered the undoubtable source. <br/> <br/> Lorem Ipsum comes from sections 1.10.32 and 1.10.33 of "de Finibus Bonorum et Malorum" (The Extremes of Good and Evil) by Cicero, written in 45 BC. This book is a treatise on the theory of ethics, very popular during the Renaissance. The first line of Lorem Ipsum, "Lorem ipsum dolor sit amet..", comes from a line in section 1.10.32. The standard chunk of Lorem Ipsum used since the 1500s is reproduced below for those interested. Sections 1.10.32 and 1.10.33 from "de Finibus Bonorum et Malorum" <br/> by Cicero are also reproduced in their exact original form, accompanied by English versions from the 1914 translation by H. Rackham.',
+    'Ubicado en la planta baja, con dos accesos. Uno desde la entrada principal junto al garage y otro desde el otro tendrás acceso direct al jardin, solarium y la pileta.<br/>' +
+    'Este espacio nos encanta, puedes disfrutar un buen desayuno con vista a las sierras, asi como por las noches cocinar rico algo en la parrilla.<br/><br/>' +
+    'En el living del departamento puedes disfrutar de un comodo sofa donde puedes ver la TV y disfrutar del sistema de sonido.</br>El living comedor cuenta con salamandra en caso de que necesites de un poco de calor . Así como airea-condicionado si hace mucho calor.<br/><br/>' +
+    'Una cocina completa, con maquina de cafe y totalmente equipada para que puedas tener una estancia reconfortante.<br/><br/>' +
+    'Cuenta con 2 habitaciones, una de ellas cuenta con armario, aire-acondicionado. El baño cuenta con ducha y bidet.<br/><br/>' +
+    'Nos esforzamos al detalle, y le dimos terminaciones de calidad para que tu estadia sea lo mas confortable posible',
     images: {
       wide: [
         {
@@ -429,7 +439,7 @@ const APARMENTS_DATA = {
   [APARMENTS_NAME.CALACABANA]: {
     type: APARMENTS_TYPE.COMPOUND,
     mainFeature:
-      "Tode el complejo ( 2 departamentos ) para vos",
+      "Tode el complejo ( 2 departamentos )",
     name: APARMENTS_NAME.CALACABANA,
     displayName: `Cala + Cabana `,
     beds: "6",
@@ -439,8 +449,9 @@ const APARMENTS_DATA = {
     description:
       'Cuentas con todo el complejo<br/> ' + 
       '<a style="text-decoration: underline;" href="cala">Alojamiento Cala</a><br/><a style="text-decoration: underline;" href="cabana">Alojamiento Cabana</a><br/><br/>' +
-      'Al tener toda la propiedad para ti, es posible que traer tus mascotas!!<br/><br/>' + 
-      'It has roots in a piece of classical Latin literature from 45 BC, making it over 2000 years old.<br/> Richard McClintock, a Latin professor at Hampden-Sydney College in Virginia, looked up one of the more obscure Latin words, consectetur, from a Lorem Ipsum passage, and going through the cites of the word in classical literature, discovered the undoubtable source. <br/> <br/> Lorem Ipsum comes from sections 1.10.32 and 1.10.33 of "de Finibus Bonorum et Malorum" (The Extremes of Good and Evil) by Cicero, written in 45 BC. This book is a treatise on the theory of ethics, very popular during the Renaissance. The first line of Lorem Ipsum, "Lorem ipsum dolor sit amet..", comes from a line in section 1.10.32. The standard chunk of Lorem Ipsum used since the 1500s is reproduced below for those interested. Sections 1.10.32 and 1.10.33 from "de Finibus Bonorum et Malorum" <br/> by Cicero are also reproduced in their exact original form, accompanied by English versions from the 1914 translation by H. Rackham.',
+      'El alojamiento CALABANA AR, situado en el Barrio Keokén, Tanti, provee la tranquilidad necesaria que da sentirse seguro, alejado de la ciudad, en contacto con la naturaleza pero cerca de todo.<br/><br/>' + 
+      'El aire puro de las sierras en combinación de las facilidades del alojamiento hacen una composición perfecta para que puedas relajarte disfrutando de una espectacular vista a las sierras.<br/><br/>' +
+      'Los apartamentos están diseñados al detalle, con terminaciones de calidad y equipados con todo lo que necesitas.',
     images: {
         wide: [
           {
