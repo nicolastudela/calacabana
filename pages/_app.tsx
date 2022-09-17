@@ -46,6 +46,9 @@ function MyApp({ Component, pageProps }: AppProps) {
             function gtag(){dataLayer.push(arguments);}
             gtag('js', new Date());
             gtag('config', '${GA_TRACKING_ID}', {
+              send_page_view: true,
+              page_title: window.location.pathname,
+              page_location: window.location.href, // Include the full URL
               page_path: window.location.pathname,
             });
           `,
