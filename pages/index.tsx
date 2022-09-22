@@ -205,14 +205,6 @@ const Page = ({ apartments, reviews }: IHomePageProps) => {
 
   return (
     <>
-      <Head>
-        <title>Cala Cabana - Servicio de alojamiento y alquileres vacacionales</title>
-        <meta
-          name="description"
-          content="Servicio de alojamiento combinando naturaleza, confort y calidez. Mirador de las sierras, en las sierras"
-        />
-        <link rel="icon" href="/favicon.ico" />
-      </Head>
       <Layout>
           {isMobile ? (
             <Box maxHeight={{base: "none", md:"500px"}} maxWidth={{base: "none", md: "500px"}}>
@@ -273,16 +265,38 @@ const Page = ({ apartments, reviews }: IHomePageProps) => {
   );
 };
 
+
+const seoDescription = `El alojamiento cuenta con apartamentos diseñados al detalle, con terminaciones de calidad y equipados con todo lo que necesitas. 
+El aire puro de las sierras en combinación de las facilidades del alojamiento hacen una composición perfecta para que puedas relajarte disfrutando de una espectacular vista a las sierras.          
+  - Cala Cabana: Servicio de alojamiento seguro, alejado de la ciudad, en contacto con la naturaleza pero cerca de todo. Tanti, Cordoba -`;
+
+const seoTitle = `Cala Cabana: Servicio de alojamiento y alquileres vacacionales en Tanti, Cordoba`
+
 const Home = (props: IHomePageProps) => {
+  const canonicalPath = process.env.NEXT_PUBLIC_ORIGIN_PATH;
   return (
     <>
       <Head>
-        <title>Cala Cabana: Servicio de alojamiento y alquileres vacacionales en Tanti, Cordoba</title>
+        <title>{seoTitle}</title>
         <meta
           name="description"
-          content="Cala Cabana: Servicio de alojamiento y alquileres vacacionales en Tanti, Cordoba - Mirador de las sierras, en las sierras"
+          content={seoDescription}
         />
         <link rel="icon" href="/favicon.ico" />
+        <meta
+          key="og-title"
+          property="og:title"
+          content={seoTitle}
+        />
+        <meta
+          key="og-description"
+          property="og:description"
+          content={seoDescription}
+          />
+         <meta
+          property="og:image"
+          content={`${canonicalPath}${images.square[0].src}`}
+          />
       </Head>
       <Page {...props} />
     </>

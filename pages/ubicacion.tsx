@@ -20,6 +20,13 @@ const images = {
   },
 };
 
+const seoTitle = `Ubicacion - Cala Cabana: Servicio de alojamiento y alquileres vacacionales en Tanti, Cordoba`
+
+const seoDescription = `El complejo se encuentra en barrio semi-privado KEOKEN, en la
+ciudad de Tanti. El barrio cuenta con salida al rio. Córdoba se encuentra a 36 km de la casa, mientras que Villa
+Carlos Paz está a 9 km. - Cala Cabana: Servicio de alojamiento seguro, alejado de la ciudad, en contacto con la naturaleza pero cerca de todo. Tanti, Cordoba -`;
+
+
 const Page = ({}) => {
   const isMobile = useBreakpointValue({ base: true, md: false });
   return (
@@ -73,17 +80,31 @@ const Page = ({}) => {
 };
 
 const Ubicacion = ({}) => {
+  const canonicalPath = process.env.NEXT_PUBLIC_ORIGIN_PATH;
   return (
     <>
       <Head>
-        <title>
-          Ubicacion - Cala Cabana: Servicio de alojamiento y alquileres
-          vacacionales en Tanti, Cordoba
+      <title>
+          {seoTitle}
         </title>
         <meta
           name="description"
-          content="Servicio de hospedaje. Mirador de las sierras, en las sierras"
+          content={seoDescription}
         />
+        <meta
+          key="og-title"
+          property="og:title"
+          content={seoTitle}
+        />
+        <meta
+          key="og-description"
+          property="og:description"
+          content={seoDescription}
+          />
+         <meta
+          property="og:image"
+          content={`${canonicalPath}/images/homepage/square/1-homepage.jpeg`}
+          />
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <Page />

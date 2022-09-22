@@ -32,6 +32,14 @@ const images = {
   },
 };
 
+
+const seoTitle = `Sobre el Alojamiento - Cala Cabana: Servicio de alojamiento y alquileres vacacionales en Tanti, Cordoba`
+
+const seoDescription = `El alojamiento cuenta con apartamentos diseñados al detalle, con terminaciones de calidad y equipados con todo lo que necesitas. 
+El aire puro de las sierras en combinación de las facilidades del alojamiento hacen una composición perfecta para que puedas relajarte disfrutando de una espectacular vista a las sierras.          
+  - Cala Cabana: Servicio de alojamiento seguro, alejado de la ciudad, en contacto con la naturaleza pero cerca de todo. Tanti, Cordoba -`;
+
+
 const Page = ({}) => {
   const isMobile = useBreakpointValue({ base: true, md: false });
   return (
@@ -167,18 +175,33 @@ const Page = ({}) => {
   );
 };
 
+
 const ElAlojamiento = ({}) => {
+  const canonicalPath = process.env.NEXT_PUBLIC_ORIGIN_PATH;
   return (
     <>
       <Head>
         <title>
-          Sobre el Alojamiento - Cala Cabana: Servicio de alojamiento y
-          alquileres vacacionales en Tanti, Cordoba
+          {seoTitle}
         </title>
         <meta
           name="description"
-          content="Servicio de alojamiento. Mirador de las sierras, en las sierras"
+          content={seoDescription}
         />
+        <meta
+          key="og-title"
+          property="og:title"
+          content={seoTitle}
+        />
+        <meta
+          key="og-description"
+          property="og:description"
+          content={seoDescription}
+          />
+         <meta
+          property="og:image"
+          content={`${canonicalPath}/images/homepage/square/1-homepage.jpeg`}
+          />
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <Page />
