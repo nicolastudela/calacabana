@@ -56,6 +56,11 @@ Follow this a explanatory tutorial on [how to configure Google Account](https://
 
 `NEXT_PUBLIC_GA_ID` Analitics GTAG id used. (We currently using one for production and others envs)
 
+*SENDGRID AND EMAIL CONFIG*
+
+`SENDGRID_KEY`
+`OWNER_NOTICE_EMAIL_RECIPIENT`
+`OTHER_NOTICE_EMAIL_RECIPENTS`  (Cvs list of mails)
 
 ## Next.js How to start app on dev 
 

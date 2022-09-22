@@ -9,6 +9,7 @@ import { APARMENTS_NAME, BookingPeriod } from "@/types/shared";
 
 import stubEvents from "@/shared/mocks/calendarEventStubber";
 import isBefore from "date-fns/isBefore";
+import subDays from "date-fns/subDays";
 
 const jwtClient = new google.auth.JWT(
   process.env.GOOGLE_CLIENT_EMAIL,
@@ -32,7 +33,7 @@ const sanitizeBookingPeriods = (periods?: calendar_v3.Schema$Event[]) => {
     const startDate = actual?.start?.date;
     const endDate = actual?.end?.date;
     if (startDate && endDate) {
-      const period: BookingPeriod = [new Date(startDate), new Date(endDate)]
+      const period: BookingPeriod = [new Date(startDate), subDays(new Date(endDate),1)]
       if (isBefore(period[0], period[1])) {
         acc.push(period)
       } 
@@ -47,7 +48,6 @@ const sanitizeEventListResponse = (
   promise
     .then(
       (resp) =>{
-        console.error(`response from google api: ${resp}`);
         return ({
           status: BookingsInfoResponseStatus.SUCCESFUL,
           statusText: resp.statusText,
