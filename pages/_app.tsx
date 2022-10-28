@@ -5,6 +5,9 @@ import { useRouter } from "next/router";
 import { useEffect } from "react";
 import Script from "next/script";
 import theme from "../theme";
+import "@fontsource/montecarlo"
+import "@fontsource/montserrat/500.css"
+
 import { trackPageview, GA_TRACKING_ID } from "@/lib/gtag";
 
 import "../styles/globals.css";
