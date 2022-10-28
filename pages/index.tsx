@@ -230,11 +230,22 @@ const Page = ({ apartments, reviews }: IHomePageProps) => {
             as="h2"
             size="xl"
             fontFamily={"'MonteCarlo', cursive"}
-            py={2}
+            letterSpacing="wide"
+            py={1}
             textAlign="center"
             display={{base: "block", md:"none"}}
           >
-            un mirador de las sierras, en las sierras
+            Alojamiento y alquileres vacacionales 
+          </Heading>  
+          <Heading
+            as="h2"
+            size="md"
+            // fontFamily={"'MonteCarlo', cursive"}
+            // pb={1}
+            textAlign="center"
+            display={{base: "block", md:"none"}}
+          >
+            Tanti, Cordoba
           </Heading>
         <Flex
           width="100%"
@@ -242,7 +253,7 @@ const Page = ({ apartments, reviews }: IHomePageProps) => {
           justifyContent={{ base: "space-around", md: "space-between" }}
           p="0"
           gap={4}
-          my="4"
+          my={2}
         >
           {apartments.map((apartment) => (
             <AparmentCard key={apartment.name} {...apartment} />
