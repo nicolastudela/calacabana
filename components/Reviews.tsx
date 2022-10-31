@@ -1,6 +1,7 @@
 import { IReview } from "@/types/shared";
 import { Heading, Text, Flex, useBreakpointValue, Avatar, Button } from "@chakra-ui/react";
 import { StarIcon } from "@chakra-ui/icons";
+import usePageScroll from "@/shared/hooks/usePageScroll";
 
 const MOBILE_REVIEWS_TO_SHOW_ON_WHEN_REDUCED = 2;
 const DESKTOP_REVIEWS_TO_SHOW_ON_WHEN_REDUCED = 6;
@@ -14,7 +15,7 @@ export interface IReviewsProps {
 
 const ReviewHeader = ({avatar, name, date} : {avatar: string; name: string; date: string}) => (
   <Flex w={"full"} gap={2}>
-    <Avatar name={name} src={avatar} size="sm" />
+    <Avatar name={name} src={avatar} size="sm" loading="lazy"/>
     <Flex direction={"column"}>
       <Heading fontSize={"sm"}>{name}</Heading>
       <Text fontSize={"xs"}>{date}</Text>
@@ -23,6 +24,7 @@ const ReviewHeader = ({avatar, name, date} : {avatar: string; name: string; date
 )
 
 const Reviews = ({reviewsCount, overallRating, reviews, onExpand }: IReviewsProps) => {
+  const scrollTrigger = usePageScroll();
   const isMobile = useBreakpointValue({ base: true, md: false });
   let reviewsToShow = reviews
   if (onExpand) {
@@ -38,7 +40,7 @@ const Reviews = ({reviewsCount, overallRating, reviews, onExpand }: IReviewsProp
         {reviewsToShow.map((review, idx) => (
           // reviews have to has an Id
           <Flex key={`${review.author}-${idx}`} width={"full"} direction={"column"} height={["32", onExpand ? "32" : "44"]} gap={2} maxWidth={isMobile ? "full" : "250px"}>
-            <ReviewHeader name={review.author} avatar={review.profilePhotoURL} date={review.relativeTimeDescription} />
+            {scrollTrigger && <ReviewHeader name={review.author} avatar={review.profilePhotoURL} date={review.relativeTimeDescription} />}
             <Text fontSize={"xs"} noOfLines={onExpand ? [3] : []}>{review.text}</Text>
           </Flex>
         ))}
