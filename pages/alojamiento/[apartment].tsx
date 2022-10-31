@@ -45,6 +45,7 @@ import fetchOutstandingReviews from "@/shared/fetchers/fetchOutstandingReviews";
 import { trackEvent } from "@/lib/gtag";
 import usePageScroll from "@/shared/hooks/usePageScroll";
 import LoadingMapContainer from "@/components/LoadingMapContainer";
+import { isMobile as isMobileFn } from "is-mobile";
 
 const VerticalGrid = dynamic(() => import("../../components/VerticalGallery"));
 
@@ -85,7 +86,7 @@ const Page = (apartmentData: IApartmentProps) => {
     apartmentData;
   const [isPageProcessing, setIsPageProcessing] = useState(false);
   const router = useRouter();
-  const isMobile = useBreakpointValue({ base: true, md: false });
+
   const [isClient, setClient] = useState(false);
   const [bookeableValidPeriodState, setBookeableValidPeriodState] =
     useState<BookeableValidPeriodState>({dateSelected: null, error: null});
@@ -174,6 +175,12 @@ const Page = (apartmentData: IApartmentProps) => {
   const onDatesSelected = useCallback((dates: BookeableValidPeriod | null) => {
     setBookeableValidPeriodState({dateSelected: dates, error: null})
   }, []);
+
+  const [isMobile, setIsMobile] = useState(true)
+
+  useEffect(() => {
+    setIsMobile(isMobileFn());
+  },[])
 
   /**
    * - Invalid dates (not existent, not valid booking date) => remove them from url (//TODO)

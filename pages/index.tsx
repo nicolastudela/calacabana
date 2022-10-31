@@ -1,4 +1,4 @@
-import { Box, Divider, Flex, Heading, useBreakpointValue } from "@chakra-ui/react";
+import { Box, Divider, Flex, Heading } from "@chakra-ui/react";
 import type { GetStaticProps } from "next";
 import Head from "next/head";
 import Layout from "@/components/Layout";
@@ -9,7 +9,7 @@ import Carousel from "@/components/Carousel";
 
 import aparmentsData from "../shared/apartmentsData";
 import HeroGrid from "@/components/HeroGrid";
-import { Suspense, useCallback, useReducer } from "react";
+import { Suspense, useCallback, useEffect, useReducer, useState } from "react";
 import { IDrawerActionTypes } from "@/types/types";
 import dynamic from "next/dynamic";
 
@@ -19,6 +19,7 @@ import fetchOutstandingReviews from "@/shared/fetchers/fetchOutstandingReviews";
 import Reviews from "@/components/Reviews";
 import usePageScroll from "@/shared/hooks/usePageScroll";
 import LoadingMapContainer from "@/components/LoadingMapContainer";
+import { isMobile as isMobileFn } from "is-mobile";
 
 const VerticalGrid = dynamic(() => import("../components/VerticalGallery"));
 
@@ -167,7 +168,11 @@ const Map = dynamic(
 });
 
 const Page = ({ apartments, reviews }: IHomePageProps) => {
-  const isMobile = useBreakpointValue({ base: true, md: false });
+  const [isMobile, setIsMobile] = useState(true)
+
+  useEffect(() => {
+    setIsMobile(isMobileFn());
+  },[])
 
   // use reducer to get dispachers to be used on CTAs, where some CTAs will update whats shown on the drawer
   const reducer = useCallback(
@@ -207,7 +212,7 @@ const Page = ({ apartments, reviews }: IHomePageProps) => {
     <>
       <Layout>
           {isMobile ? (
-            <Box maxHeight={{base: "none", md:"500px"}} maxWidth={{base: "none", md: "500px"}}>
+            <Box>
               <a
                 onClick={() => {
                   dispatch({ type: IDrawerActionTypes.SHOW_ALL_PICS });
