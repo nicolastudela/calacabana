@@ -1,4 +1,4 @@
-import { Box, Divider, Flex, Heading, useBreakpointValue } from "@chakra-ui/react";
+import { Box, Divider, Flex, Heading } from "@chakra-ui/react";
 import type { GetStaticProps } from "next";
 import Head from "next/head";
 import Layout from "@/components/Layout";
@@ -19,6 +19,7 @@ import fetchOutstandingReviews from "@/shared/fetchers/fetchOutstandingReviews";
 import Reviews from "@/components/Reviews";
 import usePageScroll from "@/shared/hooks/usePageScroll";
 import LoadingMapContainer from "@/components/LoadingMapContainer";
+import useGlobalContext from "@/shared/hooks/useGlobalContext";
 
 const VerticalGrid = dynamic(() => import("../components/VerticalGallery"));
 
@@ -167,8 +168,7 @@ const Map = dynamic(
 });
 
 const Page = ({ apartments, reviews }: IHomePageProps) => {
-  const isMobile = useBreakpointValue({ base: true, md: false });
-
+  const { isMobile } = useGlobalContext();
   // use reducer to get dispachers to be used on CTAs, where some CTAs will update whats shown on the drawer
   const reducer = useCallback(
     (state: any, action: { type: any; payload?: any }) => {
@@ -206,8 +206,7 @@ const Page = ({ apartments, reviews }: IHomePageProps) => {
   return (
     <>
       <Layout>
-          {isMobile ? (
-            <Box maxHeight={{base: "none", md:"500px"}} maxWidth={{base: "none", md: "500px"}}>
+            <Box display={{base: "block", md: "none"}}>
               <a
                 onClick={() => {
                   dispatch({ type: IDrawerActionTypes.SHOW_ALL_PICS });
@@ -216,8 +215,7 @@ const Page = ({ apartments, reviews }: IHomePageProps) => {
                 <Carousel images={images.square} />
               </a>
             </Box>
-          ) : (
-            <HeroGrid
+            {!isMobile && (<HeroGrid
               onShowAllPicks={() => {
                 // onOpen();
                 // openDrawerAndDispatch({ type: "showAllPics" });

@@ -11,7 +11,6 @@ import {
   Flex,
   Heading,
   IconButton,
-  useBreakpointValue,
 } from "@chakra-ui/react";
 
 import aparmentsData, { APARTMENTS_BUILD } from "@/shared/apartmentsData";
@@ -42,6 +41,7 @@ import { GenericResponseStatus } from "@/types/api";
 import { trackEvent } from "@/lib/gtag";
 
 import Router from 'next/router';
+import useGlobalContext from "@/shared/hooks/useGlobalContext";
 
 export type IBookingApartmentProps = IApartmentData & { key: string };
 
@@ -74,7 +74,7 @@ const Page = (apartmentData: IBookingApartmentProps) => {
     maxPeople,
     type: apartmentType,
   } = apartmentData;
-  const isMobile = useBreakpointValue({ base: true, md: false });
+  const { isMobile } = useGlobalContext();
   const router = useRouter();
   const { data: excludedDatesRanges, error: excludedDatesRangesError } = useSWR(
     `/api/bookings/${name}`,

@@ -3,7 +3,6 @@ import aparmentsData, { APARTMENTS_BUILD } from "../../shared/apartmentsData";
 
 import {
   Box,
-  useBreakpointValue,
   Flex,
   Divider,
   Text,
@@ -45,6 +44,7 @@ import fetchOutstandingReviews from "@/shared/fetchers/fetchOutstandingReviews";
 import { trackEvent } from "@/lib/gtag";
 import usePageScroll from "@/shared/hooks/usePageScroll";
 import LoadingMapContainer from "@/components/LoadingMapContainer";
+import useGlobalContext from "@/shared/hooks/useGlobalContext";
 
 const VerticalGrid = dynamic(() => import("../../components/VerticalGallery"));
 
@@ -85,7 +85,8 @@ const Page = (apartmentData: IApartmentProps) => {
     apartmentData;
   const [isPageProcessing, setIsPageProcessing] = useState(false);
   const router = useRouter();
-  const isMobile = useBreakpointValue({ base: true, md: false });
+  const { isMobile } = useGlobalContext();
+
   const [isClient, setClient] = useState(false);
   const [bookeableValidPeriodState, setBookeableValidPeriodState] =
     useState<BookeableValidPeriodState>({dateSelected: null, error: null});
@@ -98,6 +99,8 @@ const Page = (apartmentData: IApartmentProps) => {
     usePageDefaultDates({
       excludedDatesRanges,
     });
+
+ 
 
   const datePickerRef = useRef<HTMLDivElement | null>(null);
 
@@ -248,8 +251,7 @@ const Page = (apartmentData: IApartmentProps) => {
   return (
     <Box>
       <Layout>
-        {isMobile ? (
-          <Box maxHeight={{base: "none", md:"500px"}} maxWidth={{base: "none", md: "500px"}}>
+          <Box display={{base: "block", md: "none"}}>
             <a
               onClick={() => {
                 dispatch({ type: IDrawerActionTypes.SHOW_ALL_PICS });
@@ -258,12 +260,10 @@ const Page = (apartmentData: IApartmentProps) => {
               <Carousel aptName="cala" images={images.square} />
             </a>
           </Box>
-        ) : (
-          <HeroGrid
+          {!isMobile && <HeroGrid
             onShowAllPicks={onShowAllPicks}
             images={images.wide}
-          />
-        )}
+          />}
 
         <Flex
           mt={4}
@@ -371,16 +371,16 @@ const Page = (apartmentData: IApartmentProps) => {
                     <Spinner margin={"auto"} />
                   )}
 
-                  {!isMobile && (
-                    <>
+                  {/* {!isMobile && ( */}
+                    <Box display={{base:"none", md: "inline"}}>
                       <Divider my={4} width="75%" />
                       <BookingButton
                         enabled={!!userCanBook}
                         onBookingAction={gotToBookApt}
                         isLoading={isPageProcessing}
                       />
-                    </>
-                  )}
+                    </Box>
+                  {/* )} */}
                 </Box>
               )
               // </Suspense>
@@ -388,7 +388,7 @@ const Page = (apartmentData: IApartmentProps) => {
           </Box>
         </Flex>
 
-        {isMobile && (
+        {/* {isMobile && ( */}
           <Box
             position={"fixed"}
             bottom={0}
@@ -397,7 +397,7 @@ const Page = (apartmentData: IApartmentProps) => {
             h={20}
             borderTop={"1px solid black"}
             bg="brand.900"
-            display={"flex"}
+            display={{base: "flex", md:"none"}}
             zIndex={1000}
           >
             {/* Fix these buttons, are styled very poorly */}
@@ -416,7 +416,7 @@ const Page = (apartmentData: IApartmentProps) => {
               </Button>
             )}
           </Box>
-        )}
+        {/* )} */}
         {scrollTrigger && <Suspense fallback={<LoadingMapContainer/>}><Map /></Suspense>}
         <PageDrawer
           componentToShow={componentToShow}

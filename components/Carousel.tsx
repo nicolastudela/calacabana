@@ -1,12 +1,13 @@
 import Carousel, { CarouselProps as CustomCarouselProps } from "nuka-carousel";
 
-import { useBreakpointValue, IconButton, Box, Flex, Button } from "@chakra-ui/react";
+import { IconButton, Flex } from "@chakra-ui/react";
 
 import { ArrowBackIcon, ArrowForwardIcon } from "@chakra-ui/icons";
 import { MouseEventHandler } from "react";
 import Image from "next/image";
 import { IApartmentImage } from "@/types/shared";
 import { PagingDot } from "@/components/icons/PagingDot";
+import useGlobalContext from "@/shared/hooks/useGlobalContext";
 
 
 const preventDefaultClickHandlerWrapper = (wrappedHandler: () => void) => {
@@ -47,7 +48,7 @@ const CustomCarousel = ({
   aptName,
   roundedBorder = false,
 }: CarouselProps) => {
-  const isMobile = useBreakpointValue({ base: true, md: false });
+  const { isMobile } = useGlobalContext();
   return (
     <Carousel
       dragThreshold={0.2}

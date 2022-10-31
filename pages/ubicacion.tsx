@@ -5,11 +5,11 @@ import {
   Flex,
   Heading,
   Text,
-  useBreakpointValue,
 } from "@chakra-ui/react";
 import Head from "next/head";
 import Image from "next/image";
 import Map from "@/components/Map";
+import useGlobalContext from "@/shared/hooks/useGlobalContext";
 
 const images = {
   detail: {
@@ -28,7 +28,7 @@ Carlos Paz está a 9 km. - Cala Cabana: Servicio de alojamiento seguro, alejado 
 
 
 const Page = ({}) => {
-  const isMobile = useBreakpointValue({ base: true, md: false });
+  const { isMobile } = useGlobalContext();
   return (
     <Box>
       <Layout>

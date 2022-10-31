@@ -1,9 +1,8 @@
 import Layout from "@/components/Layout";
-import { Box, Flex, Heading, Spacer, useBreakpointValue } from "@chakra-ui/react";
+import { Box, Flex, Heading, Spacer } from "@chakra-ui/react";
 import Image from "next/image";
 
 const Page404 = ({}) => {
-  const isMobile = useBreakpointValue({ base: true, md: false });
   return (
     <Box>
       <Layout>
@@ -18,7 +17,7 @@ const Page404 = ({}) => {
             />
           <Heading textAlign={"center"}>Uy! no encontramos la pagina que buscabas</Heading>
         </Flex>
-        {!isMobile && (<Spacer mb={40}/>)}
+        <Spacer mb={40} display={{base: "none", md: "block"}}/>
       </Layout>
     </Box>
   );
