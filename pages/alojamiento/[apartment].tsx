@@ -214,6 +214,14 @@ const Page = (apartmentData: IApartmentProps) => {
     datePickerRef.current?.scrollIntoView()
   },[bookeableDefaultDates, name])
 
+  const userCanBook = useMemo(() => {
+    return bookeableValidPeriodState.dateSelected && !bookeableValidPeriodState.error},[bookeableValidPeriodState.dateSelected, bookeableValidPeriodState.error])
+
+
+  const shouldShowFloatingFooter = useMemo(() => {
+    return isMobile && (userCanBook || scrollTrigger) 
+  },[isMobile, userCanBook, scrollTrigger])
+
 
   const onShowExpandedDescription = useCallback(() => {
     trackEvent("show_expanded_desription",  { apartment: name })
@@ -245,8 +253,6 @@ const Page = (apartmentData: IApartmentProps) => {
     dispatch({ type: IDrawerActionTypes.SHOW_ALL_PICS });
   },[name])
 
-  const userCanBook = useMemo(() => {
-    return bookeableValidPeriodState.dateSelected && !bookeableValidPeriodState.error},[bookeableValidPeriodState.dateSelected, bookeableValidPeriodState.error])
 
   return (
     <Box>
@@ -388,8 +394,9 @@ const Page = (apartmentData: IApartmentProps) => {
           </Box>
         </Flex>
 
-        {/* {isMobile && ( */}
+        {shouldShowFloatingFooter && (
           <Box
+            data-section-id="floating-footer"
             position={"fixed"}
             bottom={0}
             right={0}
@@ -401,7 +408,7 @@ const Page = (apartmentData: IApartmentProps) => {
             zIndex={1000}
           >
             {/* Fix these buttons, are styled very poorly */}
-            {!bookeableValidPeriodState.error && !!bookeableValidPeriodState.dateSelected ? (
+            {userCanBook ? (
               <BookingButton
                 onBookingAction={gotToBookApt}
                 isLoading={isPageProcessing}
@@ -416,7 +423,7 @@ const Page = (apartmentData: IApartmentProps) => {
               </Button>
             )}
           </Box>
-        {/* )} */}
+        )}
         {scrollTrigger && <Suspense fallback={<LoadingMapContainer/>}><Map /></Suspense>}
         <PageDrawer
           componentToShow={componentToShow}

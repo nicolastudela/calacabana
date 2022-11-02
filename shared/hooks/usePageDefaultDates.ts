@@ -67,7 +67,7 @@ const usePageDefaultDates = ({
             EPageDefaultDatesErrorType.DEFAULT_DATES_ALREADY_TAKEN
           );
         } else {
-          setBookeableDefaultDates(createBookeableValidPeriod(validDefaultDates))
+          excludedDatesRanges && setBookeableDefaultDates(createBookeableValidPeriod(validDefaultDates))
         }
       } else {
         setPageDefaultDatesError(

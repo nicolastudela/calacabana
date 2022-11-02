@@ -6,7 +6,7 @@ export interface IGlobalContext {
 }
 
 const GlobalContext = createContext<IGlobalContext>({
-  isMobile: false,
+  isMobile: true,
 })
 
 interface ProviderProps {
@@ -16,11 +16,11 @@ interface ProviderProps {
 export const GlobalContextProvider: FC<ProviderProps> = ({
   children,
 }) => {
-  const [isMobile, setIsMobile] = useState<boolean>(false);
+  const [isMobile, setIsMobile] = useState<boolean>(true);
 
   useEffect(() => {
     const mobile = isMobileFn(); 
-    mobile && setIsMobile(true);
+    !mobile && setIsMobile(false);
   },[])
   
   return (<GlobalContext.Provider
