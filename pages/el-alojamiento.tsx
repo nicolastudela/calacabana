@@ -5,7 +5,6 @@ import {
   Flex,
   Heading,
   Text,
-  useBreakpointValue,
 } from "@chakra-ui/react";
 import Head from "next/head";
 import Image from "next/image";
@@ -41,11 +40,10 @@ El aire puro de las sierras en combinación de las facilidades del alojamiento h
 
 
 const Page = ({}) => {
-  const isMobile = useBreakpointValue({ base: true, md: false });
   return (
     <Box>
       <Layout>
-        {!isMobile && <Divider />}
+        <Divider display={{base: "none", md: "block"}}/>
         <Flex alignItems={"flex-start"} direction="column" ml={2} mt={4}>
           <Flex
             direction={"column"}
@@ -62,7 +60,7 @@ const Page = ({}) => {
               verticalAlign="center"
               direction={"column"}
             >
-              <Heading size={"lg"} as="h1" mb={!isMobile ? 10 : 2}>
+              <Heading size={"lg"} as="h1" mb={{base: 2, md: 10}}>
                 Naturaleza
               </Heading>
               <Text>
@@ -113,7 +111,7 @@ const Page = ({}) => {
               verticalAlign="center"
               direction={"column"}
             >
-              <Heading size={"lg"} as="h1" mb={!isMobile ? 10 : 2}>
+              <Heading size={"lg"} as="h1"mb={{base: 2, md: 10}}>
                 Tranquilidad
               </Heading>
               <Text>
@@ -144,7 +142,7 @@ const Page = ({}) => {
               verticalAlign="center"
               direction={"column"}
             >
-              <Heading size={"lg"} as="h1" mb={!isMobile ? 10 : 2}>
+              <Heading size={"lg"} as="h1" mb={{base: 2, md: 10}}>
                 Comodidad
               </Heading>
               <Text>

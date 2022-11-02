@@ -1,10 +1,11 @@
 import NextLink from "next/link";
-import { Box, BoxProps, Flex, useBreakpointValue } from "@chakra-ui/react";
+import { Box, BoxProps, Flex } from "@chakra-ui/react";
 import { APARMENTS_TYPE, IApartmentData, IApartmentImage } from "@/types/shared";
 
 import Carousel from "@/components/Carousel";
 import ApartmentTitle from "@/components/apartment/ApartmentTitle";
 import Image from "next/image";
+import useGlobalContext from "@/shared/hooks/useGlobalContext";
 
 export interface AparmentCardProps
   extends Pick<
@@ -25,7 +26,7 @@ const AparmentCard = ({
   type,
   ...rest
 }: AparmentCardProps & BoxProps) => {
-  const isMobile = useBreakpointValue({ base: true, md: false });
+  const { isMobile } = useGlobalContext();
   return (
     <NextLink href={`/alojamiento/${name}`} passHref>
       <Box

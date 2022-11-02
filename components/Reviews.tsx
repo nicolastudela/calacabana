@@ -1,6 +1,7 @@
 import { IReview } from "@/types/shared";
-import { Heading, Text, Flex, useBreakpointValue, Avatar, Button } from "@chakra-ui/react";
+import { Heading, Text, Flex, Avatar, Button } from "@chakra-ui/react";
 import { StarIcon } from "@chakra-ui/icons";
+import useGlobalContext from "@/shared/hooks/useGlobalContext";
 
 const MOBILE_REVIEWS_TO_SHOW_ON_WHEN_REDUCED = 2;
 const DESKTOP_REVIEWS_TO_SHOW_ON_WHEN_REDUCED = 6;
@@ -23,7 +24,7 @@ const ReviewHeader = ({avatar, name, date} : {avatar: string; name: string; date
 )
 
 const Reviews = ({reviewsCount, overallRating, reviews, onExpand }: IReviewsProps) => {
-  const isMobile = useBreakpointValue({ base: true, md: false });
+  const { isMobile } = useGlobalContext();
   let reviewsToShow = reviews
   if (onExpand) {
     reviewsToShow = isMobile ? reviews.slice(0,MOBILE_REVIEWS_TO_SHOW_ON_WHEN_REDUCED) : reviews.slice(0,DESKTOP_REVIEWS_TO_SHOW_ON_WHEN_REDUCED);

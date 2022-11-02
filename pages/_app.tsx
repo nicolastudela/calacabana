@@ -1,4 +1,5 @@
 import Head from "next/head";
+
 import type { AppProps } from "next/app";
 import { ChakraProvider } from "@chakra-ui/react";
 import { useRouter } from "next/router";
@@ -11,6 +12,7 @@ import "@fontsource/montserrat/500.css"
 import { trackPageview, GA_TRACKING_ID } from "@/lib/gtag";
 
 import "../styles/globals.css";
+import useGlobalContext, { GlobalContextProvider } from "@/shared/hooks/useGlobalContext";
 
 const handleRouteChange = (url: string, { shallow }: { shallow: boolean }) => {
   if (!shallow) {
@@ -20,12 +22,14 @@ const handleRouteChange = (url: string, { shallow }: { shallow: boolean }) => {
 
 function MyApp({ Component, pageProps }: AppProps) {
   const router = useRouter();
-  useEffect(() => {
+    useEffect(() => {
     router.events.on("routeChangeComplete", handleRouteChange);
     return () => {
       router.events.off("routeChangeComplete", handleRouteChange);
     };
   }, [router.events]);
+
+
 
   return (
     <>
@@ -59,9 +63,13 @@ function MyApp({ Component, pageProps }: AppProps) {
           `,
         }}
       />
+
       <ChakraProvider theme={theme}>
-        <Component {...pageProps} />
+        <GlobalContextProvider>
+          <Component {...pageProps} />
+        </GlobalContextProvider>
       </ChakraProvider>
+  
     </>
   );
 }
