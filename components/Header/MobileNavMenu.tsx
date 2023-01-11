@@ -36,8 +36,9 @@ const NavLink = ({ item, currentPath, ...props }: NavLinkProps) => {
     !!currentPath && currentPath === item.link ? theme.colors.brand[700] : "";
   const filter = selected ? "blur(1px)" : "";
   return (
-    <NextLink href={item.link} passHref>
       <Link
+        href={item.link}
+        as={NextLink}
         _hover={{ textDecoration: "none" }}
         key={item.label}
         width={"100%"}
@@ -48,7 +49,6 @@ const NavLink = ({ item, currentPath, ...props }: NavLinkProps) => {
       >
         {item.label}
       </Link>
-    </NextLink>
   );
 };
 

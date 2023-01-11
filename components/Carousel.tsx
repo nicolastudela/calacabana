@@ -97,7 +97,6 @@ const CustomCarousel = ({
             key={index}
             src={src}
             alt={alt}
-            layout="responsive"
             width={width}
             height={height}
             priority={index === 0 ? true : false}

@@ -34,14 +34,9 @@ export const DesktopNavLink = ({link, label, isMenu, ...rest}: DesktopNavLinkPro
     trackEvent("desktop_nav",  { link })
   },[link])
   return (
-    <NextLink href={link} passHref>
-      <Link
-        {...rest}
-        onClick={onClickAction}
-      >
+    <Link as={NextLink} href={link} {...rest} onClick={onClickAction}>
         {label}
-      </Link>
-    </NextLink>
+    </Link>
   );
 }
 

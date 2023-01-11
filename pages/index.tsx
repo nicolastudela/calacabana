@@ -162,8 +162,7 @@ const images = {
   ],
 };
 
-const Map = dynamic(
-  () => import("../components/Map"), {
+const Map = dynamic(() => import("../components/Map"), {
   suspense: true,
 });
 
@@ -184,10 +183,16 @@ const Page = ({ apartments, reviews }: IHomePageProps) => {
         }
         case IDrawerActionTypes.SHOW_ALL_REVIEWS: {
           if (!state) {
-            const reviewsToShow = action.payload as IReview[]
+            const reviewsToShow = action.payload as IReview[];
             return {
               title: "Opiniones",
-              component: <Reviews reviews={reviewsToShow} overallRating={"5.0"} reviewsCount={reviewsToShow.length} />,
+              component: (
+                <Reviews
+                  reviews={reviewsToShow}
+                  overallRating={"5.0"}
+                  reviewsCount={reviewsToShow.length}
+                />
+              ),
             };
           }
           return null;
@@ -205,81 +210,89 @@ const Page = ({ apartments, reviews }: IHomePageProps) => {
 
   return (
     <>
-      <Layout>
-            <Box display={{base: "block", md: "none"}}>
-              <a
-                onClick={() => {
-                  dispatch({ type: IDrawerActionTypes.SHOW_ALL_PICS });
-                }}
-              >
-                <Carousel images={images.square} />
-              </a>
-            </Box>
-            {!isMobile && (<HeroGrid
-              onShowAllPicks={() => {
-                // onOpen();
-                // openDrawerAndDispatch({ type: "showAllPics" });
-                dispatch({ type: IDrawerActionTypes.SHOW_ALL_PICS });
-              }}
-              images={images.wide}
-            />
-          )}
-          <Heading
-            as="h2"
-            size="xl"
-            fontFamily={"'MonteCarlo', cursive"}
-            letterSpacing="wide"
-            py={1}
-            textAlign="center"
-            display={{base: "block", md:"none"}}
-          >
-            Alojamiento y alquileres vacacionales 
-          </Heading>  
-          <Heading
-            as="h2"
-            size="md"
-            // fontFamily={"'MonteCarlo', cursive"}
-            // pb={1}
-            textAlign="center"
-            display={{base: "block", md:"none"}}
-          >
-            Tanti, Cordoba
-          </Heading>
-        <Flex
-          width="100%"
-          flexWrap={"wrap"}
-          justifyContent={{ base: "space-around", md: "space-between" }}
-          p="0"
-          gap={4}
-          my={2}
+      <Box display={{ base: "block", md: "none" }}>
+        <a
+          onClick={() => {
+            dispatch({ type: IDrawerActionTypes.SHOW_ALL_PICS });
+          }}
         >
-          {apartments.map((apartment) => (
-            <AparmentCard key={apartment.name} {...apartment} />
-          ))}
-        </Flex>
-        <Divider my={8} mb={4} />
-        <Reviews reviews={reviews} overallRating={"5.0"} reviewsCount={reviews.length} onExpand={() =>
-                dispatch({
-                  type: IDrawerActionTypes.SHOW_ALL_REVIEWS,
-                  payload: reviews,
-                })} />
-        <Divider my={8} mb={4} />                
-        {scrollTrigger && <Suspense fallback={<LoadingMapContainer/>}><Map /></Suspense>}
-        <PageDrawer
-          componentToShow={componentToShow}
-          onHide={() => dispatch({ type: "hide" })}
+          <Carousel images={images.square} />
+        </a>
+      </Box>
+      {!isMobile && (
+        <HeroGrid
+          onShowAllPicks={() => {
+            // onOpen();
+            // openDrawerAndDispatch({ type: "showAllPics" });
+            dispatch({ type: IDrawerActionTypes.SHOW_ALL_PICS });
+          }}
+          images={images.wide}
         />
-      </Layout>
+      )}
+      <Heading
+        as="h2"
+        size="xl"
+        fontFamily={"'MonteCarlo', cursive"}
+        letterSpacing="wide"
+        py={1}
+        textAlign="center"
+        display={{ base: "block", md: "none" }}
+      >
+        Alojamiento y alquileres vacacionales
+      </Heading>
+      <Heading
+        as="h2"
+        size="md"
+        // fontFamily={"'MonteCarlo', cursive"}
+        // pb={1}
+        textAlign="center"
+        display={{ base: "block", md: "none" }}
+      >
+        Tanti, Cordoba
+      </Heading>
+      <Flex
+        width="100%"
+        flexWrap={"wrap"}
+        justifyContent={{ base: "space-around", md: "space-between" }}
+        p="0"
+        gap={4}
+        my={2}
+      >
+        {apartments.map((apartment) => (
+          <AparmentCard key={apartment.name} {...apartment} />
+        ))}
+      </Flex>
+      <Divider my={8} mb={4} />
+      <Reviews
+        reviews={reviews}
+        overallRating={"5.0"}
+        reviewsCount={reviews.length}
+        onExpand={() =>
+          dispatch({
+            type: IDrawerActionTypes.SHOW_ALL_REVIEWS,
+            payload: reviews,
+          })
+        }
+      />
+      <Divider my={8} mb={4} />
+      {scrollTrigger && (
+        <Suspense fallback={<LoadingMapContainer />}>
+          <Map />
+        </Suspense>
+      )}
+      <PageDrawer
+        componentToShow={componentToShow}
+        onHide={() => dispatch({ type: "hide" })}
+      />
     </>
   );
 };
-
 
 const seoDescription = `El alojamiento cuenta con apartamentos diseñados al detalle, con terminaciones de calidad y equipados con todo lo que necesitas. 
 El aire puro de las sierras en combinación de las facilidades del alojamiento hacen una composición perfecta para que puedas relajarte disfrutando de una espectacular vista a las sierras.          
   - Cala Cabana: Servicio de alojamiento seguro, alejado de la ciudad, en contacto con la naturaleza pero cerca de todo. Tanti, Cordoba -`;
 
-const seoTitle = `Cala Cabana: Servicio de alojamiento y alquileres vacacionales en Tanti, Cordoba`
+const seoTitle = `Cala Cabana: Servicio de alojamiento y alquileres vacacionales en Tanti, Cordoba`;
 
 const Home = (props: IHomePageProps) => {
   const canonicalPath = process.env.NEXT_PUBLIC_ORIGIN_PATH;
@@ -287,32 +300,27 @@ const Home = (props: IHomePageProps) => {
     <>
       <Head>
         <title>{seoTitle}</title>
-        <meta
-          name="description"
-          content={seoDescription}
-        />
+        <meta name="description" content={seoDescription} />
         <link rel="icon" href="/favicon.ico" />
-        <meta
-          key="og-title"
-          property="og:title"
-          content={seoTitle}
-        />
+        <meta key="og-title" property="og:title" content={seoTitle} />
         <meta
           key="og-description"
           property="og:description"
           content={seoDescription}
-          />
-         <meta
+        />
+        <meta
           property="og:image"
           content={`${canonicalPath}${images.square[0].src}`}
-          />
+        />
       </Head>
       <Page {...props} />
     </>
   );
 };
 
-export type IHomePageProps = { apartments: AparmentCardProps[] } & { reviews: IReview[] };
+export type IHomePageProps = { apartments: AparmentCardProps[] } & {
+  reviews: IReview[];
+};
 
 // NextJS API Middleware is not available here
 const getStaticProps: GetStaticProps<IHomePageProps> = async ({}) => {
@@ -340,7 +348,7 @@ const getStaticProps: GetStaticProps<IHomePageProps> = async ({}) => {
       } as AparmentCardProps)
   );
 
-  const reviews = await fetchOutstandingReviews()
+  const reviews = await fetchOutstandingReviews();
 
   return {
     props: { apartments: apartments, reviews },

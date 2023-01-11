@@ -114,14 +114,7 @@ export interface IBookingDatesProps extends BoxProps {
   selectWithButtonFlow?: boolean;
 }
 
-function BookingDates(
-  props: IBookingDatesProps,
-) {
-  return BookingDatesWithRef(props, null);
-}
-
-
-function BookingDatesWithRef(
+const BookingDates = (
   {
     apartmentName,
     forceInline,
@@ -132,8 +125,7 @@ function BookingDatesWithRef(
     selectWithButtonFlow = false,
     ...props
   }: IBookingDatesProps,
-  ref: React.ForwardedRef<HTMLDivElement>
-) {
+) => {
   const [startDate, setStartDate] = useState<Date | null>(null);
   const [pickerOpen, setPickerOpen] = useState(forceInline);
   const [endDate, setEndDate] = useState<Date | null>(null);
@@ -209,8 +201,6 @@ function BookingDatesWithRef(
   );
 
 
-
-
   const dateSelectionText = useMemo(() => {
     if (startDate) {
       if (endDate) {
@@ -236,7 +226,6 @@ function BookingDatesWithRef(
   return (
     <Flex
       direction={"column"}
-      ref={ref}
       justifyContent="flex-start"
       {...props}
       gap={4}
@@ -293,8 +282,5 @@ function BookingDatesWithRef(
 }
 
 export default BookingDates;
-
-export { BookingDatesWithRef };
-
 
 

@@ -34,7 +34,6 @@ const HeroGrid = ({ images, onShowAllPicks, title, subtitle }: HeroGridProps) =>
             >
               <Image
                 src={src}
-                layout="fill"
                 alt={alt}
                 width={width}
                 height={height}
@@ -73,7 +72,6 @@ const HeroGrid = ({ images, onShowAllPicks, title, subtitle }: HeroGridProps) =>
             >
               <Image
                 src={src}
-                layout="fill"
                 alt={alt}
                 width={width}
                 height={height}

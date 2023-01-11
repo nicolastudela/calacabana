@@ -1,8 +1,12 @@
-import { extendTheme, ThemeConfig } from '@chakra-ui/react'
+import { extendBaseTheme, ThemeConfig } from '@chakra-ui/react'
 import Button from './components/Button';
 import DatePicker from './components/DatePicker';
 
 import Link from './components/Link'
+import chakraTheme from '@chakra-ui/theme'
+
+
+const { Modal, Drawer, Divider, Heading, Spinner, Textarea, Avatar,Menu, Input,Container  } = chakraTheme.components
 
 const colors = {
   brand: {
@@ -35,6 +39,16 @@ const overrides = {
     Link,
     DatePicker,
     Button,
+    Drawer,
+    Modal,
+    Divider,
+    Heading,
+    Spinner,
+    Textarea,
+    Avatar,
+    Menu,
+    Input,
+    Container,
   }
 }
 
@@ -46,6 +60,6 @@ const config: ThemeConfig = {
   useSystemColorMode: false,
 }
 
-const theme = extendTheme({config, ...overrides})
+const theme = extendBaseTheme({config, ...overrides})
 
 export default theme

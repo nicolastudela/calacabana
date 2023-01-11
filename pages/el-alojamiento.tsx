@@ -42,7 +42,6 @@ El aire puro de las sierras en combinación de las facilidades del alojamiento h
 const Page = ({}) => {
   return (
     <Box>
-      <Layout>
         <Divider display={{base: "none", md: "block"}}/>
         <Flex alignItems={"flex-start"} direction="column" ml={2} mt={4}>
           <Flex
@@ -82,7 +81,6 @@ const Page = ({}) => {
                 alt={images.nature.alt}
                 width={images.nature.width}
                 height={images.nature.height}
-                layout="fill"
               />
             </Box>
           </Flex>
@@ -102,7 +100,6 @@ const Page = ({}) => {
                 alt={images.cactus.alt}
                 width={images.cactus.width}
                 height={images.cactus.height}
-                layout="fill"
               />
             </Box>
             <Flex
@@ -162,13 +159,11 @@ const Page = ({}) => {
                 alt={images.dorm.alt}
                 width={images.dorm.width}
                 height={images.dorm.height}
-                layout="fill"
               />
             </Box>
           </Flex>
         </Flex>
         <Map mb={2} />
-      </Layout>
     </Box>
   );
 };
