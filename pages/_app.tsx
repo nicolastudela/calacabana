@@ -11,11 +11,11 @@ import "@fontsource/montserrat/500.css"
 import { trackPageview, GA_TRACKING_ID } from "@/lib/gtag";
 
 import "../styles/globals.css";
-import  {GlobalContextProvider } from "@/shared/hooks/useGlobalContext";
+import  { GlobalContextProvider } from "@/shared/hooks/useGlobalContext";
 import Layout from "@/components/Layout";
 
 import theme from "../theme";
-import { ChakraBaseProvider} from "@chakra-ui/react"
+import { ChakraProvider } from "@chakra-ui/react";
 
 const handleRouteChange = (url: string, { shallow }: { shallow: boolean }) => {
   if (!shallow) {
@@ -67,13 +67,13 @@ function MyApp({ Component, pageProps }: AppProps) {
         }}
       />
 
-      <ChakraBaseProvider theme={theme}>
+      <ChakraProvider theme={theme}>
         <GlobalContextProvider>
           <Layout>
             <Component {...pageProps} />
           </Layout>
         </GlobalContextProvider>
-      </ChakraBaseProvider>
+      </ChakraProvider>
   
     </>
   );
