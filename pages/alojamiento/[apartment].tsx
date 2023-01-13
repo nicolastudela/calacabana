@@ -27,7 +27,6 @@ import {
   IApartmentData,
   IReview,
 } from "@/types/shared";
-import HiglightAmenities from "@/components/amenities/HiglightAmenities";
 import BookingButton from "@/components/booking/BookingButton";
 import { BookeableValidPeriod } from "@/types/shared";
 import PageDrawer from "@/components/PageDrawer";
@@ -38,7 +37,6 @@ import usePageDefaultDates from "@/shared/hooks/usePageDefaultDates";
 
 import { useRouter } from "next/router";
 import { IDrawerActionTypes } from "@/types/types";
-import Reviews from "@/components/Reviews";
 import fetchOutstandingReviews from "@/shared/fetchers/fetchOutstandingReviews";
 import { trackEvent } from "@/lib/gtag";
 import usePageScroll from "@/shared/hooks/usePageScroll";
@@ -50,6 +48,14 @@ const VerticalGrid = dynamic(() => import("../../components/VerticalGallery"));
 
 const AllAmenities = dynamic(
   () => import("../../components/amenities/AllAmenities")
+);
+
+const HiglightAmenities = dynamic(
+  () => import("../../components/amenities/HiglightAmenities")
+);
+
+const Reviews = dynamic(
+  () => import("../../components/Reviews")
 );
 
 const BookingDatesLoader = () =>

@@ -1,172 +1,41 @@
-import { Box, Divider, Flex, Heading } from "@chakra-ui/react";
+import { Box, Divider, Flex, Heading, Spinner } from "@chakra-ui/react";
 import type { GetStaticProps } from "next";
 import Head from "next/head";
-import Layout from "@/components/Layout";
 import AparmentCard, {
   AparmentCardProps,
 } from "@/components/apartment/AparmentCard";
 import Carousel from "@/components/Carousel";
 
 import aparmentsData from "../shared/apartmentsData";
-import HeroGrid from "@/components/HeroGrid";
 import { Suspense, useCallback, useReducer } from "react";
 import { IDrawerActionTypes } from "@/types/types";
 import dynamic from "next/dynamic";
 
 import PageDrawer from "@/components/PageDrawer";
-import { IReview } from "@/types/shared";
+import { IApartmentImage, IReview } from "@/types/shared";
 import fetchOutstandingReviews from "@/shared/fetchers/fetchOutstandingReviews";
-import Reviews from "@/components/Reviews";
 import usePageScroll from "@/shared/hooks/usePageScroll";
 import LoadingMapContainer from "@/components/LoadingMapContainer";
 import useGlobalContext from "@/shared/hooks/useGlobalContext";
 
 const VerticalGrid = dynamic(() => import("../components/VerticalGallery"));
 
-const images = {
-  square: [
-    {
-      src: "/images/homepage/square/1-homepage.jpeg",
-      alt: "Servicio de hospedaje Calacabana - vista noche pileta",
-      width: 450,
-      height: 450,
-    },
-    {
-      src: "/images/homepage/square/2-homepage.jpeg",
-      alt: "Servicio de hospedaje Calacabana - vista solarium pileta",
-      width: 450,
-      height: 450,
-    },
-    {
-      src: "/images/homepage/square/3-homepage.jpeg",
-      alt: "Servicio de hospedaje Calacabana - vista desde cascada pileta",
-      width: 450,
-      height: 450,
-    },
-    {
-      src: "/images/homepage/square/4-homepage.jpeg",
-      alt: "Servicio de hospedaje Calacabana - cochera bajo techo de noche",
-      width: 450,
-      height: 450,
-    },
-    {
-      src: "/images/homepage/square/9-homepage.jpeg",
-      alt: "Servicio de hospedaje Calacabana - camino de noche",
-      width: 450,
-      height: 450,
-    },
-    {
-      src: "/images/homepage/square/6-homepage.jpeg",
-      alt: "Servicio de hospedaje Calacabana - vista hacia los apartamntos con jardin",
-      width: 450,
-      height: 450,
-    },
-    {
-      src: "/images/homepage/square/7-homepage.jpeg",
-      alt: "Servicio de hospedaje Calacabana - cochera vista a la entrada de dia",
-      width: 450,
-      height: 450,
-    },
-    {
-      src: "/images/homepage/square/8-homepage.jpeg",
-      alt: "Servicio de hospedaje Calacabana - jardin",
-      width: 450,
-      height: 450,
-    },
-    {
-      src: "/images/homepage/square/9-homepage.jpeg",
-      alt: "Servicio de hospedaje Calacabana - camino de noche",
-      width: 450,
-      height: 450,
-    },
-    {
-      src: "/images/homepage/square/5-homepage.jpeg",
-      alt: "Servicio de hospedaje Calacabana - pileta de noche efectos",
-      width: 450,
-      height: 450,
-    },
-    {
-      src: "/images/homepage/square/10-homepage.jpeg",
-      alt: "Servicio de hospedaje Calacabana - madera",
-      width: 450,
-      height: 450,
-    },
-  ],
-  wide: [
-    {
-      src: "/images/homepage/wide/1-homepage.jpeg",
-      alt: "Servicio de hospedaje Calacabana - vista noche pileta",
-      width: 1280,
-      height: 853,
-    },
-    {
-      src: "/images/homepage/wide/2-homepage.jpeg",
-      alt: "Servicio de hospedaje Calacabana - vista solarium pileta",
-      width: 1280,
-      height: 853,
-    },
-    {
-      src: "/images/homepage/wide/3-homepage.jpeg",
-      alt: "Servicio de hospedaje Calacabana - vista desde cascada pileta",
-      width: 1280,
-      height: 853,
-    },
-    {
-      src: "/images/homepage/wide/4-homepage.jpeg",
-      alt: "Servicio de hospedaje Calacabana - cochera bajo techo de noche",
-      width: 1280,
-      height: 853,
-    },
-    {
-      src: "/images/homepage/wide/9-homepage.jpeg",
-      alt: "Servicio de hospedaje Calacabana - camino de noche",
-      width: 1280,
-      height: 853,
-    },
-    {
-      src: "/images/homepage/wide/6-homepage.jpeg",
-      alt: "Servicio de hospedaje Calacabana - vista hacia los apartamntos con jardin",
-      width: 1280,
-      height: 853,
-    },
-    {
-      src: "/images/homepage/wide/7-homepage.jpeg",
-      alt: "Servicio de hospedaje Calacabana - cochera vista a la entrada de dia",
-      width: 1280,
-      height: 853,
-    },
-    {
-      src: "/images/homepage/wide/8-homepage.jpeg",
-      alt: "Servicio de hospedaje Calacabana - jardin",
-      width: 1280,
-      height: 853,
-    },
-    {
-      src: "/images/homepage/wide/9-homepage.jpeg",
-      alt: "Servicio de hospedaje Calacabana - camino de noche",
-      width: 1280,
-      height: 853,
-    },
-    {
-      src: "/images/homepage/wide/5-homepage.jpeg",
-      alt: "Servicio de hospedaje Calacabana - pileta de noche efectos",
-      width: 1280,
-      height: 853,
-    },
-    {
-      src: "/images/homepage/wide/10-homepage.jpeg",
-      alt: "Servicio de hospedaje Calacabana - madera",
-      width: 1280,
-      height: 853,
-    },
-  ],
-};
+const Reviews = dynamic(
+  () => import("../components/Reviews")
+);
+
+const HeroGrid = dynamic(
+  () => import("../components/HeroGrid"), {
+    loading: () => <Flex height={"450px"} width={"100%"}><Spinner margin="auto"/></Flex>,
+    ssr: false,
+  }
+);
 
 const Map = dynamic(() => import("../components/Map"), {
   suspense: true,
 });
 
-const Page = ({ apartments, reviews }: IHomePageProps) => {
+const Page = ({ apartments, reviews, images }: IHomePageProps) => {
   const { isMobile } = useGlobalContext();
   // use reducer to get dispachers to be used on CTAs, where some CTAs will update whats shown on the drawer
   const reducer = useCallback(
@@ -203,7 +72,7 @@ const Page = ({ apartments, reviews }: IHomePageProps) => {
           return null;
       }
     },
-    []
+    [images]
   );
   const [componentToShow, dispatch] = useReducer(reducer, null);
   const scrollTrigger = usePageScroll();
@@ -310,7 +179,7 @@ const Home = (props: IHomePageProps) => {
         />
         <meta
           property="og:image"
-          content={`${canonicalPath}${images.square[0].src}`}
+          content={`${canonicalPath}${props.images.square[0].src}`}
         />
       </Head>
       <Page {...props} />
@@ -318,7 +187,10 @@ const Home = (props: IHomePageProps) => {
   );
 };
 
-export type IHomePageProps = { apartments: AparmentCardProps[] } & {
+export type IHomePageProps = { apartments: AparmentCardProps[], images: {
+  wide: IApartmentImage[],
+  square: IApartmentImage[],
+} } & {
   reviews: IReview[];
 };
 
@@ -350,8 +222,148 @@ const getStaticProps: GetStaticProps<IHomePageProps> = async ({}) => {
 
   const reviews = await fetchOutstandingReviews();
 
+  const images = {
+    square: [
+      {
+        src: "/images/homepage/square/1-homepage.jpeg",
+        alt: "Servicio de hospedaje Calacabana - vista noche pileta",
+        width: 450,
+        height: 450,
+      },
+      {
+        src: "/images/homepage/square/2-homepage.jpeg",
+        alt: "Servicio de hospedaje Calacabana - vista solarium pileta",
+        width: 450,
+        height: 450,
+      },
+      {
+        src: "/images/homepage/square/3-homepage.jpeg",
+        alt: "Servicio de hospedaje Calacabana - vista desde cascada pileta",
+        width: 450,
+        height: 450,
+      },
+      {
+        src: "/images/homepage/square/4-homepage.jpeg",
+        alt: "Servicio de hospedaje Calacabana - cochera bajo techo de noche",
+        width: 450,
+        height: 450,
+      },
+      {
+        src: "/images/homepage/square/9-homepage.jpeg",
+        alt: "Servicio de hospedaje Calacabana - camino de noche",
+        width: 450,
+        height: 450,
+      },
+      {
+        src: "/images/homepage/square/6-homepage.jpeg",
+        alt: "Servicio de hospedaje Calacabana - vista hacia los apartamntos con jardin",
+        width: 450,
+        height: 450,
+      },
+      {
+        src: "/images/homepage/square/7-homepage.jpeg",
+        alt: "Servicio de hospedaje Calacabana - cochera vista a la entrada de dia",
+        width: 450,
+        height: 450,
+      },
+      {
+        src: "/images/homepage/square/8-homepage.jpeg",
+        alt: "Servicio de hospedaje Calacabana - jardin",
+        width: 450,
+        height: 450,
+      },
+      {
+        src: "/images/homepage/square/9-homepage.jpeg",
+        alt: "Servicio de hospedaje Calacabana - camino de noche",
+        width: 450,
+        height: 450,
+      },
+      {
+        src: "/images/homepage/square/5-homepage.jpeg",
+        alt: "Servicio de hospedaje Calacabana - pileta de noche efectos",
+        width: 450,
+        height: 450,
+      },
+      {
+        src: "/images/homepage/square/10-homepage.jpeg",
+        alt: "Servicio de hospedaje Calacabana - madera",
+        width: 450,
+        height: 450,
+      },
+    ],
+    wide: [
+      {
+        src: "/images/homepage/wide/1-homepage.jpeg",
+        alt: "Servicio de hospedaje Calacabana - vista noche pileta",
+        width: 1280,
+        height: 853,
+      },
+      {
+        src: "/images/homepage/wide/2-homepage.jpeg",
+        alt: "Servicio de hospedaje Calacabana - vista solarium pileta",
+        width: 1280,
+        height: 853,
+      },
+      {
+        src: "/images/homepage/wide/3-homepage.jpeg",
+        alt: "Servicio de hospedaje Calacabana - vista desde cascada pileta",
+        width: 1280,
+        height: 853,
+      },
+      {
+        src: "/images/homepage/wide/4-homepage.jpeg",
+        alt: "Servicio de hospedaje Calacabana - cochera bajo techo de noche",
+        width: 1280,
+        height: 853,
+      },
+      {
+        src: "/images/homepage/wide/9-homepage.jpeg",
+        alt: "Servicio de hospedaje Calacabana - camino de noche",
+        width: 1280,
+        height: 853,
+      },
+      {
+        src: "/images/homepage/wide/6-homepage.jpeg",
+        alt: "Servicio de hospedaje Calacabana - vista hacia los apartamntos con jardin",
+        width: 1280,
+        height: 853,
+      },
+      {
+        src: "/images/homepage/wide/7-homepage.jpeg",
+        alt: "Servicio de hospedaje Calacabana - cochera vista a la entrada de dia",
+        width: 1280,
+        height: 853,
+      },
+      {
+        src: "/images/homepage/wide/8-homepage.jpeg",
+        alt: "Servicio de hospedaje Calacabana - jardin",
+        width: 1280,
+        height: 853,
+      },
+      {
+        src: "/images/homepage/wide/9-homepage.jpeg",
+        alt: "Servicio de hospedaje Calacabana - camino de noche",
+        width: 1280,
+        height: 853,
+      },
+      {
+        src: "/images/homepage/wide/5-homepage.jpeg",
+        alt: "Servicio de hospedaje Calacabana - pileta de noche efectos",
+        width: 1280,
+        height: 853,
+      },
+      {
+        src: "/images/homepage/wide/10-homepage.jpeg",
+        alt: "Servicio de hospedaje Calacabana - madera",
+        width: 1280,
+        height: 853,
+      },
+    ],
+  };
+  
+
   return {
-    props: { apartments: apartments, reviews },
+    props: { apartments: apartments, reviews, images },
     notFound: false,
     // if you want revalidate data of an apartment manually.
     //https://nextjs.org/docs/basic-features/data-fetching/incremental-static-regeneration#on-demand-revalidation

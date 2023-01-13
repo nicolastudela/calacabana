@@ -1,4 +1,3 @@
-import Layout from "@/components/Layout";
 import {
   Box,
   Divider,
@@ -79,8 +78,7 @@ const Page = ({}) => {
               <Image
                 src={images.nature.src}
                 alt={images.nature.alt}
-                width={images.nature.width}
-                height={images.nature.height}
+                fill
               />
             </Box>
           </Flex>
@@ -98,8 +96,7 @@ const Page = ({}) => {
               <Image
                 src={images.cactus.src}
                 alt={images.cactus.alt}
-                width={images.cactus.width}
-                height={images.cactus.height}
+                fill
               />
             </Box>
             <Flex
@@ -157,8 +154,7 @@ const Page = ({}) => {
               <Image
                 src={images.dorm.src}
                 alt={images.dorm.alt}
-                width={images.dorm.width}
-                height={images.dorm.height}
+                fill
               />
             </Box>
           </Flex>

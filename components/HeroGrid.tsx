@@ -35,8 +35,7 @@ const HeroGrid = ({ images, onShowAllPicks, title, subtitle }: HeroGridProps) =>
               <Image
                 src={src}
                 alt={alt}
-                width={width}
-                height={height}
+                fill
                 priority
                 sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 50vw"
               />
@@ -73,8 +72,7 @@ const HeroGrid = ({ images, onShowAllPicks, title, subtitle }: HeroGridProps) =>
               <Image
                 src={src}
                 alt={alt}
-                width={width}
-                height={height}
+                fill
                 sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
               />
             </GridItem>

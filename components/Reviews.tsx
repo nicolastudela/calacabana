@@ -35,10 +35,10 @@ const Reviews = ({reviewsCount, overallRating, reviews, onExpand }: IReviewsProp
         <StarIcon fontSize={"sm"}/>
         <Heading as="h3" size="lg">{overallRating} · {reviewsCount} Opiniones</Heading>
       </Flex>
-      <Flex direction="column" maxHeight={[onExpand ? "96" : "auto", onExpand ? "80" : "96"]} wrap={"wrap"} gap={4} mb={2}>
+      <Flex direction={"row"} wrap={"wrap"} gap={4} mb={2}>
         {reviewsToShow.map((review, idx) => (
           // reviews have to has an Id
-          <Flex key={`${review.author}-${idx}`} width={"full"} direction={"column"} height={["32", onExpand ? "32" : "44"]} gap={2} maxWidth={isMobile ? "full" : "250px"}>
+          <Flex key={`${review.author}-${idx}`} width={"full"} direction={"column"} gap={2} maxWidth={isMobile ? "full" : "250px"}>
             <ReviewHeader name={review.author} avatar={review.profilePhotoURL} date={review.relativeTimeDescription} />
             <Text fontSize={"xs"} noOfLines={onExpand ? [3] : []}>{review.text}</Text>
           </Flex>

@@ -20,7 +20,6 @@ import {
   UserInquiry,
   UserInquiryRequest,
 } from "@/types/shared";
-import Layout from "@/components/Layout";
 import aparmentBookingsFetcher from "@/shared/fetchers/aparmentBookingsFetcher";
 import usePageDefaultDates, {
   EPageDefaultDatesErrorType,

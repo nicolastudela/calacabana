@@ -1,4 +1,3 @@
-import Layout from "@/components/Layout";
 import { Box, Divider, Flex, Heading, Text } from "@chakra-ui/react";
 import Head from "next/head";
 import Image from "next/image";
@@ -7,7 +6,7 @@ import useGlobalContext from "@/shared/hooks/useGlobalContext";
 
 const images = {
   detail: {
-    src: "/images/detalles/detalles-naturaleza-15.jpeg",
+    src: "/images/detalles/naturaleza.jpeg",
     alt: "Servicio de hospedaje Calacabana - Naturaleza",
     width: 1280,
     height: 853,
@@ -57,8 +56,7 @@ const Page = ({}) => {
             <Image
               src={images.detail.src}
               alt={images.detail.alt}
-              width={images.detail.width}
-              height={images.detail.height}
+              fill
             />
           </Box>
         </Flex>
@@ -84,7 +82,7 @@ const Ubicacion = ({}) => {
         />
         <meta
           property="og:image"
-          content={`${canonicalPath}/images/homepage/square/1-homepage.jpeg`}
+          content={`${canonicalPath}/images/homepage/square/1-homepage.jpg`}
         />
         <link rel="icon" href="/favicon.ico" />
       </Head>

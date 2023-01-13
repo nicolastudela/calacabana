@@ -1,6 +1,6 @@
 import Carousel, { CarouselProps as CustomCarouselProps } from "nuka-carousel";
 
-import { IconButton, Flex } from "@chakra-ui/react";
+import { IconButton, Flex, Box, AspectRatio } from "@chakra-ui/react";
 
 import { ArrowBackIcon, ArrowForwardIcon } from "@chakra-ui/icons";
 import { MouseEventHandler } from "react";
@@ -93,14 +93,16 @@ const CustomCarousel = ({
     >
       {images &&
         images.map(({ src, alt, width, height }, index) => (
+          <AspectRatio key={index} ratio={1/1}>
           <Image
-            key={index}
             src={src}
             alt={alt}
-            width={width}
-            height={height}
+            fill
+            placeholder={index === 0 ? "blur" : "empty"}
+            blurDataURL={"data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNksbWtBwABygD/9kd92AAAAABJRU5ErkJggg=="}
             priority={index === 0 ? true : false}
           />
+          </AspectRatio>
         ))}
     </Carousel>
   );
