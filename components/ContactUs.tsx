@@ -8,6 +8,7 @@ import { useForm } from "react-hook-form";
 import { TextAreaFieldWithRef as TextAreaField } from "@/components/TextArea";
 import { TextFieldWithRef as TextField } from "@/components/TextField";
 import { trackEvent } from "@/lib/gtag";
+import React from "react";
 
 const t = (key: string, args?: Record<string, string>) => {
   switch (key) {
@@ -37,7 +38,7 @@ export interface ContactUsProps {
   onChange: (values: UserInquiry | null) => void;
 }
 
-const ContactUs = ({ onChange }: ContactUsProps) => {
+const ContactUs = React.memo(function Contactus({ onChange }: ContactUsProps) {
   const {
     register,
     getValues,
@@ -58,7 +59,7 @@ const ContactUs = ({ onChange }: ContactUsProps) => {
       const formValues = getValues();
       if (formValues.body && formValues.firstName && formValues.lastName && formValues.email && formValues.phone )
         onChange(formValues as UserInquiry);
-    } else if (isDirty && !isValid && !isValidating)  {
+    } else if (isDirty && !isValid && !isValidating) {
       onChange(null);
     }
   }, [getValues, isValid, isDirty, isValidating, onChange]);
@@ -177,6 +178,6 @@ const ContactUs = ({ onChange }: ContactUsProps) => {
       />
     </Flex>
   );
-};
+});
 
 export default ContactUs;

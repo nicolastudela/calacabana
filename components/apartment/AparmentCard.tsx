@@ -28,9 +28,9 @@ const AparmentCard = ({
 }: AparmentCardProps & BoxProps) => {
   const { isMobile } = useGlobalContext();
   return (
-    <NextLink href={`/alojamiento/${name}`} passHref>
       <Box
-        as="a"
+        href={`/alojamiento/${name}`} 
+        as={NextLink}
         w={{ base: "100%", md: type !== APARMENTS_TYPE.COMPOUND ? "50%" : "auto" }}
         maxWidth={type !== APARMENTS_TYPE.COMPOUND ? "550px" : "1000px"}
         pb={4}
@@ -48,8 +48,8 @@ const AparmentCard = ({
       >
         {(!isMobile && type === APARMENTS_TYPE.COMPOUND) ? (
           <Flex direction="row" gap="5">
-            <Image src={images[0].src} alt={images[0].alt} width={images[0].width} height={images[0].height} layout="fixed" />  
-            <Image src={images[1].src} alt={images[1].alt} width={images[1].width} height={images[1].height} layout="fixed" />
+            <Image src={images[0].src} alt={images[0].alt} width={images[0].width} height={images[0].height}  />  
+            <Image src={images[1].src} alt={images[1].alt} width={images[1].width} height={images[1].height}  />
           </Flex>
         ) : (<Carousel aptName={name} images={images} />)}
 
@@ -62,7 +62,6 @@ const AparmentCard = ({
           p={1}
         />
       </Box>
-    </NextLink>
   );
 };
 

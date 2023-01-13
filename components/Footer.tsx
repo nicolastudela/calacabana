@@ -13,9 +13,11 @@ const Footer = () => (
     direction={{ base: "column-reverse", md: "row" }}
     alignItems="center"
   >
-    <Text textAlign="center" fontSize={{ base: "xs", md: "md" }}>
-      ©2022 CALABANA. Todos los derechos reservados
-    </Text>
+    <NextLink passHref href={"/"} scroll={false}> 
+      <Text textAlign="center" fontSize={{ base: "xs", md: "md" }}>
+        ©2022 CALABANA. Todos los derechos reservados
+      </Text>
+    </NextLink>
     <VStack pb={4}>
       <Link
         display={"flex"}
@@ -50,8 +52,8 @@ const Footer = () => (
         <Icon as={FaWhatsapp} mr={1} />
         <Text>11-5060-9152</Text>
       </Link>
-      <NextLink href={"/el-alojamiento"} passHref><Link>Sobre el alojamiento</Link></NextLink>
-      <NextLink href={"/ubicacion"} passHref><Link>Tanti, Córdoba, Argentina</Link></NextLink>
+      <Link href={"/el-alojamiento"} as={NextLink}>Sobre el alojamiento</Link>
+      <Link href={"/ubicacion"} as={NextLink}>Tanti, Córdoba, Argentina</Link>
     </VStack>
   </Flex>
 );

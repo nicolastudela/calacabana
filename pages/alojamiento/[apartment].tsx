@@ -10,12 +10,11 @@ import {
   Spinner,
 } from "@chakra-ui/react";
 import Head from "next/head";
-import Layout from "@/components/Layout";
 import Carousel from "@/components/Carousel";
 
 import HeroGrid from "@/components/HeroGrid";
 import dynamic from "next/dynamic";
-import { Suspense, useCallback, useEffect, useMemo, useReducer, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useReducer, useRef, useState } from "react";
 import ApartmentTitle from "@/components/apartment/ApartmentTitle";
 import { BsFillDoorOpenFill } from "react-icons/bs";
 import { GiCctvCamera, GiHomeGarage } from "react-icons/gi";
@@ -28,7 +27,6 @@ import {
   IApartmentData,
   IReview,
 } from "@/types/shared";
-import HiglightAmenities from "@/components/amenities/HiglightAmenities";
 import BookingButton from "@/components/booking/BookingButton";
 import { BookeableValidPeriod } from "@/types/shared";
 import PageDrawer from "@/components/PageDrawer";
@@ -39,12 +37,12 @@ import usePageDefaultDates from "@/shared/hooks/usePageDefaultDates";
 
 import { useRouter } from "next/router";
 import { IDrawerActionTypes } from "@/types/types";
-import Reviews from "@/components/Reviews";
 import fetchOutstandingReviews from "@/shared/fetchers/fetchOutstandingReviews";
 import { trackEvent } from "@/lib/gtag";
 import usePageScroll from "@/shared/hooks/usePageScroll";
 import LoadingMapContainer from "@/components/LoadingMapContainer";
 import useGlobalContext from "@/shared/hooks/useGlobalContext";
+import React from "react";
 
 const VerticalGrid = dynamic(() => import("../../components/VerticalGallery"));
 
@@ -52,17 +50,25 @@ const AllAmenities = dynamic(
   () => import("../../components/amenities/AllAmenities")
 );
 
+const HiglightAmenities = dynamic(
+  () => import("../../components/amenities/HiglightAmenities")
+);
+
+const Reviews = dynamic(
+  () => import("../../components/Reviews")
+);
+
 const BookingDatesLoader = () =>
-  import("../../components/booking/BookingDatesWithRef");
+  import("../../components/booking/BookingDates");
 
 const BookingDates = dynamic(BookingDatesLoader, {
-  suspense: true,
+  loading: () => <Flex minWidth="350px" height={"350px"} ><Spinner margin="auto"/></Flex>,
   ssr: false,
 });
 
 const Map = dynamic(
   () => import("../../components/Map"), {
-  suspense: true,
+  loading: () => <LoadingMapContainer/>,
   ssr: false,
 });
 
@@ -87,7 +93,6 @@ const Page = (apartmentData: IApartmentProps) => {
   const router = useRouter();
   const { isMobile } = useGlobalContext();
 
-  const [isClient, setClient] = useState(false);
   const [bookeableValidPeriodState, setBookeableValidPeriodState] =
     useState<BookeableValidPeriodState>({dateSelected: null, error: null});
   const { data: excludedDatesRanges, error } = useSWR(
@@ -169,10 +174,6 @@ const Page = (apartmentData: IApartmentProps) => {
   );
 
   const [componentToShow, dispatch] = useReducer(reducer, null);
-
-  useEffect(() => {
-    setClient(true);
-  }, []);
 
   const onDatesSelected = useCallback((dates: BookeableValidPeriod | null) => {
     setBookeableValidPeriodState({dateSelected: dates, error: null})
@@ -256,7 +257,6 @@ const Page = (apartmentData: IApartmentProps) => {
 
   return (
     <Box>
-      <Layout>
           <Box display={{base: "block", md: "none"}}>
             <a
               onClick={() => {
@@ -339,9 +339,9 @@ const Page = (apartmentData: IApartmentProps) => {
             top={{ base: "unset", md: "40px" }}
           >
             {
-              isClient && (
-                // <Suspense fallback="loading">
+              scrollTrigger && (
                 <Box
+                  ref={datePickerRef}
                   display="flex"
                   alignItems={"center"}
                   flexDirection={"column"}
@@ -362,7 +362,6 @@ const Page = (apartmentData: IApartmentProps) => {
                     excludedDatesRanges != null &&
                     !error && (
                       <BookingDates
-                        ref={datePickerRef}
                         m={"auto"}
                         width="fit-content"
                         apartmentName={displayName}
@@ -389,7 +388,6 @@ const Page = (apartmentData: IApartmentProps) => {
                   {/* )} */}
                 </Box>
               )
-              // </Suspense>
             }
           </Box>
         </Flex>
@@ -424,12 +422,11 @@ const Page = (apartmentData: IApartmentProps) => {
             )}
           </Box>
         )}
-        {scrollTrigger && <Suspense fallback={<LoadingMapContainer/>}><Map /></Suspense>}
+        {scrollTrigger && <Map />}
         <PageDrawer
           componentToShow={componentToShow}
           onHide={() => dispatch({ type: "hide" })}
         />
-      </Layout>
     </Box>
   );
 };

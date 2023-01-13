@@ -1,5 +1,5 @@
 // import { ChevronDownIcon } from "@chakra-ui/icons";
-import { Menu, MenuButton, MenuList, MenuItem, Link, LinkProps, useDisclosure } from "@chakra-ui/react";
+import { Menu, MenuButton, MenuList, MenuItem, Link } from "@chakra-ui/react";
 import { INavMenu } from "@/types/types";
 import { INavLink } from "@/types/types";
 import { useState } from "react";

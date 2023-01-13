@@ -20,7 +20,6 @@ import {
   UserInquiry,
   UserInquiryRequest,
 } from "@/types/shared";
-import Layout from "@/components/Layout";
 import aparmentBookingsFetcher from "@/shared/fetchers/aparmentBookingsFetcher";
 import usePageDefaultDates, {
   EPageDefaultDatesErrorType,
@@ -40,7 +39,7 @@ import NotificationSection, {
 import { GenericResponseStatus } from "@/types/api";
 import { trackEvent } from "@/lib/gtag";
 
-import Router from 'next/router';
+import Router from "next/router";
 import useGlobalContext from "@/shared/hooks/useGlobalContext";
 
 export type IBookingApartmentProps = IApartmentData & { key: string };
@@ -57,12 +56,15 @@ export enum EApartmentBookingErrorType {
 
 interface BookeableValidPeriodState {
   dateSelected: BookeableValidPeriod | null;
-  error: EApartmentBookingErrorType.SELECTED_DATES_NOT_AVAILABLE | null
+  error: EApartmentBookingErrorType.SELECTED_DATES_NOT_AVAILABLE | null;
 }
 
 interface UserInquiryState {
   userInquiry: UserInquiry | null;
-  error: EApartmentBookingErrorType.USER_INQUIRY_NOT_AVAILABLE | EApartmentBookingErrorType.INQUIRY_ACTION_FAILED | null;
+  error:
+    | EApartmentBookingErrorType.USER_INQUIRY_NOT_AVAILABLE
+    | EApartmentBookingErrorType.INQUIRY_ACTION_FAILED
+    | null;
 }
 
 const Page = (apartmentData: IBookingApartmentProps) => {
@@ -84,35 +86,40 @@ const Page = (apartmentData: IBookingApartmentProps) => {
   const [isPageProcessing, setIsPageProcessing] = useState(false);
   const [userInquiryRequestSent, setUserInquiryRequestSent] = useState(false);
   const [bookeableValidPeriodState, setBookeableValidPeriodState] =
-    useState<BookeableValidPeriodState>({dateSelected: null, error: null});
-  const [userInquiryDataState, setUserInquiryDataState] = useState<UserInquiryState>({
-    userInquiry: null,
-    error: null,
-  });
+    useState<BookeableValidPeriodState>({ dateSelected: null, error: null });
+  const [userInquiryDataState, setUserInquiryDataState] =
+    useState<UserInquiryState>({
+      userInquiry: null,
+      error: null,
+    });
   const { defaultDates, bookeableDefaultDates, pageDefaultDatesError } =
     usePageDefaultDates({
       excludedDatesRanges,
     });
 
   const onDatesSelected = useCallback((dates: BookeableValidPeriod | null) => {
-    setBookeableValidPeriodState({dateSelected: dates, error: null})
+    setBookeableValidPeriodState({ dateSelected: dates, error: null });
   }, []);
 
   const onUserConctactChange = useCallback(
     (userContactData: UserInquiry | null) => {
       if (userContactData) {
-        trackEvent("user_contact_filled", {aparment: name})  
-        setUserInquiryDataState({userInquiry: userContactData, error: null});
+        trackEvent("user_contact_filled", { aparment: name });
+        setUserInquiryDataState({ userInquiry: userContactData, error: null });
       } else {
-        setUserInquiryDataState({userInquiry: null, error: EApartmentBookingErrorType.USER_INQUIRY_NOT_AVAILABLE});
+        userInquiryDataState.userInquiry !== null && setUserInquiryDataState({
+          userInquiry: null,
+          error: EApartmentBookingErrorType.USER_INQUIRY_NOT_AVAILABLE,
+        });
       }
     },
-    [name]
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [name, JSON.stringify(userInquiryDataState)]
   );
 
   const selectDatesAndCloseDrawer = useCallback(
     (dates: BookeableValidPeriod | null) => {
-      trackEvent("dates_selected_through_booking",  { apartment: name })
+      trackEvent("dates_selected_through_booking", { apartment: name });
       onDatesSelected(dates);
       if (router && dates) {
         updateQueryStringWithBookingDates(router, [
@@ -130,16 +137,26 @@ const Page = (apartmentData: IBookingApartmentProps) => {
     if (userInquiryRequestSent) {
       return NOTIFICATION.SUCCESS_INQUIRY_ACTION;
     }
-    if (userInquiryDataState.error === EApartmentBookingErrorType.INQUIRY_ACTION_FAILED) {
-      return NOTIFICATION.FAILED_INQUIRY_ACTION; 
-    } 
+    if (
+      userInquiryDataState.error ===
+      EApartmentBookingErrorType.INQUIRY_ACTION_FAILED
+    ) {
+      return NOTIFICATION.FAILED_INQUIRY_ACTION;
+    }
 
-    if (bookeableValidPeriodState.error === EApartmentBookingErrorType.SELECTED_DATES_NOT_AVAILABLE) {
+    if (
+      bookeableValidPeriodState.error ===
+      EApartmentBookingErrorType.SELECTED_DATES_NOT_AVAILABLE
+    ) {
       return NOTIFICATION.FAILED_SELECTED_DATES_NOT_AVAILABLE;
     }
 
     return null;
-  }, [bookeableValidPeriodState.error, userInquiryDataState.error, userInquiryRequestSent]);
+  }, [
+    bookeableValidPeriodState.error,
+    userInquiryDataState.error,
+    userInquiryRequestSent,
+  ]);
 
   const onBackAction = useCallback(() => {
     trackEvent("return_to_aparment", { apartment: name });
@@ -149,19 +166,16 @@ const Page = (apartmentData: IBookingApartmentProps) => {
     router.push({
       pathname: `/alojamiento/${name}`,
       query: restQuery,
-    });
+    }, undefined, {scroll: false});
   }, [name, router]);
 
-  const onEditDates = useCallback(
-    () => {
-      trackEvent("edit_dates_on_booking", { apartment: name });
-      dispatch({
-        type: IDrawerActionTypes.SHOW_EDIT_DATES,
-        payload: bookeableValidPeriodState.dateSelected,
-      })
-    },
-    [bookeableValidPeriodState.dateSelected, name]
-  );
+  const onEditDates = useCallback(() => {
+    trackEvent("edit_dates_on_booking", { apartment: name });
+    dispatch({
+      type: IDrawerActionTypes.SHOW_EDIT_DATES,
+      payload: bookeableValidPeriodState.dateSelected,
+    });
+  }, [bookeableValidPeriodState.dateSelected, name]);
   // use reducer to get dispachers to be used on CTAs, where some CTAs will update whats shown on the PageDrawer
   const reducer = useCallback(
     (state: any, action: { type: any; payload?: any }) => {
@@ -185,7 +199,10 @@ const Page = (apartmentData: IBookingApartmentProps) => {
                     onDatesSelected={selectDatesAndCloseDrawer}
                     defaultDates={
                       bookeableValidPeriodState.dateSelected
-                        ? [bookeableValidPeriodState.dateSelected.startDate, bookeableValidPeriodState.dateSelected.endDate]
+                        ? [
+                            bookeableValidPeriodState.dateSelected.startDate,
+                            bookeableValidPeriodState.dateSelected.endDate,
+                          ]
                         : undefined
                     }
                   />
@@ -212,13 +229,6 @@ const Page = (apartmentData: IBookingApartmentProps) => {
 
   const [componentToShow, dispatch] = useReducer(reducer, null);
 
-  useEffect(() => {
-    if (bookeableDefaultDates !== undefined) {
-      setBookeableValidPeriodState((prev) => ({...prev, dateSelected: bookeableDefaultDates }))
-    }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [JSON.stringify(bookeableDefaultDates)]);
-
   /**
    * ISSUE: #6
    * - Invalid dates (not existent, not valid booking date) => Redirects to /aparment/[apt]
@@ -226,8 +236,13 @@ const Page = (apartmentData: IBookingApartmentProps) => {
    */
   useEffect(() => {
     if (pageDefaultDatesError) {
-      trackEvent("not_available_dates_selected_through_url",  { apartment: name })
-      setBookeableValidPeriodState((prev: BookeableValidPeriodState) => ({...prev, error: EApartmentBookingErrorType.SELECTED_DATES_NOT_AVAILABLE}));
+      trackEvent("not_available_dates_selected_through_url", {
+        apartment: name,
+      });
+      setBookeableValidPeriodState((prev: BookeableValidPeriodState) => ({
+        ...prev,
+        error: EApartmentBookingErrorType.SELECTED_DATES_NOT_AVAILABLE,
+      }));
       if (
         pageDefaultDatesError ===
         EPageDefaultDatesErrorType.DEFAULT_DATES_INVALID
@@ -239,139 +254,160 @@ const Page = (apartmentData: IBookingApartmentProps) => {
   }, [pageDefaultDatesError, name]);
 
   const userCanSubmitInquiry = useMemo(() => {
-    return bookeableValidPeriodState.dateSelected && !bookeableValidPeriodState.error && name && userInquiryDataState.userInquiry && !userInquiryDataState.error;
-  },[bookeableValidPeriodState.dateSelected, bookeableValidPeriodState.error, name, userInquiryDataState.error, userInquiryDataState.userInquiry])
+    return (
+      bookeableValidPeriodState.dateSelected &&
+      !bookeableValidPeriodState.error &&
+      name &&
+      userInquiryDataState.userInquiry &&
+      !userInquiryDataState.error
+    );
+  }, [
+    bookeableValidPeriodState.dateSelected,
+    bookeableValidPeriodState.error,
+    name,
+    userInquiryDataState.error,
+    userInquiryDataState.userInquiry,
+  ]);
 
   // callback to post user_inqury. Checks for no errors and data should be available
   const postInquiry = useCallback(() => {
     if (userCanSubmitInquiry) {
-      trackEvent("user_requested_info",  { apartment: name })
+      trackEvent("user_requested_info", { apartment: name });
       setIsPageProcessing(true);
       postUserInquiry({
         apartment: name,
-        period: bookeableValidPeriodState.dateSelected ,
+        period: bookeableValidPeriodState.dateSelected,
         userContact: userInquiryDataState.userInquiry,
         apartmentLink: window.location.href.replace("reserva", "alojamiento"),
       } as UserInquiryRequest)
         .then((resp) => {
           if (resp.isError || resp.status === GenericResponseStatus.ERROR) {
-            setUserInquiryDataState((prev) => ({...prev, error: EApartmentBookingErrorType.USER_INQUIRY_NOT_AVAILABLE}))
+            setUserInquiryDataState((prev) => ({
+              ...prev,
+              error: EApartmentBookingErrorType.USER_INQUIRY_NOT_AVAILABLE,
+            }));
           } else {
             setUserInquiryRequestSent(true);
           }
         })
         .finally(() => setIsPageProcessing(false));
     }
-  }, [bookeableValidPeriodState, name, userInquiryDataState, userCanSubmitInquiry]);
+  }, [
+    bookeableValidPeriodState,
+    name,
+    userInquiryDataState,
+    userCanSubmitInquiry,
+  ]);
 
   return (
     <Box>
-      <Layout>
-        <Flex w={"full"} alignContent="center" gap={4} mt={2}>
-          <IconButton
-            size="sm"
-            variant="ghost"
-            aria-label="Atras"
-            isLoading={isPageProcessing}
-            onClick={onBackAction}
-            _focus={{ boxShadow: "none" }}
-            icon={<ArrowBackIcon />}
-          />
-          <Heading as="h2" size="lg">
-            Envia tu consulta
-          </Heading>
-        </Flex>
-        <Flex
-          mt={4}
-          alignItems={"flex-start"}
-          justifyContent="space-between"
-          position="relative"
-          wrap={"wrap"}
-          direction={{ base: "column-reverse", md: "row" }}
-          px={{ base: 1, md: "unset" }}
-        >
-          <Flex
-            w={{ base: "100%", md: "65%" }}
-            alignItems={"flex-start"}
-            direction="column"
-          >
-            {!isMobile && <Divider mb={4} />}
-            <TripSection
-              w={"full"}
-              numGuests={maxPeople}
-              bookingPeriod={
-                bookeableValidPeriodState.dateSelected
-                  ? [bookeableValidPeriodState.dateSelected.startDate, bookeableValidPeriodState.dateSelected.endDate]
-                  : defaultDates
-              }
-              onEditDates={onEditDates}
-              invalidDates={!!bookeableValidPeriodState.error}
-            />
-            <Divider my={6} />
-            {notification ? (
-              <NotificationSection
-                notification={notification}
-                m="auto"
-                maxWidth={"sm"}
-                minHeight={72}
-              />
-            ) : (
-              <ContactUs onChange={onUserConctactChange} />
-            )}
-
-            <Divider my={6} />
-            {!userInquiryRequestSent && (
-              <Button
-                isLoading={isPageProcessing}
-                size={"lg"}
-                alignSelf={{ base: "center", md: "flex-start" }}
-                variant="action"
-                disabled={!userCanSubmitInquiry}
-                mb={4}
-                onClick={postInquiry}
-              >
-                Envia tu consulta
-              </Button>
-            )}
-          </Flex>
-          <Box
-            w={{ base: "100%", md: "35%" }}
-            position={{ base: "relative", md: "sticky" }}
-            top={{ base: "unset", md: "40px" }}
-          >
-            <Box
-              display="flex"
-              alignItems={"center"}
-              flexDirection={"column"}
-              rounded={{ base: "none", md: "md" }}
-              width={"fit-content"}
-              margin="auto"
-              padding={{ base: "unset", md: "24px" }}
-              border={{ base: "none", md: "1px solid" }}
-              borderColor="brand.500"
-              minWidth="350px"
-            >
-              <ListingCard
-                image={images.wide[0]}
-                name={displayName}
-                mainFeature={mainFeature}
-                apartmentType={apartmentType}
-              />
-              {!isMobile && (
-                <>
-                  <Divider my={4} />
-                  <DiscountsInformation w={"full"} />
-                </>
-              )}
-            </Box>
-            {isMobile && <Divider my={4} />}
-          </Box>
-        </Flex>
-        <PageDrawer
-          componentToShow={componentToShow}
-          onHide={() => dispatch({ type: "hide" })}
+      <Flex w={"full"} alignContent="center" gap={4} mt={2}>
+        <IconButton
+          size="sm"
+          variant="ghost"
+          aria-label="Atras"
+          isLoading={isPageProcessing}
+          onClick={onBackAction}
+          _focus={{ boxShadow: "none" }}
+          icon={<ArrowBackIcon />}
         />
-      </Layout>
+        <Heading as="h2" size="lg">
+          Envia tu consulta
+        </Heading>
+      </Flex>
+      <Flex
+        mt={4}
+        alignItems={"flex-start"}
+        justifyContent="space-between"
+        position="relative"
+        wrap={"wrap"}
+        direction={{ base: "column-reverse", md: "row" }}
+        px={{ base: 1, md: "unset" }}
+      >
+        <Flex
+          w={{ base: "100%", md: "65%" }}
+          alignItems={"flex-start"}
+          direction="column"
+        >
+          {!isMobile && <Divider mb={4} />}
+          <TripSection
+            w={"full"}
+            numGuests={maxPeople}
+            bookingPeriod={
+              bookeableValidPeriodState.dateSelected
+                ? [
+                    bookeableValidPeriodState.dateSelected.startDate,
+                    bookeableValidPeriodState.dateSelected.endDate,
+                  ]
+                : defaultDates
+            }
+            onEditDates={onEditDates}
+            invalidDates={!!bookeableValidPeriodState.error}
+          />
+          <Divider my={6} />
+          {notification ? (
+            <NotificationSection
+              notification={notification}
+              m="auto"
+              maxWidth={"sm"}
+              minHeight={72}
+            />
+          ) : (
+            <ContactUs onChange={onUserConctactChange} />
+          )}
+
+          <Divider my={6} />
+          {!userInquiryRequestSent && (
+            <Button
+              isLoading={isPageProcessing}
+              size={"lg"}
+              alignSelf={{ base: "center", md: "flex-start" }}
+              variant="action"
+              disabled={!userCanSubmitInquiry}
+              mb={4}
+              onClick={postInquiry}
+            >
+              Envia tu consulta
+            </Button>
+          )}
+        </Flex>
+        <Box
+          w={{ base: "100%", md: "35%" }}
+          position={{ base: "relative", md: "sticky" }}
+          top={{ base: "unset", md: "40px" }}
+        >
+          <Box
+            display="flex"
+            alignItems={"center"}
+            flexDirection={"column"}
+            rounded={{ base: "none", md: "md" }}
+            width={"fit-content"}
+            margin="auto"
+            padding={{ base: "unset", md: "24px" }}
+            border={{ base: "none", md: "1px solid" }}
+            borderColor="brand.500"
+            minWidth="350px"
+          >
+            <ListingCard
+              image={images.wide[0]}
+              name={displayName}
+              mainFeature={mainFeature}
+              apartmentType={apartmentType}
+            />
+            {!isMobile && (
+              <>
+                <Divider my={4} />
+                <DiscountsInformation w={"full"} />
+              </>
+            )}
+          </Box>
+          {isMobile && <Divider my={4} />}
+        </Box>
+      </Flex>
+      <PageDrawer
+        componentToShow={componentToShow}
+        onHide={() => dispatch({ type: "hide" })}
+      />
     </Box>
   );
 };
