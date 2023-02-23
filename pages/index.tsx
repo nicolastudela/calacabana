@@ -3,35 +3,37 @@ import type { GetStaticProps } from "next";
 import Head from "next/head";
 import AparmentCard, {
   AparmentCardProps,
-} from "@/components/apartment/AparmentCard";
-import Carousel from "@/components/Carousel";
+} from "@/features/apartment/AparmentCard";
+import Carousel from "@/features/apartment/ImageCarousel";
 
-import aparmentsData from "../shared/apartmentsData";
 import { Suspense, useCallback, useReducer } from "react";
 import { IDrawerActionTypes } from "@/types/types";
 import dynamic from "next/dynamic";
 
 import PageDrawer from "@/components/PageDrawer";
 import { IApartmentImage, IReview } from "@/types/shared";
-import fetchOutstandingReviews from "@/shared/fetchers/fetchOutstandingReviews";
 import usePageScroll from "@/shared/hooks/usePageScroll";
-import LoadingMapContainer from "@/components/LoadingMapContainer";
+import LoadingMapContainer from "@/features/location/LoadingMapContainer";
 import useGlobalContext from "@/shared/hooks/useGlobalContext";
+import fetchApartments from "@/server/services/fetchApartments";
+import fetchOutstandingReviews from "@/server/services/fetchOutstandingReviews";
+import fetchOutStandingReviews from "@/server/services/fetchOutstandingReviews";
+import { GenericResponseStatus, ISuccessGenericRes, IReviewsResposePayload } from "@/types/api";
 
-const VerticalGrid = dynamic(() => import("../components/VerticalGallery"));
+const VerticalGrid = dynamic(() => import("../features/apartment/VerticalGallery"));
 
 const Reviews = dynamic(
-  () => import("../components/Reviews")
+  () => import("../features/reviews/Reviews")
 );
 
 const HeroGrid = dynamic(
-  () => import("../components/HeroGrid"), {
+  () => import("../features/apartment/HeroGrid"), {
     loading: () => <Flex height={"450px"} width={"100%"}><Spinner margin="auto"/></Flex>,
     ssr: false,
   }
 );
 
-const Map = dynamic(() => import("../components/Map"), {
+const Map = dynamic(() => import("../features/location/Map"), {
   suspense: true,
 });
 
@@ -196,7 +198,9 @@ export type IHomePageProps = { apartments: AparmentCardProps[], images: {
 
 // NextJS API Middleware is not available here
 const getStaticProps: GetStaticProps<IHomePageProps> = async ({}) => {
-  const apartments = Object.values(aparmentsData).map(
+
+  const apartmentsResp = await fetchApartments({includes: ["images"]})
+  const apartments = apartmentsResp ? apartmentsResp.map(
     ({
       name,
       displayName,
@@ -215,12 +219,19 @@ const getStaticProps: GetStaticProps<IHomePageProps> = async ({}) => {
         rooms,
         beds,
         maxPeople,
-        images: images.square,
+        images: images ? images.square : [],
         type,
       } as AparmentCardProps)
-  );
+  ) : []
 
-  const reviews = await fetchOutstandingReviews();
+  let reviews: IReview[] = []
+  const reviewsResponse = await fetchOutStandingReviews();
+  if (reviewsResponse.status === GenericResponseStatus.SUCCESFUL) {
+    const succes = (reviewsResponse as ISuccessGenericRes<IReviewsResposePayload>)
+    reviews = succes.data.reviews;
+  } else {
+    console.error(JSON.stringify(reviewsResponse))
+  }
 
   const images = {
     square: [

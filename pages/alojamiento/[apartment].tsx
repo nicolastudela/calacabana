@@ -1,5 +1,4 @@
 import { GetStaticPaths, GetStaticProps } from "next/types";
-import aparmentsData, { APARTMENTS_BUILD } from "../../shared/apartmentsData";
 
 import {
   Box,
@@ -10,56 +9,60 @@ import {
   Spinner,
 } from "@chakra-ui/react";
 import Head from "next/head";
-import Carousel from "@/components/Carousel";
+import Carousel from "@/features/apartment/ImageCarousel";
 
-import HeroGrid from "@/components/HeroGrid";
+import HeroGrid from "@/features/apartment/HeroGrid";
 import dynamic from "next/dynamic";
 import { useCallback, useEffect, useMemo, useReducer, useRef, useState } from "react";
-import ApartmentTitle from "@/components/apartment/ApartmentTitle";
+import ApartmentTitle from "@/features/apartment/ApartmentTitle";
 import { BsFillDoorOpenFill } from "react-icons/bs";
 import { GiCctvCamera, GiHomeGarage } from "react-icons/gi";
 import ApartmentFeatures, {
   ApartmentFeature,
   ApartmentFeatureIcon,
-} from "@/components/apartment/ApartmentFeatures";
+} from "@/features/apartment/ApartmentFeatures";
 import {
   IAparmentAmenitiesGroup,
   IApartmentData,
   IReview,
 } from "@/types/shared";
-import BookingButton from "@/components/booking/BookingButton";
+import BookingButton from "@/features/booking/BookingButton";
 import { BookeableValidPeriod } from "@/types/shared";
 import PageDrawer from "@/components/PageDrawer";
 
 import useSWR from "swr";
-import aparmentBookingsFetcher from "@/shared/fetchers/aparmentBookingsFetcher";
+import aparmentBookingsFetcher from "fetchers/aparmentBookingsFetcher";
 import usePageDefaultDates from "@/shared/hooks/usePageDefaultDates";
 
 import { useRouter } from "next/router";
 import { IDrawerActionTypes } from "@/types/types";
-import fetchOutstandingReviews from "@/shared/fetchers/fetchOutstandingReviews";
+import fetchOutstandingReviews from "fetchers/fetchOutstandingReviews";
 import { trackEvent } from "@/lib/gtag";
 import usePageScroll from "@/shared/hooks/usePageScroll";
-import LoadingMapContainer from "@/components/LoadingMapContainer";
+import LoadingMapContainer from "@/features/location/LoadingMapContainer";
 import useGlobalContext from "@/shared/hooks/useGlobalContext";
 import React from "react";
+import fetchOutStandingReviews from "@/server/services/fetchOutstandingReviews";
+import { GenericResponseStatus, ISuccessGenericRes, IReviewsResposePayload } from "@/types/api";
+import fetchApartmentSlugs from "@/server/services/fetchApartmentSlugs";
+import fetchApartment from "@/server/services/fetchApartment";
 
-const VerticalGrid = dynamic(() => import("../../components/VerticalGallery"));
+const VerticalGrid = dynamic(() => import("../../features/apartment/VerticalGallery"));
 
 const AllAmenities = dynamic(
-  () => import("../../components/amenities/AllAmenities")
+  () => import("../../features/amenities/AllAmenities")
 );
 
 const HiglightAmenities = dynamic(
-  () => import("../../components/amenities/HiglightAmenities")
+  () => import("../../features/amenities/HiglightAmenities")
 );
 
 const Reviews = dynamic(
-  () => import("../../components/Reviews")
+  () => import("../../features/reviews/Reviews")
 );
 
 const BookingDatesLoader = () =>
-  import("../../components/booking/BookingDates");
+  import("../../features/availability/AvailableDatesPicker");
 
 const BookingDates = dynamic(BookingDatesLoader, {
   loading: () => <Flex minWidth="350px" height={"350px"} ><Spinner margin="auto"/></Flex>,
@@ -67,7 +70,7 @@ const BookingDates = dynamic(BookingDatesLoader, {
 });
 
 const Map = dynamic(
-  () => import("../../components/Map"), {
+  () => import("../../features/location/Map"), {
   loading: () => <LoadingMapContainer/>,
   ssr: false,
 });
@@ -320,10 +323,10 @@ const Page = (apartmentData: IApartmentProps) => {
               Mostrar mas
             </Button>
             <Divider my={4} />
-            <HiglightAmenities
+            { amenities && <HiglightAmenities
               amenities={amenities}
               onExpand={onShowAllAmeninities}
-            />
+            />}
             <Divider my={4} />
             <Reviews
               reviews={reviews}
@@ -466,11 +469,12 @@ const Apartment = (apartmentData: IApartmentProps) => {
   );
 };
 
-// Return paths for pre built merchants during build phase
-// redirects for disabled and aliased merchants handled in next.config.js
+// Return paths for pre built apartments during build phase
 const getStaticPaths: GetStaticPaths = async () => {
+
+  const slugs = await fetchApartmentSlugs()
   return {
-    paths: APARTMENTS_BUILD.map((apartment: string) => ({
+    paths: (slugs || []).map((apartment: string) => ({
       params: { apartment: apartment },
     })),
     fallback: false,
@@ -480,12 +484,22 @@ const getStaticPaths: GetStaticPaths = async () => {
 // NextJS API Middleware is not available here
 const getStaticProps: GetStaticProps<IApartmentProps> = async ({ params }) => {
   let props: IApartmentProps | null = null;
+  let reviews: IReview[] = []
 
-  const reviews = await fetchOutstandingReviews();
-  if (params?.apartment) {
+  // reviews
+  const reviewsResponse = await fetchOutStandingReviews();
+  if (reviewsResponse.status === GenericResponseStatus.SUCCESFUL) {
+    const succes = (reviewsResponse as ISuccessGenericRes<IReviewsResposePayload>)
+    reviews = succes.data.reviews;
+  } else {
+    console.error(JSON.stringify(reviewsResponse))
+  }
+
+  const apartment = await fetchApartment(params?.apartment as string);
+  if (apartment) {
     props = {
       key: params?.apartment as string,
-      ...aparmentsData[params?.apartment as "cala" | "cabana"],
+      ...apartment,
       reviews,
     };
   }

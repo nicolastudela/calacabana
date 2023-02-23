@@ -7,7 +7,7 @@ import {
 } from "@chakra-ui/react";
 import Head from "next/head";
 import Image from "next/image";
-import Map from "@/components/Map";
+import Map from "@/features/location/Map"
 
 const images = {
   nature: {

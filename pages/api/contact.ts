@@ -9,7 +9,7 @@ import {
 import type { NextApiRequest, NextApiResponse } from "next";
 import nc from "next-connect";
 import sgMail from "@sendgrid/mail";
-import { toErrorWithMessage } from "@/utils/genericErrorsHandler";
+import { toErrorWithMessage } from "server/utils/genericErrorsHandler";
 import { toDDMMYYYY } from "@/utils/dates";
 
 export type EmailData = string|{ name?: string; email: string; }
@@ -38,7 +38,7 @@ const handler = nc<NextApiRequest, NextApiResponse>({
   },
 }).post(async (req, res) => {
   try {
-    const { apartment,  period, apartmentLink, userContact: {firstName, lastName, email, phone, body } } = req.body as IUserInquiryRequestSerialized
+    const { apartmentName,  period, apartmentLink, userContact: {firstName, lastName, email, phone, body } } = req.body as IUserInquiryRequestSerialized
 
     const periodStr = [formatFromYYYYMMDDtoDDMMYYYY(period[0]), formatFromYYYYMMDDtoDDMMYYYY(period[1])];
 
@@ -62,7 +62,7 @@ const handler = nc<NextApiRequest, NextApiResponse>({
           lastName,
           email,
           phone,
-          apartment,
+          apartment: apartmentName,
           startDate: periodStr[0],
           endDate: periodStr[1],
           body
@@ -78,7 +78,7 @@ const handler = nc<NextApiRequest, NextApiResponse>({
           dynamicTemplateData: {
             firstName,
             lastName,
-            apartment,
+            apartment: apartmentName,
             startDate: periodStr[0],
             endDate: periodStr[1],
             body,
