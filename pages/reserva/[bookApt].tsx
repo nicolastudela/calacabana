@@ -12,40 +12,40 @@ import {
   Heading,
   IconButton,
 } from "@chakra-ui/react";
-
-import aparmentsData, { APARTMENTS_BUILD } from "@/shared/apartmentsData";
 import {
   BookeableValidPeriod,
   IApartmentData,
   UserInquiry,
   UserInquiryRequest,
 } from "@/types/shared";
-import aparmentBookingsFetcher from "@/shared/fetchers/aparmentBookingsFetcher";
+import aparmentBookingsFetcher from "fetchers/aparmentBookingsFetcher";
 import usePageDefaultDates, {
   EPageDefaultDatesErrorType,
 } from "@/shared/hooks/usePageDefaultDates";
 import { IDrawerActionTypes } from "@/types/types";
-import ListingCard from "@/components/apartment/ListingCard";
-import DiscountsInformation from "@/components/DiscountsInformation";
-import TripSection from "@/components/TripSeccion";
+import ListingCard from "@/features/apartment/ListingCard";
+import DiscountsInformation from "@/features/pricing/DiscountsInformation";
+import TripSection from "@/features/availability/TripSeccion";
 import PageDrawer from "@/components/PageDrawer";
 import dynamic from "next/dynamic";
 import { updateQueryStringWithBookingDates } from "@/utils/queryStringHandler";
-import ContactUs from "@/components/ContactUs";
-import postUserInquiry from "@/shared/services/postUserInquiry";
+import ContactUs from "@/features/inquiry/ContactUs";
+import postUserInquiry from "fetchers/postUserInquiry";
 import NotificationSection, {
   NOTIFICATION,
-} from "@/components/booking/NotificationSection";
+} from "@/features/inquiry/NotificationSection";
 import { GenericResponseStatus } from "@/types/api";
 import { trackEvent } from "@/lib/gtag";
 
 import Router from "next/router";
 import useGlobalContext from "@/shared/hooks/useGlobalContext";
+import fetchApartment from "@/server/services/fetchApartment";
+import fetchApartmentSlugs from "@/server/services/fetchApartmentSlugs";
 
 export type IBookingApartmentProps = IApartmentData & { key: string };
 
 const BookingDates = dynamic(
-  () => import("../../components/booking/BookingDates")
+  () => import("../../features/availability/AvailableDatesPicker")
 );
 
 export enum EApartmentBookingErrorType {
@@ -275,7 +275,7 @@ const Page = (apartmentData: IBookingApartmentProps) => {
       trackEvent("user_requested_info", { apartment: name });
       setIsPageProcessing(true);
       postUserInquiry({
-        apartment: name,
+        apartmentName: name,
         period: bookeableValidPeriodState.dateSelected,
         userContact: userInquiryDataState.userInquiry,
         apartmentLink: window.location.href.replace("reserva", "alojamiento"),
@@ -455,10 +455,12 @@ const getStaticProps: GetStaticProps<IBookingApartmentProps> = async ({
   params,
 }) => {
   let props: IBookingApartmentProps | null = null;
-  if (params?.bookApt) {
+
+  const apartment = await fetchApartment(params?.bookApt as string);
+  if (apartment) {
     props = {
       key: params?.bookApt as string,
-      ...aparmentsData[params?.bookApt as "cala" | "cabana"],
+      ...apartment,
     };
   }
 
@@ -477,8 +479,10 @@ const getStaticProps: GetStaticProps<IBookingApartmentProps> = async ({
 // Return paths for pre built merchants during build phase
 // redirects for disabled and aliased merchants handled in next.config.js
 const getStaticPaths: GetStaticPaths = async () => {
+
+    const slugs = await fetchApartmentSlugs()
   return {
-    paths: APARTMENTS_BUILD.map((apartment: string) => ({
+    paths: (slugs || []).map((apartment: string) => ({
       params: { bookApt: apartment },
     })),
     fallback: false,

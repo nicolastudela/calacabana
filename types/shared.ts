@@ -1,13 +1,6 @@
-export enum APARMENTS_NAME {
-  CALA = "cala",
-  CABANA = "cabana",
-  CALACABANA = "calacabana",
-}
+export const APARMENT_TYPES = ['APARTAMENT', 'COMPOUND'] as const;
+export type APARMENTS_TYPE = typeof APARMENT_TYPES[number]
 
-export enum APARMENTS_TYPE {
-  APARTAMENT = "Apartamento",
-  COMPOUND = "Complejo",
-}
 
 export interface IApartmentImage {
   alt: string;
@@ -15,20 +8,23 @@ export interface IApartmentImage {
   src: string;
   width: number;
 }
+
+export interface IAparmentImages {
+  wide: IApartmentImage[];
+  square: IApartmentImage[];
+}
 export interface IApartmentData {
-  amenities: IAparmentAmenitiesGroup[];
+  amenities?: IAparmentAmenitiesGroup[];
   beds: string;
   description: string;
-  images: {
-    wide: IApartmentImage[],
-    square: IApartmentImage[],
-  }
+  images: IAparmentImages;
   mainFeature: string;
   maxPeople: string;
   name: string;
   displayName: string;
   rooms: string;
   type: APARMENTS_TYPE;
+  priority?: number;
 }
 
 export enum AMENITIES_GROUP {
@@ -129,7 +125,8 @@ export type UserInquiry = UserData & {
 };
 
 export type UserInquiryRequest = {
-  apartment: APARMENTS_NAME;
+  apartmentName: string;
+  // apartmentId: Number;
   period: BookeableValidPeriod;
   userContact: UserInquiry;
   apartmentLink: string;

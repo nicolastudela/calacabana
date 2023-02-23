@@ -1,4 +1,4 @@
-import { APARMENTS_NAME, BookingPeriod, IReview, UserInquiry } from "@/types/shared";
+import { BookingPeriod, IReview, UserInquiry } from "@/types/shared";
 
 
 // -----------------------------------------------------
@@ -10,6 +10,7 @@ export enum GenericResponseStatus {
 }
 
 export interface IGenericResponse<Payload> { 
+  httpStatus?: number;
   isError: boolean;
   status: GenericResponseStatus;
   data?: Payload
@@ -82,7 +83,7 @@ export interface IAparmentBookingsResponseError extends IAparmentBookingsRespons
 // IUserInquiry Requests/Responses types are meant to be used through IGenericResponse 
 
 export interface IUserInquiryRequestSerialized {
-  apartment: APARMENTS_NAME;
+  apartmentName: string;
   period: [string, string];
   userContact: UserInquiry;
   apartmentLink: string

@@ -1,0 +1,75 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+  binaryTargets = ["native", "darwin-arm64"]
+}
+
+datasource db {
+  provider          = "postgresql"
+  url               = env("DATABASE_URL")
+  shadowDatabaseUrl = env("SHADOW_DATABASE_URL")
+}
+
+enum APARMENTS_TYPE {
+  APARTAMENT
+  COMPOUND
+}
+
+model ApartmentImage {
+  id          Int       @id @default(autoincrement())
+  alt         String
+  src         String
+  height      Int
+  width       Int
+  position    Int
+  apartment   Apartment @relation(fields: [apartmentId], references: [id], onDelete: Cascade)
+  apartmentId Int       @map("apartment_id")
+  wide        Boolean
+}
+
+model AmenitiesGroup {
+  id        Int        @id @default(autoincrement())
+  name      String     @unique @db.VarChar(255)
+  amenities Amenitiy[] @relation(name: "amenities_group")
+}
+
+model Amenitiy {
+  id         Int                   @id @default(autoincrement())
+  name       String                @unique @db.VarChar(255)
+  group      AmenitiesGroup        @relation(name: "amenities_group", fields: [groupId], references: [id], onDelete: Cascade)
+  groupId    Int                   @map("group_id")
+  apartments AmentiesOnAparments[] 
+}
+
+model AmentiesOnAparments {
+  amenity     Amenitiy  @relation(fields: [amenityId], references: [id])
+  amenityId   Int       @map("amenity_id")
+  apartment   Apartment @relation(fields: [apartmentId], references: [id], onDelete: Cascade)
+  apartmentId Int       @map("apartment_id")
+  description String?
+  highlighted Boolean?  @default(false)
+  priority    Int?
+
+  @@id([amenityId, apartmentId])
+}
+
+model Apartment {
+  id               Int                   @id @default(autoincrement())
+  amenities        AmentiesOnAparments[]
+  beds             Int
+  description      String
+  images           ApartmentImage[]
+  mainFeature      String                @map("main_feature") @db.VarChar(255)
+  maxPeople        Int                   @map("max_people")
+  name             String                @unique @db.VarChar(255)
+  displayName      String                @map("display_name") @db.VarChar(255)
+  rooms            Int
+  type             APARMENTS_TYPE
+  compound         Apartment?            @relation("ApartmentCompound", fields: [compoundId], references: [id])
+  subAparments     Apartment[]           @relation("ApartmentCompound")
+  compoundId       Int?                  @map("compound_id")
+  googleCalendarId String?               @map("google_calendar_id") @db.VarChar(255)
+  priority         Int                   @default(0)
+}

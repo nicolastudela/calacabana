@@ -2,7 +2,7 @@
 
 import type { NextApiRequest, NextApiResponse } from "next";
 import nc from "next-connect";
-import fetchOutStandingReviews from "api-services/fetchOutstandingReviews";
+import fetchOutStandingReviews from "@/server/services/fetchOutstandingReviews";
 
 const handler = nc<NextApiRequest, NextApiResponse>({
   onError: (err, _req, res) => {

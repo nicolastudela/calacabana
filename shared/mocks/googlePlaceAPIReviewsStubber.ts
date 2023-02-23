@@ -1,4 +1,4 @@
-import { IRawGoogleReview } from "api-services/fetchOutstandingReviews";
+import { IRawGoogleReview } from "@/server/services/fetchOutstandingReviews";
 
 const MOCK_GOOGLE_REVIEWS = [
   {

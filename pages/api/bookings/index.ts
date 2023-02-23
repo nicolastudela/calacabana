@@ -6,9 +6,8 @@ import {
   IBookingsInfoResponsePartial,
   IBookingsInfoResponseSuccessful,
 } from "@/types/api";
-import intersectDateRanges from "@/utils/intersectDateRanges";
-import fetchBookings from "../../../api-services/fetchBookings";
-import { APARMENTS_NAME } from "@/types/shared";
+import intersectDateRanges from "@/server/utils/intersectDateRanges";
+import fetchBookings from "@/server/services/fetchBookings";
 
 
 const BUENOS_AIRES_ISO_TIME = "T15:00:00-03:00";
@@ -23,10 +22,17 @@ const handler = nc<NextApiRequest, NextApiResponse>({
   },
 }).get(async (_req, res) => {
 
-  const [calaEventsResponse, cabanaEventsResponse] = await Promise.all([
-    fetchBookings(APARMENTS_NAME.CALA),
-    fetchBookings(APARMENTS_NAME.CABANA)
-  ]);
+  const apartments = await prisma.apartment.findMany({ select: {
+    name: true,
+    googleCalendarId: true,
+  }, where: {
+    type: "APARTAMENT"
+  }})
+
+  const aptsSort = apartments.slice(0,2).sort((a,_) => a.name === "cala" ? 0 : 1)
+
+
+  const [calaEventsResponse, cabanaEventsResponse] = await Promise.all(aptsSort.map( aptSort => fetchBookings(aptSort.name, aptSort.googleCalendarId)));
 
   const bookingsReservation = {
     cala: calaEventsResponse,
