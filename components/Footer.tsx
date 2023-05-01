@@ -44,7 +44,7 @@ const Footer = () => (
       <Link
         display={"flex"}
         alignItems={"center"}
-        href="https://wa.me/+5191153254124?text=Hola%20quiero%20averiguar%20sobre%20calacabana"
+        href="https://wa.me/+5491153254124?text=Hola%20quiero%20averiguar%20sobre%20calacabana"
         aria-label={"Calacabana en Whatsapp"}
         isExternal
         rel="noopener noreferrer"
