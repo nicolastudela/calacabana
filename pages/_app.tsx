@@ -12,7 +12,7 @@ import { trackPageview, GA_TRACKING_ID } from "@/lib/gtag";
 
 import "../styles/globals.css";
 import  { GlobalContextProvider } from "@/shared/hooks/useGlobalContext";
-import Layout from "@/components/Layout";
+import { Layout }  from "@/components";
 
 import theme from "../theme";
 import { ChakraProvider } from "@chakra-ui/react";

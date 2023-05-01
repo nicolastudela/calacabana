@@ -15,9 +15,9 @@ import {
 } from "@chakra-ui/react";
 import { NextRouter, useRouter } from "next/router";
 import { useCallback, useState } from "react";
-import { INavLink } from "@/types/types";
-import MobileHeadMaster from "@/components/Header/MobileHeadMaster";
-import MENU_LINKS from "@/components/Header/navLinks";
+import { INavLink } from "@/components/types";
+import MobileHeadMaster from "@/components/headers/MobileHeadMaster";
+import MENU_LINKS from "@/components/headers/navLinks";
 import theme from "../../theme";
 import { trackEvent } from "@/lib/gtag";
 

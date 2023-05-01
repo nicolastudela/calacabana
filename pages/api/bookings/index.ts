@@ -5,7 +5,7 @@ import {
   IBookingsInfoResponseError,
   IBookingsInfoResponsePartial,
   IBookingsInfoResponseSuccessful,
-} from "@/types/api";
+} from "@/server/types";
 import intersectDateRanges from "@/server/utils/intersectDateRanges";
 import fetchBookings from "@/server/services/fetchBookings";
 

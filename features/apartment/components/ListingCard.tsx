@@ -1,16 +1,16 @@
-import { IApartmentImage } from "@/types/shared";
+
 import { Flex, Box, Text, Heading, FlexProps } from "@chakra-ui/react";
 import Image from "next/image";
-
+import { IImage } from "@/shared/types";
 
 export interface IListingCardProps {
   name: string,
-  image: IApartmentImage,
+  image: IImage,
   apartmentType: string,
   mainFeature: string,
 }
 
-const ListingCard = ({ image, apartmentType, name, mainFeature, ...rest } : IListingCardProps & FlexProps) => (
+export const ListingCard = ({ image, apartmentType, name, mainFeature, ...rest } : IListingCardProps & FlexProps) => (
   <Flex gap={3} {...rest}>
     <Box width={{"base": 150, "md": 150}} height={{"base": 100, "md": 100 }} position="relative">
       <Image src={image.src} alt={image.alt} height={image.height} width={image.width} />

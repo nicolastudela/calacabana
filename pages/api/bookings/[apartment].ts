@@ -4,7 +4,7 @@ import {
   IAparmentBookingsResponseError,
   IAparmentBookingsResponseSerializedSuccessful,
   IAparmentBookingsResponseSuccessful,
-} from "@/types/api";
+} from "@/server/types";
 import { bookingPeriodSerialize } from "server/serializers/bookingPeriodSerializer";
 import type { NextApiRequest, NextApiResponse } from "next";
 import nc from "next-connect";

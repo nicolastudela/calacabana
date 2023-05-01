@@ -1,12 +1,7 @@
-import {
-  AMENITIES_GROUP,
-  AMENITY,
-  APARMENT_TYPES,
-  IAparmentAmenitiesGroup,
-  IApartmentData,
-} from "@/types/shared";
+import { IAmenitiesGroup, AMENITIES_GROUP, AMENITY } from "@/features/amenities/types";
+import { IApartment } from "../types";
 
-const sharedAparmentAmenities: IAparmentAmenitiesGroup[] = [
+const sharedAparmentAmenities: IAmenitiesGroup[] = [
   {
     name: AMENITIES_GROUP.SCENIC_VIEWS,
     amenities: [
@@ -311,7 +306,7 @@ const APARMENTS_DATA = {
     rooms: "3",
     type: "APARTAMENT",
     priority: 10,
-  } as IApartmentData,
+  } as IApartment,
   ["cala"]: {
     amenities: sharedAparmentAmenities,
     beds: "2",
@@ -431,7 +426,7 @@ const APARMENTS_DATA = {
     rooms: "2",
     type: "APARTAMENT",
     priority: 20,
-  } as IApartmentData,
+  } as IApartment,
   ["calacabana"]: {
     type: "COMPOUND",
     mainFeature:
@@ -558,7 +553,7 @@ const APARMENTS_DATA = {
           
     },
     priority: 0,
-  } as IApartmentData,
+  } as IApartment,
 };
 
 export const stubApartmentData = (apartmentName: MOCKED_APARTMENTS_NAMES) => {

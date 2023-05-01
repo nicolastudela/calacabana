@@ -1,6 +1,6 @@
 import { getBaseUrl } from "@/utils/getBaseUrl";
 import { get } from "@/lib/httpClient";
-import { GenericResponseStatus, IGenericErrorRes, ISuccessGenericRes } from "@/types/api";
+import { GenericResponseStatus, IGenericErrorRes, ISuccessGenericRes } from "@/server/types";
 
 
 const APARTMENT_SLUGS_API_PATH = `${getBaseUrl()}/api/apartments/slugs`

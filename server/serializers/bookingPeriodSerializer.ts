@@ -1,4 +1,4 @@
-import { BookeableValidPeriod, BookingPeriod } from "@/types/shared";
+import { BookeableValidPeriod, BookingPeriod } from "@/types/types";
 import { toYYYYMMDD } from "../../utils/dates";
 
 

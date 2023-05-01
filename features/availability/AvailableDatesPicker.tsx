@@ -26,8 +26,8 @@ import {
 import { updateQueryStringWithBookingDates } from "@/utils/queryStringHandler";
 import { EPageDefaultDatesErrorType } from "@/shared/hooks/usePageDefaultDates";
 import createBookeableValidPeriod from "@/shared/model/BookingValidPeriod";
-import { BookingPeriod, BookeableValidPeriod } from "@/types/shared";
 import { trackEvent } from "@/lib/gtag";
+import { BookeableValidPeriod, BookingPeriod } from "../booking/types";
 
 const DatesInput = ({
   startDate,

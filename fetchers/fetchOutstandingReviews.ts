@@ -1,5 +1,5 @@
-import { GenericResponseStatus, IGenericErrorRes, IReviewsResposePayload, ISuccessGenericRes } from "@/types/api";
-import { IReview } from "@/types/shared";
+import { GenericResponseStatus, IGenericErrorRes, IReviewsResposePayload, ISuccessGenericRes } from "@/server/types";
+import { IReview } from "@/types/types";
 import { getBaseUrl } from "@/utils/getBaseUrl";
 import { get } from "@/lib/httpClient";
 

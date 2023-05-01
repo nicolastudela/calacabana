@@ -1,11 +1,11 @@
 import Carousel, { CarouselProps as CustomCarouselProps } from "nuka-carousel";
 
-import { IconButton, Flex, Box, AspectRatio } from "@chakra-ui/react";
+import { IconButton, Flex, AspectRatio } from "@chakra-ui/react";
 
 import { ArrowBackIcon, ArrowForwardIcon } from "@chakra-ui/icons";
 import { MouseEventHandler } from "react";
 import Image from "next/image";
-import { IApartmentImage } from "@/types/shared";
+import { IImage } from "@/shared/types";
 import { PagingDot } from "@/components/icons/PagingDot";
 import useGlobalContext from "@/shared/hooks/useGlobalContext";
 
@@ -37,17 +37,17 @@ const BottomDotsControls = ({}: {
   </Flex>
 );
 
-export interface CarouselProps extends CustomCarouselProps {
+export interface ImageCarouselProps extends CustomCarouselProps {
   aptName?: string;
   roundedBorder?: boolean;
-  images: IApartmentImage[];
+  images: IImage[];
 }
 
-const CustomCarousel = ({
+export const ImageCarousel = ({
   images,
   aptName,
   roundedBorder = false,
-}: CarouselProps) => {
+}: ImageCarouselProps) => {
   const { isMobile } = useGlobalContext();
   return (
     <Carousel
@@ -108,4 +108,4 @@ const CustomCarousel = ({
   );
 };
 
-export default CustomCarousel;
+export default ImageCarousel;

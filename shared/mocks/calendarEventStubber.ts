@@ -1,4 +1,4 @@
-import { BookingsInfoResponseStatus, IAparmentBookingsResponseSuccessful } from "@/types/api";
+import { BookingsInfoResponseStatus, IAparmentBookingsResponseSuccessful } from "@/server/types";
 import { addDays } from "date-fns"; 
 
 

@@ -1,17 +1,17 @@
 
 import { Icon, Text, Flex, Box, FlexProps, StackProps } from "@chakra-ui/react"
 
-export const ApartmentFeatureIcon = ({ as }: { as: any}) => (
+export const FeatureIcon = ({ as }: { as: any}) => (
   <Icon as={as} w={6} h={6} mr={4} />
 )
 
-export interface IApartmentFeature extends FlexProps{
+export interface IFeatureProps extends FlexProps{
   title: string;
   isHighlight?: boolean;
   subtitle?: string;
 }
 
-export const ApartmentFeature = ({children, title, subtitle, isHighlight , ...rest}: IApartmentFeature) => (
+export const Feature = ({children, title, subtitle, isHighlight , ...rest}: IFeatureProps) => (
   <Flex {...rest}>
       <Box>
         {children}
@@ -23,7 +23,7 @@ export const ApartmentFeature = ({children, title, subtitle, isHighlight , ...re
     </Flex>
 )
 
-const ApartmentFeatures = ({children, ...rest}: StackProps) => {
+export const FeatureList = ({children, ...rest}: StackProps) => {
   return (
     <Flex direction={"column"} alignItems={"flex-start"} {...rest}>
       {children}
@@ -31,4 +31,4 @@ const ApartmentFeatures = ({children, ...rest}: StackProps) => {
   )
 }
 
-export default ApartmentFeatures;
+export default FeatureList;

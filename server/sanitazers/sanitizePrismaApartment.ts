@@ -1,4 +1,4 @@
-import { IApartmentData, IAparmentAmenitiesGroup, IAparmentAmenity, AMENITIES_GROUP, IApartmentImage } from "@/types/shared";
+import { IApartment, IAmenitiesGroup, IAmenity, AMENITIES_GROUP, IImage } from "@/types/types";
 
 import {
   Apartment as PrismaApartment,
@@ -19,7 +19,7 @@ export type PrismaAparmentWithImgAndAmenties = PrismaApartment & {
 };
 
 export const sanitizePrismaImages = (images: ApartmentImage[]) => {
-  type ImgWithPosition = IApartmentImage & { position: number };
+  type ImgWithPosition = IImage & { position: number };
   let aptImages = images.reduce(
     (prev, curr) => {
       const img: ImgWithPosition = {
@@ -54,8 +54,8 @@ export const sanitizePrismaAmenties = (amenities: (AmentiesOnAparments & {
     group: AmenitiesGroup;
   };
 })[]) => {
-  const amenitiesGroups: IAparmentAmenitiesGroup[] = amenities.reduce(
-    (prev: IAparmentAmenitiesGroup[], curr) => {
+  const amenitiesGroups: IAmenitiesGroup[] = amenities.reduce(
+    (prev: IAmenitiesGroup[], curr) => {
       const groupIdx = prev
         .map((grp) => grp.name as string)
         .indexOf(curr.amenity.group.name);
@@ -65,7 +65,7 @@ export const sanitizePrismaAmenties = (amenities: (AmentiesOnAparments & {
           description: curr.description,
           highlighted: curr.highlighted,
           priority: curr.priority,
-        } as IAparmentAmenity);
+        } as IAmenity);
         return prev;
       } else {
         return prev.concat({
@@ -76,12 +76,12 @@ export const sanitizePrismaAmenties = (amenities: (AmentiesOnAparments & {
               description: curr.description,
               highlighted: curr.highlighted,
               priority: curr.priority,
-            } as IAparmentAmenity,
+            } as IAmenity,
           ],
         });
       }
     },
-    [] as IAparmentAmenitiesGroup[]
+    [] as IAmenitiesGroup[]
 
   );
 
@@ -103,7 +103,7 @@ const sanitizeApartment = ({
   type,
   priority,
 }: PrismaAparmentWithImgAndAmenties) => {
-  let apt: IApartmentData;
+  let apt: IApartment;
 
   apt = {
     beds: beds.toString(),

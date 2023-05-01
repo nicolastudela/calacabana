@@ -1,7 +1,7 @@
 import type { NextApiRequest, NextApiResponse } from "next";
 import nc from "next-connect";
 import { toErrorWithMessage } from "@/server/utils/genericErrorsHandler";
-import { GenericResponseStatus, IGenericErrorRes } from "@/types/api";
+import { GenericResponseStatus, IGenericErrorRes } from "@/server/types";
 import fetchApartmentSlugs from "@/server/services/fetchApartmentSlugs";
 
 

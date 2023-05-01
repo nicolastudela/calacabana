@@ -1,14 +1,14 @@
-import { UserInquiry } from "@/types/shared";
 import { EMAIL_REGEX } from "@/utils/validation";
 import {
   Flex,
 } from "@chakra-ui/react";
 import { useEffect } from "react";
 import { useForm } from "react-hook-form";
-import { TextAreaFieldWithRef as TextAreaField } from "@/components/TextArea";
+import { TextAreaFieldWithRef as TextAreaField } from "@/components/TextAreaField";
 import { TextFieldWithRef as TextField } from "@/components/TextField";
 import { trackEvent } from "@/lib/gtag";
 import React from "react";
+import { UserInquiry } from "./types";
 
 const t = (key: string, args?: Record<string, string>) => {
   switch (key) {

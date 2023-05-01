@@ -2,13 +2,13 @@
 
 import { VStack, Box, StackProps } from "@chakra-ui/react";
 import Image from "next/image";
-import { IApartmentImage } from "@/types/shared";
+import { IImage } from "@/shared/types";
 
-type VerticalGallery = StackProps & {
-  images: IApartmentImage[];
+export type VerticalGalleryProps = StackProps & {
+  images: IImage[];
 };
 
-const VerticalGallery = ({ images }: VerticalGallery) => {
+export const VerticalGallery = ({ images }: VerticalGalleryProps) => {
 
   return (
      <VStack w={'100%'} h={'100%'}>

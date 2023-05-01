@@ -1,4 +1,4 @@
-import { BookingPeriod } from "@/types/shared";
+import { BookingPeriod } from "@/types/types";
 
 import { isSameDay, addDays, isBefore, isAfter } from 'date-fns'
 

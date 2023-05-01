@@ -1,5 +1,6 @@
+import { IAmenitiesGroup } from "@/features/amenities/types";
 import { stubApartmentData } from "@/shared/mocks/apartmentsDataStubber";
-import { IAparmentAmenitiesGroup, IAparmentImages, IApartmentData, IApartmentImage } from "../types/shared";
+import { IApartment, IImage, IImagesGroup } from "@/shared/types";
 import { Apartment, PrismaClient } from "@prisma/client";
 
 
@@ -19,7 +20,7 @@ const fromSharedDataToPrismaSchema = ({
   rooms,
   type,
   priority,
-}: IApartmentData) => {
+}: IApartment) => {
   const data = {
     beds: Number.parseInt(beds),
     description,
@@ -40,9 +41,9 @@ const fromSharedDataToPrismaSchema = ({
   return data;
 };
 
-const fromImagesToPrismaSchema = (images: IAparmentImages) => {
+const fromImagesToPrismaSchema = (images: IImagesGroup) => {
   const fromImageToPRismaSchema = (
-    image: IApartmentImage,
+    image: IImage,
     idx: number,
     wide: boolean
   ) => {
@@ -62,8 +63,8 @@ const fromImagesToPrismaSchema = (images: IAparmentImages) => {
     );
 };
 
-const fromAmenityGropToPrismaScheme = (amenties: IAparmentAmenitiesGroup[] = []) => {
-  return amenties.flatMap(({name, amenities, priority}: IAparmentAmenitiesGroup) => {
+const fromAmenityGropToPrismaScheme = (amenties: IAmenitiesGroup[] = []) => {
+  return amenties.flatMap(({name, amenities, priority}: IAmenitiesGroup) => {
     return amenities.map(am => {
       return {
         amenity: {

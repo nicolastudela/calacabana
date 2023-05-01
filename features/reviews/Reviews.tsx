@@ -1,7 +1,7 @@
-import { IReview } from "@/types/shared";
 import { Heading, Text, Flex, Avatar, Button } from "@chakra-ui/react";
 import { StarIcon } from "@chakra-ui/icons";
 import useGlobalContext from "@/shared/hooks/useGlobalContext";
+import { IReview } from "./types";
 
 const MOBILE_REVIEWS_TO_SHOW_ON_WHEN_REDUCED = 2;
 const DESKTOP_REVIEWS_TO_SHOW_ON_WHEN_REDUCED = 6;

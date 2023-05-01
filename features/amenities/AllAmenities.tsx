@@ -4,17 +4,14 @@ import {
   Flex,
   Heading,
 } from "@chakra-ui/react";
-import { IAparmentAmenitiesGroup } from "@/types/shared";
-import ApartmentFeatures, {
-  ApartmentFeature,
-  ApartmentFeatureIcon,
-} from "@/features/apartment/ApartmentFeatures";
-import amenityIconMapper from "@/features/amenities/utils/amenitiesIconMapper";
+import { Feature, FeatureIcon, FeatureList } from "@/components"
+import amenityIconMapper from './utils/amenitiesIconMapper'
+import { IAmenitiesGroup } from "./types";
 
 const AllAmenities = ({
   amenities,
 }: {
-  amenities: IAparmentAmenitiesGroup[];
+  amenities: IAmenitiesGroup[];
 }) => {
   return (
     <Box w={{ base: "full", md: "container.md" }} mx="auto">
@@ -24,19 +21,19 @@ const AllAmenities = ({
           <Heading as="h2" size={"md"} mt={6} mb={4}>
             {group.name}
           </Heading>
-          <ApartmentFeatures>
+          <FeatureList>
             {group.amenities.map((amenity, index) => (
               <span key={`${amenity.name}-${index}`}>
-                <ApartmentFeature
+                <Feature
                   title={amenity.name}
                   subtitle={amenity.description}
                 >
-                  <ApartmentFeatureIcon as={amenityIconMapper(amenity.name)} />
-                </ApartmentFeature>
+                  <FeatureIcon as={amenityIconMapper(amenity.name)} />
+                </Feature>
                 <Divider my={2} />
               </span>
             ))}
-          </ApartmentFeatures>
+          </FeatureList>
         </Flex>
       ))}
     </Flex>

@@ -1,5 +1,5 @@
-import { IUserInquiryRequestSerialized } from "@/types/api";
-import { UserInquiryRequest } from "@/types/shared";
+import { IUserInquiryRequestSerialized } from "@/server/types";
+import { UserInquiryRequest } from "@/types/types";
 import { bookeableValidPeriodSerialize } from "./bookingPeriodSerializer";
 
 const userInquiryRequestSerialize = (userInquiry: UserInquiryRequest) => {

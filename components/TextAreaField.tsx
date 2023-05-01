@@ -1,6 +1,5 @@
-import { FormControl, FormErrorMessage, FormLabel, Input, InputProps, Textarea, TextareaProps } from "@chakra-ui/react";
+import { FormControl, FormErrorMessage, FormLabel, Textarea, TextareaProps } from "@chakra-ui/react";
 import React from "react";
-import { forwardRef } from "react";
 
 
 interface TextAreaFieldProps extends TextareaProps{
@@ -12,7 +11,7 @@ interface TextAreaFieldProps extends TextareaProps{
   textArea?: boolean;
 }
 
-function TextAreaField(props: TextAreaFieldProps) {
+export function TextAreaField(props: TextAreaFieldProps) {
   return TextAreaFieldForwardedRef(props, null);
 }
 
@@ -32,9 +31,6 @@ function TextAreaFieldForwardedRef({label, maxWidth, isRequired, errorMsg, ariaL
   </FormControl>
   );
 }
-
-export default TextAreaField;
-
 
 const TextAreaFieldWithRef = React.forwardRef<HTMLTextAreaElement, TextAreaFieldProps>(TextAreaFieldForwardedRef)
 

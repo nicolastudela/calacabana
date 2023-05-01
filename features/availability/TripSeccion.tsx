@@ -1,8 +1,8 @@
-import { BookingPeriod } from "@/types/shared";
 import { Flex, FlexProps, Heading, Link, Spacer, Text } from "@chakra-ui/react";
 import { format } from "date-fns";
 
 import esLocale  from 'date-fns/locale/es'
+import { BookingPeriod } from "../booking/types";
 
 
 export interface TripSectionProps  {

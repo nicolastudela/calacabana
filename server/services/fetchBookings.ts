@@ -4,8 +4,8 @@ import {
   BookingsInfoResponseStatus,
   IAparmentBookingsResponseError,
   IAparmentBookingsResponseSuccessful,
-} from "../../types/api";
-import { BookingPeriod } from "@/types/shared";
+} from "../types";
+import { BookingPeriod } from "@/types/types";
 
 import stubEvents from "@/shared/mocks/calendarEventStubber";
 import isBefore from "date-fns/isBefore";

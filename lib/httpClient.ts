@@ -1,4 +1,4 @@
-import { IGenericErrorRes, IGenericResponse, ISuccessGenericRes } from "@/types/api"
+import { IGenericErrorRes, IGenericResponse, ISuccessGenericRes } from "@/server/types"
 
 
 export type BaseResponse = Pick<

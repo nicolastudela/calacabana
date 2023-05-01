@@ -1,4 +1,6 @@
-import { BookingPeriod, IReview, UserInquiry } from "@/types/shared";
+import { BookingPeriod } from "@/features/booking/types";
+import { UserInquiry } from "@/features/inquiry/types";
+import { IReview } from "@/features/reviews/types";
 
 
 // -----------------------------------------------------

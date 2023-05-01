@@ -15,7 +15,7 @@ import NextLink from "next/link";
 import dynamic from "next/dynamic";
 import { Suspense, useCallback, useState } from "react";
 import { trackEvent } from "@/lib/gtag";
-import { INavLink } from "@/types/types";
+import { INavLink } from "@/components/types";
 
 const DesktopNavMenu = dynamic(
   () => import("./DesktopNavMenu"),

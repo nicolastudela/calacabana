@@ -1,5 +1,12 @@
+import React,{ useCallback, useEffect, useMemo, useReducer, useRef, useState } from "react";
 import { GetStaticPaths, GetStaticProps } from "next/types";
+import dynamic from "next/dynamic";
+import useSWR from "swr";
+import { useRouter } from "next/router";
+import Head from "next/head";
 
+import { BsFillDoorOpenFill } from "react-icons/bs";
+import { GiCctvCamera, GiHomeGarage } from "react-icons/gi";
 import {
   Box,
   Flex,
@@ -8,46 +15,35 @@ import {
   Button,
   Spinner,
 } from "@chakra-ui/react";
-import Head from "next/head";
-import Carousel from "@/features/apartment/ImageCarousel";
 
-import HeroGrid from "@/features/apartment/HeroGrid";
-import dynamic from "next/dynamic";
-import { useCallback, useEffect, useMemo, useReducer, useRef, useState } from "react";
-import ApartmentTitle from "@/features/apartment/ApartmentTitle";
-import { BsFillDoorOpenFill } from "react-icons/bs";
-import { GiCctvCamera, GiHomeGarage } from "react-icons/gi";
-import ApartmentFeatures, {
-  ApartmentFeature,
-  ApartmentFeatureIcon,
-} from "@/features/apartment/ApartmentFeatures";
-import {
-  IAparmentAmenitiesGroup,
-  IApartmentData,
-  IReview,
-} from "@/types/shared";
+import { Feature, FeatureList, FeatureIcon, PageDrawer} from "@/components"
+import { ApartmentTitle, HeroGrid, ImageCarousel as Carousel } from "@/features/apartment"
+
+import LoadingMapContainer from "@/features/location/LoadingMapContainer";
 import BookingButton from "@/features/booking/BookingButton";
-import { BookeableValidPeriod } from "@/types/shared";
-import PageDrawer from "@/components/PageDrawer";
 
-import useSWR from "swr";
-import aparmentBookingsFetcher from "fetchers/aparmentBookingsFetcher";
+import { IAmenitiesGroup } from "@/features/amenities/types";
+import { BookeableValidPeriod } from "@/features/booking/types";
+import { IReview } from "@/features/reviews/types";
+import { IApartment } from "@/shared/types";
+
+
+import { IDrawerActionTypes } from "@/components/types";
+
 import usePageDefaultDates from "@/shared/hooks/usePageDefaultDates";
 
-import { useRouter } from "next/router";
-import { IDrawerActionTypes } from "@/types/types";
-import fetchOutstandingReviews from "fetchers/fetchOutstandingReviews";
 import { trackEvent } from "@/lib/gtag";
 import usePageScroll from "@/shared/hooks/usePageScroll";
-import LoadingMapContainer from "@/features/location/LoadingMapContainer";
 import useGlobalContext from "@/shared/hooks/useGlobalContext";
-import React from "react";
+
+import aparmentBookingsFetcher from "fetchers/aparmentBookingsFetcher";
+import { GenericResponseStatus, ISuccessGenericRes, IReviewsResposePayload } from "@/server/types";
 import fetchOutStandingReviews from "@/server/services/fetchOutstandingReviews";
-import { GenericResponseStatus, ISuccessGenericRes, IReviewsResposePayload } from "@/types/api";
 import fetchApartmentSlugs from "@/server/services/fetchApartmentSlugs";
 import fetchApartment from "@/server/services/fetchApartment";
 
-const VerticalGrid = dynamic(() => import("../../features/apartment/VerticalGallery"));
+
+const VerticalGrid = dynamic(() => import("../../features/apartment/components/VerticalGallery"));
 
 const AllAmenities = dynamic(
   () => import("../../features/amenities/AllAmenities")
@@ -75,7 +71,7 @@ const Map = dynamic(
   ssr: false,
 });
 
-export type IApartmentProps = IApartmentData & {
+export type IApartmentProps = IApartment & {
   key: string;
   reviews: IReview[];
 };
@@ -133,7 +129,7 @@ const Page = (apartmentData: IApartmentProps) => {
               title: "Que ofrece este lugar?",
               component: (
                 <AllAmenities
-                  amenities={action.payload as IAparmentAmenitiesGroup[]}
+                  amenities={action.payload as IAmenitiesGroup[]}
                 />
               ),
             };
@@ -289,27 +285,27 @@ const Page = (apartmentData: IApartmentProps) => {
           >
             <ApartmentTitle {...apartmentData} isPageTitle />
             <Divider my={4} />
-            <ApartmentFeatures gap={"2"}>
-              <ApartmentFeature
+            <FeatureList gap={"2"}>
+              <Feature
                 title="Check-in flexible"
                 subtitle="Nos amoldamos a tus necesidades"
                 isHighlight
               >
-                <ApartmentFeatureIcon as={BsFillDoorOpenFill} />
-              </ApartmentFeature>
-              <ApartmentFeature
+                <FeatureIcon as={BsFillDoorOpenFill} />
+              </Feature>
+              <Feature
                 title="Cámaras de seguridad en la propiedad"
                 isHighlight
               >
-                <ApartmentFeatureIcon as={GiCctvCamera} />
-              </ApartmentFeature>
-              <ApartmentFeature
+                <FeatureIcon as={GiCctvCamera} />
+              </Feature>
+              <Feature
                 title="Entrada independiente. Cochera bajo techo"
                 isHighlight
               >
-                <ApartmentFeatureIcon as={GiHomeGarage} />
-              </ApartmentFeature>
-            </ApartmentFeatures>
+                <FeatureIcon as={GiHomeGarage} />
+              </Feature>
+            </FeatureList>
             <Divider my={4} />
             <Text
               noOfLines={[6, 20]}

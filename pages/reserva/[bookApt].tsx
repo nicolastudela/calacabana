@@ -12,21 +12,23 @@ import {
   Heading,
   IconButton,
 } from "@chakra-ui/react";
+import { PageDrawer}  from "@/components";
+
 import {
   BookeableValidPeriod,
-  IApartmentData,
+  IApartment,
   UserInquiry,
   UserInquiryRequest,
-} from "@/types/shared";
+} from "@/types/types";
 import aparmentBookingsFetcher from "fetchers/aparmentBookingsFetcher";
 import usePageDefaultDates, {
   EPageDefaultDatesErrorType,
 } from "@/shared/hooks/usePageDefaultDates";
-import { IDrawerActionTypes } from "@/types/types";
-import ListingCard from "@/features/apartment/ListingCard";
+import { IDrawerActionTypes } from "@/components/types";
+import { ListingCard } from "@/features/apartment";
 import DiscountsInformation from "@/features/pricing/DiscountsInformation";
 import TripSection from "@/features/availability/TripSeccion";
-import PageDrawer from "@/components/PageDrawer";
+
 import dynamic from "next/dynamic";
 import { updateQueryStringWithBookingDates } from "@/utils/queryStringHandler";
 import ContactUs from "@/features/inquiry/ContactUs";
@@ -34,7 +36,7 @@ import postUserInquiry from "fetchers/postUserInquiry";
 import NotificationSection, {
   NOTIFICATION,
 } from "@/features/inquiry/NotificationSection";
-import { GenericResponseStatus } from "@/types/api";
+import { GenericResponseStatus } from "@/server/types";
 import { trackEvent } from "@/lib/gtag";
 
 import Router from "next/router";
@@ -42,7 +44,7 @@ import useGlobalContext from "@/shared/hooks/useGlobalContext";
 import fetchApartment from "@/server/services/fetchApartment";
 import fetchApartmentSlugs from "@/server/services/fetchApartmentSlugs";
 
-export type IBookingApartmentProps = IApartmentData & { key: string };
+export type IBookingApartmentProps = IApartment & { key: string };
 
 const BookingDates = dynamic(
   () => import("../../features/availability/AvailableDatesPicker")

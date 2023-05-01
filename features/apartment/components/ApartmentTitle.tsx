@@ -11,7 +11,7 @@ export interface IApartmentTitleProps {
   isPageTitle?: boolean;
 }
 
-const ApartmentTitle = ({
+export const ApartmentTitle = ({
   displayName,
   mainFeature,
   maxPeople,

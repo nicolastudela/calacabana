@@ -1,4 +1,4 @@
-import { IAparmentBookingsResponseSerializedSuccessful, IAparmentBookingsResponseError, BookingsInfoResponseStatus } from "@/types/api";
+import { IAparmentBookingsResponseSerializedSuccessful, IAparmentBookingsResponseError, BookingsInfoResponseStatus } from "@/server/types";
 import { formatStringDateRange } from "@/utils/dateRanges";
 
 

@@ -4,7 +4,7 @@ import {
   IGenericResponse,
   IUserInquiryRequestSerialized,
   IUserInquiryResposePayload,
-} from "@/types/api";
+} from "@/server/types";
 
 import type { NextApiRequest, NextApiResponse } from "next";
 import nc from "next-connect";

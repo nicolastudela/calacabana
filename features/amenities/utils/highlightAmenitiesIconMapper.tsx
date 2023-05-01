@@ -1,4 +1,4 @@
-import { AMENITY } from "../../../types/shared";
+import { AMENITY } from "../../../types/types";
 import {
   FaMountain,
   FaRegSnowflake, FaSwimmingPool,

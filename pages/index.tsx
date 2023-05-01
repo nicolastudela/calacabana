@@ -1,33 +1,33 @@
-import { Box, Divider, Flex, Heading, Spinner } from "@chakra-ui/react";
 import type { GetStaticProps } from "next";
 import Head from "next/head";
-import AparmentCard, {
-  AparmentCardProps,
-} from "@/features/apartment/AparmentCard";
-import Carousel from "@/features/apartment/ImageCarousel";
+
+import { Box, Divider, Flex, Heading, Spinner } from "@chakra-ui/react";
+import { PageDrawer } from "@/components";
+import {AparmentCard,
+  AparmentCardProps, ImageCarousel as Carousel,
+} from "@/features/apartment";
 
 import { Suspense, useCallback, useReducer } from "react";
-import { IDrawerActionTypes } from "@/types/types";
+import { IDrawerActionTypes } from "@/components/types";
 import dynamic from "next/dynamic";
 
-import PageDrawer from "@/components/PageDrawer";
-import { IApartmentImage, IReview } from "@/types/shared";
+
+import { IImage, IReview } from "@/types/types";
 import usePageScroll from "@/shared/hooks/usePageScroll";
 import LoadingMapContainer from "@/features/location/LoadingMapContainer";
 import useGlobalContext from "@/shared/hooks/useGlobalContext";
 import fetchApartments from "@/server/services/fetchApartments";
-import fetchOutstandingReviews from "@/server/services/fetchOutstandingReviews";
 import fetchOutStandingReviews from "@/server/services/fetchOutstandingReviews";
-import { GenericResponseStatus, ISuccessGenericRes, IReviewsResposePayload } from "@/types/api";
+import { GenericResponseStatus, ISuccessGenericRes, IReviewsResposePayload } from "@/server/types";
 
-const VerticalGrid = dynamic(() => import("../features/apartment/VerticalGallery"));
+const VerticalGrid = dynamic(() => import("../features/apartment/components/VerticalGallery"));
 
 const Reviews = dynamic(
   () => import("../features/reviews/Reviews")
 );
 
 const HeroGrid = dynamic(
-  () => import("../features/apartment/HeroGrid"), {
+  () => import("../features/apartment/components/HeroGrid"), {
     loading: () => <Flex height={"450px"} width={"100%"}><Spinner margin="auto"/></Flex>,
     ssr: false,
   }
@@ -190,8 +190,8 @@ const Home = (props: IHomePageProps) => {
 };
 
 export type IHomePageProps = { apartments: AparmentCardProps[], images: {
-  wide: IApartmentImage[],
-  square: IApartmentImage[],
+  wide: IImage[],
+  square: IImage[],
 } } & {
   reviews: IReview[];
 };

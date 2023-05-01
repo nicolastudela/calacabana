@@ -1,16 +1,16 @@
 import { Box, Button, Grid, GridItem, GridProps, Heading } from "@chakra-ui/react";
 
 import Image from "next/image";
-import { IApartmentImage } from "@/types/shared";
+import { IImage } from "@/shared/types";
 
-type HeroGridProps = GridProps & {
+export type HeroGridProps = GridProps & {
   onShowAllPicks: () => void;
-  images: IApartmentImage[];
+  images: IImage[];
   title?: string
   subtitle?: string
 };
 
-const HeroGrid = ({ images, onShowAllPicks, title, subtitle }: HeroGridProps) => {
+export const HeroGrid = ({ images, onShowAllPicks, title, subtitle }: HeroGridProps) => {
   return (
     <Grid
       height={"450px"}

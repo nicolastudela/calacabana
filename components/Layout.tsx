@@ -7,8 +7,8 @@ import {
 } from "@chakra-ui/react";
 
 const Footer = dynamic(() => import("@/components/Footer"));
-const MobileHeader = dynamic(() => import("@/components/Header/MobileHeader"));
-const DesktopHeader = dynamic(() => import("@/components/Header/DesktopHeader"));
+const MobileHeader = dynamic(() => import("@/components/headers/MobileHeader"));
+const DesktopHeader = dynamic(() => import("@/components/headers/DesktopHeader"));
 
 const Layout = ({ children, ...rest }: StackProps) => {
   return (

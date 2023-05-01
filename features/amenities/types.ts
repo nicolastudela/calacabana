@@ -1,32 +1,3 @@
-export const APARMENT_TYPES = ['APARTAMENT', 'COMPOUND'] as const;
-export type APARMENTS_TYPE = typeof APARMENT_TYPES[number]
-
-
-export interface IApartmentImage {
-  alt: string;
-  height: number;
-  src: string;
-  width: number;
-}
-
-export interface IAparmentImages {
-  wide: IApartmentImage[];
-  square: IApartmentImage[];
-}
-export interface IApartmentData {
-  amenities?: IAparmentAmenitiesGroup[];
-  beds: string;
-  description: string;
-  images: IAparmentImages;
-  mainFeature: string;
-  maxPeople: string;
-  name: string;
-  displayName: string;
-  rooms: string;
-  type: APARMENTS_TYPE;
-  priority?: number;
-}
-
 export enum AMENITIES_GROUP {
   BATHROOM = "Baño",
   BEEDROOM_LOUNDRY = "Dormitorio y lavadero",
@@ -84,7 +55,7 @@ export enum AMENITY {
   ALL_PROPERTY = "Todo el complejo",
 }
 
-export interface IAparmentAmenity {
+export interface IAmenity {
   name: AMENITY;
   description?: string;
   highlighted?: boolean;
@@ -92,53 +63,8 @@ export interface IAparmentAmenity {
 }
 
 
-export interface IAparmentAmenitiesGroup {
+export interface IAmenitiesGroup {
   name: AMENITIES_GROUP;
-  amenities: IAparmentAmenity[];
+  amenities: IAmenity[];
   priority?: number;
-}
-
-/**
- * This type represents a period that is ready and valid to be bookeable.
- * Meaning that a period is sematically valid, startDate is after FIRST_BOOKING_DAY. And period not intersect in other booking periods.
- */
- export type BookeableValidPeriod = {
-  startDate: Date,
-  endDate: Date,
-}
-
-/**
- * This type represents a period that is ready sematically valid
- */
-export type BookingPeriod = [Date, Date]
-
-
-export type UserData = {
-  firstName: string;
-  lastName: string;
-  email: string;
-  phone: number;
-};
-
-export type UserInquiry = UserData & {
-  body: string;
-};
-
-export type UserInquiryRequest = {
-  apartmentName: string;
-  // apartmentId: Number;
-  period: BookeableValidPeriod;
-  userContact: UserInquiry;
-  apartmentLink: string;
-}
-
-export interface IReview {
-  author: string;
-  authorUrl: string;
-  language: string;
-  profilePhotoURL: string;
-  rating: number;
-  relativeTimeDescription: string;
-  text: string;
-  timeInSeconds: number;
 }

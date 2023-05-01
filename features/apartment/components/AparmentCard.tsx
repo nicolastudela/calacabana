@@ -1,21 +1,21 @@
 import NextLink from "next/link";
 import { Box, BoxProps, Flex } from "@chakra-ui/react";
-import { APARMENTS_TYPE, IApartmentData, IApartmentImage } from "@/types/shared";
 
-import Carousel from "@/features/apartment/ImageCarousel";
-import ApartmentTitle from "@/features/apartment/ApartmentTitle";
+import Carousel from "./ImageCarousel";
+import ApartmentTitle from "./ApartmentTitle";
 import Image from "next/image";
 import useGlobalContext from "@/shared/hooks/useGlobalContext";
+import { IApartment, IImage } from "@/shared/types";
 
 export interface AparmentCardProps
   extends Pick<
-    IApartmentData,
+    IApartment,
     "name" | "displayName" | "mainFeature" | "rooms" | "beds" | "maxPeople" | "type"
   > {
-  images: IApartmentImage[];
+  images: IImage[];
 }
 
-const AparmentCard = ({
+export const AparmentCard = ({
   images,
   name,
   displayName,
@@ -64,5 +64,3 @@ const AparmentCard = ({
       </Box>
   );
 };
-
-export default AparmentCard;
