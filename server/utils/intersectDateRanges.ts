@@ -1,4 +1,4 @@
-
+import { isSameDay } from "date-fns";
 
 interface RangesIterator {
   allRanges: [Date, Date][];
@@ -56,7 +56,7 @@ const intersectDateRanges = (A: [Date, Date][] = [], B: [Date, Date][] = []) => 
 
     if (P[0] > Q[1]) {
       rangeEnd.move();
-    } else if (P[0] === Q[1]) {
+    } else if (isSameDay(P[0], Q[1])) {
       intersectons.push([P[0],P[0]]);
       rangeEnd.move();
     } else  { // P[0] < Q[1]

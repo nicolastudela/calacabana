@@ -53,15 +53,18 @@ router.get(async (_req, res) => {
     return;
   }
 
+  // TODO(DB): When using DB approach, derive apartment keys from actual names instead of
+  // assuming exactly two apartments named "cala" and "cabana". See WORKSPACE.md.
   const apartments = await prisma.apartment.findMany({
-    select: { name: true },
+    select: { name: true, googleCalendarId: true },
     where: { type: "APARTAMENT" },
   });
 
-  const aptsSort = apartments.slice(0, 2).sort((a, _) => (a.name === "cala" ? 0 : 1))
+  const aptsSort = apartments.slice(0, 2).sort((a, _) => (a.name === "cala" ? 0 : 1));
 
-
-  const [calaEventsResponse, cabanaEventsResponse] = await Promise.all(aptsSort.map((apt) => fetchBookings(apt.name)));
+  const [calaEventsResponse, cabanaEventsResponse] = await Promise.all(
+    aptsSort.map((apt) => fetchBookings(apt.name, apt.googleCalendarId))
+  );
 
   const bookingsReservation = {
     cala: calaEventsResponse,
@@ -83,8 +86,8 @@ router.get(async (_req, res) => {
          ...bookingsReservation,
         } as IBookingsInfoResponseSuccessful);
   } else if (
-    calaEventsResponse.status == BookingsInfoResponseStatus.SUCCESFUL ||
-    cabanaEventsResponse.status == BookingsInfoResponseStatus.SUCCESFUL
+    calaEventsResponse.status === BookingsInfoResponseStatus.SUCCESFUL ||
+    cabanaEventsResponse.status === BookingsInfoResponseStatus.SUCCESFUL
   ) {
     res
       .status(200)

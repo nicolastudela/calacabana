@@ -99,7 +99,7 @@ router.get(async (req, res) => {
   // if its compound property
   if (apartment.type === "COMPOUND" && apartment.subAparments.length > 0) {
     const responses = await Promise.all(apartment.subAparments.map(subApartment =>
-      fetchBookings(subApartment.name)))
+      fetchBookings(subApartment.name, subApartment.googleCalendarId)))
     // if (
     //   responses.every(res => res.status === BookingsInfoResponseStatus.SUCCESFUL)
     // ) {
@@ -129,7 +129,7 @@ router.get(async (req, res) => {
       } as IAparmentBookingsResponseSuccessful
     }, { status: BookingsInfoResponseStatus.SUCCESFUL, bookedPeriods: []} as IAparmentBookingsResponseSuccessful)
   } else {
-    bookingsResponse = await fetchBookings(apartment.name);
+    bookingsResponse = await fetchBookings(apartment.name, apartment.googleCalendarId);
   }
 
   const serializedResponse =

@@ -1,5 +1,5 @@
-export { AparmentCard } from './AparmentCard'
-export type { AparmentCardProps } from './AparmentCard'
+export { ApartmentCard } from './ApartmentCard'
+export type { ApartmentCardProps } from './ApartmentCard'
 export { ApartmentTitle } from './ApartmentTitle'
 export type { IApartmentTitleProps } from './ApartmentTitle'
 

@@ -16,7 +16,7 @@ declare global {
 
 let prisma: PrismaClient
 
-const envLog: any= process.env.NODE_ENV === 'development' ? ['warn', 'error','info', 'query'] : ['error, warn']
+const envLog: any = process.env.NODE_ENV === 'development' ? ['warn', 'error', 'info', 'query'] : ['error', 'warn'] as const
 
 if (process.env.NODE_ENV === 'production') {
   prisma = new PrismaClient()

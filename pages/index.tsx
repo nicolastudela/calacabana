@@ -3,8 +3,8 @@ import Head from "next/head";
 
 import { Box, Divider, Flex, Heading, Spinner } from "@chakra-ui/react";
 import { PageDrawer } from "@/components";
-import {AparmentCard,
-  AparmentCardProps, ImageCarousel as Carousel,
+import { ApartmentCard,
+  ApartmentCardProps, ImageCarousel as Carousel,
 } from "@/features/apartment";
 
 import { Suspense, useCallback, useReducer } from "react";
@@ -130,7 +130,7 @@ const Page = ({ apartments, reviews, images }: IHomePageProps) => {
         my={2}
       >
         {apartments.map((apartment) => (
-          <AparmentCard key={apartment.name} {...apartment} />
+          <ApartmentCard key={apartment.name} {...apartment} />
         ))}
       </Flex>
       <Divider my={8} mb={4} />
@@ -189,7 +189,7 @@ const Home = (props: IHomePageProps) => {
   );
 };
 
-export type IHomePageProps = { apartments: AparmentCardProps[], images: {
+export type IHomePageProps = { apartments: ApartmentCardProps[], images: {
   wide: IImage[],
   square: IImage[],
 } } & {
@@ -221,7 +221,7 @@ const getStaticProps: GetStaticProps<IHomePageProps> = async ({}) => {
         maxPeople,
         images: images ? images.square : [],
         type,
-      } as AparmentCardProps)
+      } as ApartmentCardProps)
   ) : []
 
   let reviews: IReview[] = []

@@ -1,7 +1,7 @@
 import { IAmenitiesGroup, AMENITIES_GROUP, AMENITY } from "@/features/amenities/types";
 import { IApartment } from "../types";
 
-const sharedAparmentAmenities: IAmenitiesGroup[] = [
+const sharedApartmentAmenities: IAmenitiesGroup[] = [
   {
     name: AMENITIES_GROUP.SCENIC_VIEWS,
     amenities: [
@@ -188,7 +188,7 @@ const calacabana_paking_and_facilities =   {
 
 const APARMENTS_DATA = {
   ["cabana"]: {
-    amenities: sharedAparmentAmenities,
+    amenities: sharedApartmentAmenities,
     beds: "4",
     description:
       'Ubicado en la planta alta, especial para apreciar las sierras. Cuenta con una hermosa terraza. Especial para apreciar la caida del sol.<br/>' +
@@ -308,7 +308,7 @@ const APARMENTS_DATA = {
     priority: 10,
   } as IApartment,
   ["cala"]: {
-    amenities: sharedAparmentAmenities,
+    amenities: sharedApartmentAmenities,
     beds: "2",
     description:
     'Ubicado en la planta baja, con dos accesos. Uno desde la entrada principal junto al garage y otro desde el otro tendrás acceso direct al jardin, solarium y la pileta.<br/>' +
@@ -436,7 +436,7 @@ const APARMENTS_DATA = {
     beds: "6",
     maxPeople: "10",
     rooms: "5",
-    amenities: sharedAparmentAmenities.filter(((group) => group.name !== AMENITIES_GROUP.PARKING_AND_FACILITIES)).concat(calacabana_paking_and_facilities),
+    amenities: sharedApartmentAmenities.filter(((group) => group.name !== AMENITIES_GROUP.PARKING_AND_FACILITIES)).concat(calacabana_paking_and_facilities),
     description:
       'Cuentas con todo el complejo<br/> ' + 
       '<a style="text-decoration: underline;" href="cala">Alojamiento Cala</a><br/><a style="text-decoration: underline;" href="cabana">Alojamiento Cabana</a><br/><br/>' +

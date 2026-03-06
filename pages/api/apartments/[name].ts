@@ -16,11 +16,11 @@ router.get(async (req, res) => {
       const apartment = await fetchApartment(name)
 
       if (!apartment) {
-        res.status(204).json({
-          status: GenericResponseStatus.SUCCESFUL,
-          isError: false,
+        res.status(404).json({
+          isError: true,
           data: null,
-        });
+          error: "Apartment not found",
+        } as IGenericErrorRes);
       } else {
         res.status(200).json({
           status: GenericResponseStatus.SUCCESFUL,
@@ -33,7 +33,7 @@ router.get(async (req, res) => {
     }
   } catch (error) {
     res
-      .status(200)
+      .status(500)
       .json({ isError: true, data: null, error: toErrorWithMessage(error).message } as IGenericErrorRes);
   }
 });

@@ -19,7 +19,7 @@ const fetchApartment = async (name: string) => {
   const response = await get(`${APARTMENT_API_PATH}/${name}`);
 
   if (response.status === GenericResponseStatus.SUCCESFUL) {
-    return response.httpStatus === 204 ? null : (response as ISuccessGenericRes<IApartment>).data
+    return (response as ISuccessGenericRes<IApartment>).data;
   } else {
     const errorResponse = (response as IGenericErrorRes)
     const error = errorResponse.error

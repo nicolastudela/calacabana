@@ -9,6 +9,7 @@ import { BookingPeriod } from "@/types/types";
 
 import stubEvents from "@/shared/mocks/calendarEventStubber";
 import isBefore from "date-fns/isBefore";
+import isSameDay from "date-fns/isSameDay";
 import subDays from "date-fns/subDays";
 
 const jwtClient = new google.auth.JWT(
@@ -34,7 +35,7 @@ const sanitizeBookingPeriods = (periods?: calendar_v3.Schema$Event[]) => {
     const endDate = actual?.end?.date;
     if (startDate && endDate) {
       const period: BookingPeriod = [new Date(startDate), subDays(new Date(endDate),1)]
-      if (isBefore(period[0], period[1])) {
+      if (isBefore(period[0], period[1]) || isSameDay(period[0], period[1])) {
         acc.push(period)
       } 
     }
@@ -76,11 +77,11 @@ const sanitizeEventListResponse = (
       } as IAparmentBookingsResponseError;
     });
 
-const fetchBookings = (apartmentName: string) => {
+const fetchBookings = (apartmentName: string, calendarIdFromDb?: string | null) => {
   if (process.env.MOCK_CALENDAR_API && process.env.MOCK_CALENDAR_API === "1") {
     return stubEvents(apartmentName);
   }
-  const calendarId = getCalendarIdForApartment(apartmentName);
+  const calendarId = calendarIdFromDb || getCalendarIdForApartment(apartmentName);
   if (!calendarId) {
     return Promise.resolve({
       status: BookingsInfoResponseStatus.ERROR,

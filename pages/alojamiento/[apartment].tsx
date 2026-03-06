@@ -36,7 +36,7 @@ import { trackEvent } from "@/lib/gtag";
 import usePageScroll from "@/shared/hooks/usePageScroll";
 import useGlobalContext from "@/shared/hooks/useGlobalContext";
 
-import aparmentBookingsFetcher from "fetchers/aparmentBookingsFetcher";
+import apartmentBookingsFetcher from "fetchers/apartmentBookingsFetcher";
 import { GenericResponseStatus, ISuccessGenericRes, IReviewsResposePayload } from "@/server/types";
 import fetchOutStandingReviews from "@/server/services/fetchOutstandingReviews";
 import fetchApartmentSlugs from "@/server/services/fetchApartmentSlugs";
@@ -96,7 +96,7 @@ const Page = (apartmentData: IApartmentProps) => {
     useState<BookeableValidPeriodState>({dateSelected: null, error: null});
   const { data: excludedDatesRanges, error } = useSWR(
     `/api/bookings/${name}`,
-    aparmentBookingsFetcher,
+    apartmentBookingsFetcher,
     { revalidateOnFocus: false }
   );
   const { defaultDates, bookeableDefaultDates, pageDefaultDatesError } =

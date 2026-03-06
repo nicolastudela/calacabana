@@ -7,7 +7,7 @@ import Image from "next/image";
 import useGlobalContext from "@/shared/hooks/useGlobalContext";
 import { IApartment, IImage } from "@/shared/types";
 
-export interface AparmentCardProps
+export interface ApartmentCardProps
   extends Pick<
     IApartment,
     "name" | "displayName" | "mainFeature" | "rooms" | "beds" | "maxPeople" | "type"
@@ -15,7 +15,7 @@ export interface AparmentCardProps
   images: IImage[];
 }
 
-export const AparmentCard = ({
+export const ApartmentCard = ({
   images,
   name,
   displayName,
@@ -25,7 +25,7 @@ export const AparmentCard = ({
   maxPeople,
   type,
   ...rest
-}: AparmentCardProps & BoxProps) => {
+}: ApartmentCardProps & BoxProps) => {
   const { isMobile } = useGlobalContext();
   return (
       <Box

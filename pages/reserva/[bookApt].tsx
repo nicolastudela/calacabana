@@ -20,7 +20,7 @@ import {
   UserInquiry,
   UserInquiryRequest,
 } from "@/types/types";
-import aparmentBookingsFetcher from "fetchers/aparmentBookingsFetcher";
+import apartmentBookingsFetcher from "fetchers/apartmentBookingsFetcher";
 import usePageDefaultDates, {
   EPageDefaultDatesErrorType,
 } from "@/shared/hooks/usePageDefaultDates";
@@ -82,7 +82,7 @@ const Page = (apartmentData: IBookingApartmentProps) => {
   const router = useRouter();
   const { data: excludedDatesRanges, error: excludedDatesRangesError } = useSWR(
     `/api/bookings/${name}`,
-    aparmentBookingsFetcher,
+    apartmentBookingsFetcher,
     { revalidateOnFocus: false }
   );
   const [isPageProcessing, setIsPageProcessing] = useState(false);
