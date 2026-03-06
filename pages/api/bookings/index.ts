@@ -10,18 +10,15 @@ import intersectDateRanges from "@/server/utils/intersectDateRanges";
 import fetchBookings from "@/server/services/fetchBookings";
 import prisma from "@/lib/prisma";
 
-const MOCK_APARTMENTS = [
-  { name: "cala", googleCalendarId: "mock" },
-  { name: "cabana", googleCalendarId: "mock" },
-] as const;
+const MOCK_APARTMENT_NAMES = ["cala", "cabana"] as const;
 
 const router = createRouter<NextApiRequest, NextApiResponse>();
 
 router.get(async (_req, res) => {
-  // Mock mode: use stub data, no Prisma
+  // Mock mode: use stub data, no Prisma. Calendar IDs resolved in fetchBookings.
   if (process.env.NEXT_PUBLIC_MOCK_APARTMENTS_DATA === "1") {
     const [calaEventsResponse, cabanaEventsResponse] = await Promise.all(
-      MOCK_APARTMENTS.map((apt) => fetchBookings(apt.name, apt.googleCalendarId))
+      MOCK_APARTMENT_NAMES.map((name) => fetchBookings(name))
     );
     const bookingsReservation = {
       cala: calaEventsResponse,
@@ -57,14 +54,14 @@ router.get(async (_req, res) => {
   }
 
   const apartments = await prisma.apartment.findMany({
-    select: { name: true, googleCalendarId: true },
+    select: { name: true },
     where: { type: "APARTAMENT" },
   });
 
   const aptsSort = apartments.slice(0, 2).sort((a, _) => (a.name === "cala" ? 0 : 1))
 
 
-  const [calaEventsResponse, cabanaEventsResponse] = await Promise.all(aptsSort.map( aptSort => fetchBookings(aptSort.name, aptSort.googleCalendarId)));
+  const [calaEventsResponse, cabanaEventsResponse] = await Promise.all(aptsSort.map((apt) => fetchBookings(apt.name)));
 
   const bookingsReservation = {
     cala: calaEventsResponse,

@@ -42,6 +42,17 @@ const sanitizeBookingPeriods = (periods?: calendar_v3.Schema$Event[]) => {
   }, initValue);
 };
 
+const getCalendarIdForApartment = (apartmentName: string): string | null => {
+  switch (apartmentName) {
+    case "cala":
+      return process.env.CALA_GOOGLE_CALENDAR_ID ?? null;
+    case "cabana":
+      return process.env.CABANA_GOOGLE_CALENDAR_ID ?? null;
+    default:
+      return null;
+  }
+};
+
 const sanitizeEventListResponse = (
   promise: GaxiosPromise<calendar_v3.Schema$Events>
 ) =>
@@ -65,31 +76,28 @@ const sanitizeEventListResponse = (
       } as IAparmentBookingsResponseError;
     });
 
-const fetchBookings = (apartmentName: string, calendarId: string | null) => {
-  //TODO (#23) REMOVE THIS, IT'S JUST TO NOT TO CALL CALENDAR_API ON EACH CALL
+const fetchBookings = (apartmentName: string) => {
   if (process.env.MOCK_CALENDAR_API && process.env.MOCK_CALENDAR_API === "1") {
     return stubEvents(apartmentName);
-  } else {
-    if (!calendarId) {
-      return {
-        status: BookingsInfoResponseStatus.ERROR,
-        errorCode: 400,
-        statusText: "A proper calendar id must be provided",
-        errorsDetails:  "A proper calendar id must be provided",
-      } as IAparmentBookingsResponseError;
-    }
-    return sanitizeEventListResponse(
-      calendar.events.list({
-        calendarId,
-        timeMin: new Date().toISOString(),
-        //TODO: remove to enable all events
-        maxResults: 10,
-        // don't know what this is
-        singleEvents: true,
-        orderBy: "startTime",
-      })
-    );
   }
+  const calendarId = getCalendarIdForApartment(apartmentName);
+  if (!calendarId) {
+    return Promise.resolve({
+      status: BookingsInfoResponseStatus.ERROR,
+      errorCode: 400,
+      statusText: "A proper calendar id must be provided",
+      errorsDetails: `No calendar ID configured for apartment: ${apartmentName}`,
+    } as IAparmentBookingsResponseError);
+  }
+  return sanitizeEventListResponse(
+    calendar.events.list({
+      calendarId,
+      timeMin: new Date().toISOString(),
+      maxResults: 10,
+      singleEvents: true,
+      orderBy: "startTime",
+    })
+  );
 };
 
 export default fetchBookings;

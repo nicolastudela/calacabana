@@ -37,7 +37,7 @@ router.get(async (req, res) => {
   }
   const apartmentName = req.query.apartment as string;
 
-  // Mock mode: use stub data, no Prisma
+  // Mock mode: use stub apartment list, no Prisma. Calendar IDs resolved in fetchBookings.
   if (process.env.NEXT_PUBLIC_MOCK_APARTMENTS_DATA === "1") {
     if (!MOCK_APARTMENT_NAMES.includes(apartmentName as typeof MOCK_APARTMENT_NAMES[number])) {
       res.status(404).end("Apartment not found");
@@ -46,8 +46,8 @@ router.get(async (req, res) => {
     let bookingsResponse: IAparmentBookingsResponseSuccessful | IAparmentBookingsResponseError;
     if (apartmentName === "calacabana") {
       const [calaResponse, cabanaResponse] = await Promise.all([
-        fetchBookings("cala", "mock"),
-        fetchBookings("cabana", "mock"),
+        fetchBookings("cala"),
+        fetchBookings("cabana"),
       ]);
       bookingsResponse =
         calaResponse.status === BookingsInfoResponseStatus.SUCCESFUL &&
@@ -63,7 +63,7 @@ router.get(async (req, res) => {
             ? calaResponse
             : cabanaResponse;
     } else {
-      bookingsResponse = await fetchBookings(apartmentName, "mock");
+      bookingsResponse = await fetchBookings(apartmentName);
     }
     const serializedResponse =
       bookingsResponse.status === BookingsInfoResponseStatus.SUCCESFUL
@@ -98,8 +98,8 @@ router.get(async (req, res) => {
     | IAparmentBookingsResponseError;
   // if its compound property
   if (apartment.type === "COMPOUND" && apartment.subAparments.length > 0) {
-    const responses = await Promise.all(apartment.subAparments.map(subApartment => 
-      fetchBookings(subApartment.name, subApartment.googleCalendarId)))
+    const responses = await Promise.all(apartment.subAparments.map(subApartment =>
+      fetchBookings(subApartment.name)))
     // if (
     //   responses.every(res => res.status === BookingsInfoResponseStatus.SUCCESFUL)
     // ) {
@@ -129,9 +129,7 @@ router.get(async (req, res) => {
       } as IAparmentBookingsResponseSuccessful
     }, { status: BookingsInfoResponseStatus.SUCCESFUL, bookedPeriods: []} as IAparmentBookingsResponseSuccessful)
   } else {
-    bookingsResponse = await fetchBookings(
-      apartment.name, apartment.googleCalendarId
-    );
+    bookingsResponse = await fetchBookings(apartment.name);
   }
 
   const serializedResponse =
