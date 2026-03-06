@@ -10,8 +10,11 @@ import type { NextApiRequest, NextApiResponse } from "next";
 import { createRouter } from "next-connect";
 import fetchBookings from "../../../server/services/fetchBookings";
 import joinArrayBookingPeriods from "@/server/utils/joinDateRanges";
+import { stubApartmentSlugs } from "@/shared/mocks/apartmentsDataStubber";
 
 import prisma from "@/lib/prisma";
+
+const MOCK_APARTMENT_NAMES = stubApartmentSlugs();
 
 const serializeBookingPeriods = (
   bookings: IAparmentBookingsResponseSuccessful
@@ -33,6 +36,42 @@ router.get(async (req, res) => {
     return;
   }
   const apartmentName = req.query.apartment as string;
+
+  // Mock mode: use stub data, no Prisma
+  if (process.env.NEXT_PUBLIC_MOCK_APARTMENTS_DATA === "1") {
+    if (!MOCK_APARTMENT_NAMES.includes(apartmentName as typeof MOCK_APARTMENT_NAMES[number])) {
+      res.status(404).end("Apartment not found");
+      return;
+    }
+    let bookingsResponse: IAparmentBookingsResponseSuccessful | IAparmentBookingsResponseError;
+    if (apartmentName === "calacabana") {
+      const [calaResponse, cabanaResponse] = await Promise.all([
+        fetchBookings("cala", "mock"),
+        fetchBookings("cabana", "mock"),
+      ]);
+      bookingsResponse =
+        calaResponse.status === BookingsInfoResponseStatus.SUCCESFUL &&
+        cabanaResponse.status === BookingsInfoResponseStatus.SUCCESFUL
+          ? {
+              status: BookingsInfoResponseStatus.SUCCESFUL,
+              bookedPeriods: joinArrayBookingPeriods(
+                calaResponse.bookedPeriods,
+                cabanaResponse.bookedPeriods
+              ),
+            }
+          : calaResponse.status === BookingsInfoResponseStatus.ERROR
+            ? calaResponse
+            : cabanaResponse;
+    } else {
+      bookingsResponse = await fetchBookings(apartmentName, "mock");
+    }
+    const serializedResponse =
+      bookingsResponse.status === BookingsInfoResponseStatus.SUCCESFUL
+        ? serializeBookingPeriods(bookingsResponse)
+        : bookingsResponse;
+    res.status(200).json(serializedResponse);
+    return;
+  }
 
   const apartment = await prisma.apartment.findUnique({
     where: {
