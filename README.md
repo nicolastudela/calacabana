@@ -14,6 +14,8 @@ __Debugging pourposes__
 
 `MOCK_GOOGLE_PLACES_REVIEWS_API=1` Will mock reviews fetch from place API (outstanding reviews)
 
+`NEXT_PUBLIC_MOCK_APARTMENTS_DATA=1` Will use stub apartment data instead of the database. **Use this for local dev when you don't have a DB.**
+
 __Required__
 
 *Email addresses*
@@ -61,6 +63,64 @@ Follow this a explanatory tutorial on [how to configure Google Account](https://
 `SENDGRID_KEY`
 `OWNER_NOTICE_EMAIL_RECIPIENT`
 `OTHER_NOTICE_EMAIL_RECIPENTS`  (Cvs list of mails)
+
+## Local development (no DB)
+
+To run the app **without a database** (Supabase deleted, no local Postgres):
+
+1. In `.env.local`, set:
+   ```
+   NEXT_PUBLIC_MOCK_APARTMENTS_DATA=1
+   ```
+2. Keep these mock flags for full local dev without external APIs:
+   ```
+   MOCK_CALENDAR_API=1
+   MOCK_GOOGLE_PLACES_REVIEWS_API=1
+   NEXT_PUBLIC_MOCK_MAPS=1
+   ```
+3. Run:
+   ```bash
+   npm run dev
+   ```
+4. Open [http://localhost:3000](http://localhost:3000)
+
+---
+
+## Vercel deployment (this branch — mock only)
+
+This branch (**EPIC-95-DB-PRISMA**) is configured to deploy **without a database**, using mocked data only.
+
+### Environment variables (Vercel → Project → Settings → Environment Variables)
+
+Set these for **Production**, **Preview**, and **Development**:
+
+**Mock flags:**
+- `NEXT_PUBLIC_MOCK_APARTMENTS_DATA=1` — **Required** for this branch (no DB). Uses stub apartment data.
+- `MOCK_CALENDAR_API=1`, `MOCK_GOOGLE_PLACES_REVIEWS_API=1`, `NEXT_PUBLIC_MOCK_MAPS=1` — Optional. Use for a fully mocked preview (no Google keys needed); omit if you have real API credentials.
+
+**Required (use production values or placeholders):**
+```
+SENDGRID_KEY
+OWNER_NOTICE_EMAIL_RECIPIENT
+OTHER_NOTICE_EMAIL_RECIPENTS
+GOOGLE_PRIVATE_KEY
+GOOGLE_CLIENT_EMAIL
+GOOGLE_CALENDAR_SCOPES_FULL
+GOOGLE_CALENDAR_SCOPES_READ_ONLY
+GOOGLE_PROJECT_NUMBER
+CABANA_GOOGLE_CALENDAR_ID
+CALA_GOOGLE_CALENDAR_ID
+GOOGLE_PLACES_API_KEY
+GOOGLE_PLACES_ID
+GOOGLE_PLACE_OUTSTANDING_REVIEWS_API_PATH
+NEXT_PUBLIC_GA_ID
+NEXT_PUBLIC_ORIGIN_PATH
+```
+(For preview deployments, `NEXT_PUBLIC_ORIGIN_PATH` can be the Vercel preview URL, e.g. `https://your-project-xxx.vercel.app`.)
+
+**Do not set** `DATABASE_URL` or `SHADOW_DATABASE_URL` for this branch — the build uses stub data and does not connect to a database.
+
+---
 
 ## Next.js How to start app on dev 
 

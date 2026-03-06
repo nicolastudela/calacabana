@@ -1,4 +1,4 @@
-import { BookingPeriod, BookeableValidPeriod } from "@/types/shared";
+import { BookingPeriod, BookeableValidPeriod } from "@/types/types";
 import { isValidBookingDateRange } from "@/utils/dateRanges";
 
 function createBookeableValidPeriod(period: BookingPeriod| null) {

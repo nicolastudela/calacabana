@@ -1,0 +1,39 @@
+---
+description: Calacabana project context, session summary, and next steps
+alwaysApply: true
+---
+
+# Calacabana — Project Context
+
+## What This Is
+Next.js 14 vacation rental site (Cala + Cabana apartments, Tanti, Argentina). Branch **EPIC-95-DB-PRISMA** adds Prisma + PostgreSQL, features-based architecture, apartment APIs.
+
+## Session Summary (March 2026)
+
+### Tackled
+- **Baseline update**: Next 14, Prisma 5, TS 5, Chakra 2.8, dotenv-cli
+- **Types fix**: Created `types/types.ts` barrel (old `@/types/types` imports were broken after features refactor)
+- **Layout export fix**: `components/index.ts` — `export * as Layout` → `export { default as Layout }`
+- **next-connect 1.0**: Migrated all 8 API routes to `createRouter()` + `router.handler()`
+- **Local dev**: Works with `NEXT_PUBLIC_MOCK_APARTMENTS_DATA=1` (no DB). Supabase project was deleted.
+
+### Decisions
+- Keep Pages Router (no App Router migration)
+- Not married to Supabase — Neon, Railway, local Postgres all work
+- Auth/reservations planned but not implemented (`prisma/not_included.prisma`)
+
+### Next Steps
+1. Run locally: `NEXT_PUBLIC_MOCK_APARTMENTS_DATA=1` in .env.local, then `npm run dev`
+2. **Vercel (this branch)**: Mock-only — set env vars per README "Vercel deployment (this branch — mock only)". No DATABASE_URL.
+3. When ready for DB: local Postgres (Docker) or new Neon/Railway/Supabase
+4. Future: Reservations in DB, admin APIs, booking manager, auth (NextAuth/Clerk/etc.)
+5. Minor: amenities bundle size (FIXME in amenitiesIconMapper), Footer copyright year
+
+## Reference
+- `WORKSPACE.md` — Full project index, architecture, planned features
+- `README.md` — Env vars, local dev, how to run
+
+---
+
+## Maintenance
+**When completing a major milestone or making a significant decision in this project, update this file** with the new state, decisions, and next steps. Examples: finishing a feature, choosing auth/DB provider, pivoting approach, resolving a blocker.

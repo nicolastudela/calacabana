@@ -1,6 +1,12 @@
+import React,{ useCallback, useEffect, useMemo, useReducer, useRef, useState } from "react";
 import { GetStaticPaths, GetStaticProps } from "next/types";
-import aparmentsData, { APARTMENTS_BUILD } from "../../shared/apartmentsData";
+import dynamic from "next/dynamic";
+import useSWR from "swr";
+import { useRouter } from "next/router";
+import Head from "next/head";
 
+import { BsFillDoorOpenFill } from "react-icons/bs";
+import { GiCctvCamera, GiHomeGarage } from "react-icons/gi";
 import {
   Box,
   Flex,
@@ -9,57 +15,50 @@ import {
   Button,
   Spinner,
 } from "@chakra-ui/react";
-import Head from "next/head";
-import Carousel from "@/components/Carousel";
 
-import HeroGrid from "@/components/HeroGrid";
-import dynamic from "next/dynamic";
-import { useCallback, useEffect, useMemo, useReducer, useRef, useState } from "react";
-import ApartmentTitle from "@/components/apartment/ApartmentTitle";
-import { BsFillDoorOpenFill } from "react-icons/bs";
-import { GiCctvCamera, GiHomeGarage } from "react-icons/gi";
-import ApartmentFeatures, {
-  ApartmentFeature,
-  ApartmentFeatureIcon,
-} from "@/components/apartment/ApartmentFeatures";
-import {
-  IAparmentAmenitiesGroup,
-  IApartmentData,
-  IReview,
-} from "@/types/shared";
-import BookingButton from "@/components/booking/BookingButton";
-import { BookeableValidPeriod } from "@/types/shared";
-import PageDrawer from "@/components/PageDrawer";
+import { Feature, FeatureList, FeatureIcon, PageDrawer} from "@/components"
+import { ApartmentTitle, HeroGrid, ImageCarousel as Carousel } from "@/features/apartment"
 
-import useSWR from "swr";
-import aparmentBookingsFetcher from "@/shared/fetchers/aparmentBookingsFetcher";
+import LoadingMapContainer from "@/features/location/LoadingMapContainer";
+import BookingButton from "@/features/booking/BookingButton";
+
+import { IAmenitiesGroup } from "@/features/amenities/types";
+import { BookeableValidPeriod } from "@/features/booking/types";
+import { IReview } from "@/features/reviews/types";
+import { IApartment } from "@/shared/types";
+
+
+import { IDrawerActionTypes } from "@/components/types";
+
 import usePageDefaultDates from "@/shared/hooks/usePageDefaultDates";
 
-import { useRouter } from "next/router";
-import { IDrawerActionTypes } from "@/types/types";
-import fetchOutstandingReviews from "@/shared/fetchers/fetchOutstandingReviews";
 import { trackEvent } from "@/lib/gtag";
 import usePageScroll from "@/shared/hooks/usePageScroll";
-import LoadingMapContainer from "@/components/LoadingMapContainer";
 import useGlobalContext from "@/shared/hooks/useGlobalContext";
-import React from "react";
 
-const VerticalGrid = dynamic(() => import("../../components/VerticalGallery"));
+import apartmentBookingsFetcher from "fetchers/apartmentBookingsFetcher";
+import { GenericResponseStatus, ISuccessGenericRes, IReviewsResposePayload } from "@/server/types";
+import fetchOutStandingReviews from "@/server/services/fetchOutstandingReviews";
+import fetchApartmentSlugs from "@/server/services/fetchApartmentSlugs";
+import fetchApartment from "@/server/services/fetchApartment";
+
+
+const VerticalGrid = dynamic(() => import("../../features/apartment/components/VerticalGallery"));
 
 const AllAmenities = dynamic(
-  () => import("../../components/amenities/AllAmenities")
+  () => import("../../features/amenities/AllAmenities")
 );
 
 const HiglightAmenities = dynamic(
-  () => import("../../components/amenities/HiglightAmenities")
+  () => import("../../features/amenities/HiglightAmenities")
 );
 
 const Reviews = dynamic(
-  () => import("../../components/Reviews")
+  () => import("../../features/reviews/Reviews")
 );
 
 const BookingDatesLoader = () =>
-  import("../../components/booking/BookingDates");
+  import("../../features/availability/AvailableDatesPicker");
 
 const BookingDates = dynamic(BookingDatesLoader, {
   loading: () => <Flex minWidth="350px" height={"350px"} ><Spinner margin="auto"/></Flex>,
@@ -67,12 +66,12 @@ const BookingDates = dynamic(BookingDatesLoader, {
 });
 
 const Map = dynamic(
-  () => import("../../components/Map"), {
+  () => import("../../features/location/Map"), {
   loading: () => <LoadingMapContainer/>,
   ssr: false,
 });
 
-export type IApartmentProps = IApartmentData & {
+export type IApartmentProps = IApartment & {
   key: string;
   reviews: IReview[];
 };
@@ -97,7 +96,7 @@ const Page = (apartmentData: IApartmentProps) => {
     useState<BookeableValidPeriodState>({dateSelected: null, error: null});
   const { data: excludedDatesRanges, error } = useSWR(
     `/api/bookings/${name}`,
-    aparmentBookingsFetcher,
+    apartmentBookingsFetcher,
     { revalidateOnFocus: false }
   );
   const { defaultDates, bookeableDefaultDates, pageDefaultDatesError } =
@@ -130,7 +129,7 @@ const Page = (apartmentData: IApartmentProps) => {
               title: "Que ofrece este lugar?",
               component: (
                 <AllAmenities
-                  amenities={action.payload as IAparmentAmenitiesGroup[]}
+                  amenities={action.payload as IAmenitiesGroup[]}
                 />
               ),
             };
@@ -286,27 +285,27 @@ const Page = (apartmentData: IApartmentProps) => {
           >
             <ApartmentTitle {...apartmentData} isPageTitle />
             <Divider my={4} />
-            <ApartmentFeatures gap={"2"}>
-              <ApartmentFeature
+            <FeatureList gap={"2"}>
+              <Feature
                 title="Check-in flexible"
                 subtitle="Nos amoldamos a tus necesidades"
                 isHighlight
               >
-                <ApartmentFeatureIcon as={BsFillDoorOpenFill} />
-              </ApartmentFeature>
-              <ApartmentFeature
+                <FeatureIcon as={BsFillDoorOpenFill} />
+              </Feature>
+              <Feature
                 title="Cámaras de seguridad en la propiedad"
                 isHighlight
               >
-                <ApartmentFeatureIcon as={GiCctvCamera} />
-              </ApartmentFeature>
-              <ApartmentFeature
+                <FeatureIcon as={GiCctvCamera} />
+              </Feature>
+              <Feature
                 title="Entrada independiente. Cochera bajo techo"
                 isHighlight
               >
-                <ApartmentFeatureIcon as={GiHomeGarage} />
-              </ApartmentFeature>
-            </ApartmentFeatures>
+                <FeatureIcon as={GiHomeGarage} />
+              </Feature>
+            </FeatureList>
             <Divider my={4} />
             <Text
               noOfLines={[6, 20]}
@@ -320,10 +319,10 @@ const Page = (apartmentData: IApartmentProps) => {
               Mostrar mas
             </Button>
             <Divider my={4} />
-            <HiglightAmenities
+            { amenities && <HiglightAmenities
               amenities={amenities}
               onExpand={onShowAllAmeninities}
-            />
+            />}
             <Divider my={4} />
             <Reviews
               reviews={reviews}
@@ -466,11 +465,12 @@ const Apartment = (apartmentData: IApartmentProps) => {
   );
 };
 
-// Return paths for pre built merchants during build phase
-// redirects for disabled and aliased merchants handled in next.config.js
+// Return paths for pre built apartments during build phase
 const getStaticPaths: GetStaticPaths = async () => {
+
+  const slugs = await fetchApartmentSlugs()
   return {
-    paths: APARTMENTS_BUILD.map((apartment: string) => ({
+    paths: (slugs || []).map((apartment: string) => ({
       params: { apartment: apartment },
     })),
     fallback: false,
@@ -480,12 +480,22 @@ const getStaticPaths: GetStaticPaths = async () => {
 // NextJS API Middleware is not available here
 const getStaticProps: GetStaticProps<IApartmentProps> = async ({ params }) => {
   let props: IApartmentProps | null = null;
+  let reviews: IReview[] = []
 
-  const reviews = await fetchOutstandingReviews();
-  if (params?.apartment) {
+  // reviews
+  const reviewsResponse = await fetchOutStandingReviews();
+  if (reviewsResponse.status === GenericResponseStatus.SUCCESFUL) {
+    const succes = (reviewsResponse as ISuccessGenericRes<IReviewsResposePayload>)
+    reviews = succes.data.reviews;
+  } else {
+    console.error(JSON.stringify(reviewsResponse))
+  }
+
+  const apartment = await fetchApartment(params?.apartment as string);
+  if (apartment) {
     props = {
       key: params?.apartment as string,
-      ...aparmentsData[params?.apartment as "cala" | "cabana"],
+      ...apartment,
       reviews,
     };
   }

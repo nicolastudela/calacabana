@@ -1,37 +1,39 @@
-import { Box, Divider, Flex, Heading, Spinner } from "@chakra-ui/react";
 import type { GetStaticProps } from "next";
 import Head from "next/head";
-import AparmentCard, {
-  AparmentCardProps,
-} from "@/components/apartment/AparmentCard";
-import Carousel from "@/components/Carousel";
 
-import aparmentsData from "../shared/apartmentsData";
+import { Box, Divider, Flex, Heading, Spinner } from "@chakra-ui/react";
+import { PageDrawer } from "@/components";
+import { ApartmentCard,
+  ApartmentCardProps, ImageCarousel as Carousel,
+} from "@/features/apartment";
+
 import { Suspense, useCallback, useReducer } from "react";
-import { IDrawerActionTypes } from "@/types/types";
+import { IDrawerActionTypes } from "@/components/types";
 import dynamic from "next/dynamic";
 
-import PageDrawer from "@/components/PageDrawer";
-import { IApartmentImage, IReview } from "@/types/shared";
-import fetchOutstandingReviews from "@/shared/fetchers/fetchOutstandingReviews";
-import usePageScroll from "@/shared/hooks/usePageScroll";
-import LoadingMapContainer from "@/components/LoadingMapContainer";
-import useGlobalContext from "@/shared/hooks/useGlobalContext";
 
-const VerticalGrid = dynamic(() => import("../components/VerticalGallery"));
+import { IImage, IReview } from "@/types/types";
+import usePageScroll from "@/shared/hooks/usePageScroll";
+import LoadingMapContainer from "@/features/location/LoadingMapContainer";
+import useGlobalContext from "@/shared/hooks/useGlobalContext";
+import fetchApartments from "@/server/services/fetchApartments";
+import fetchOutStandingReviews from "@/server/services/fetchOutstandingReviews";
+import { GenericResponseStatus, ISuccessGenericRes, IReviewsResposePayload } from "@/server/types";
+
+const VerticalGrid = dynamic(() => import("../features/apartment/components/VerticalGallery"));
 
 const Reviews = dynamic(
-  () => import("../components/Reviews")
+  () => import("../features/reviews/Reviews")
 );
 
 const HeroGrid = dynamic(
-  () => import("../components/HeroGrid"), {
+  () => import("../features/apartment/components/HeroGrid"), {
     loading: () => <Flex height={"450px"} width={"100%"}><Spinner margin="auto"/></Flex>,
     ssr: false,
   }
 );
 
-const Map = dynamic(() => import("../components/Map"), {
+const Map = dynamic(() => import("../features/location/Map"), {
   suspense: true,
 });
 
@@ -128,7 +130,7 @@ const Page = ({ apartments, reviews, images }: IHomePageProps) => {
         my={2}
       >
         {apartments.map((apartment) => (
-          <AparmentCard key={apartment.name} {...apartment} />
+          <ApartmentCard key={apartment.name} {...apartment} />
         ))}
       </Flex>
       <Divider my={8} mb={4} />
@@ -187,16 +189,18 @@ const Home = (props: IHomePageProps) => {
   );
 };
 
-export type IHomePageProps = { apartments: AparmentCardProps[], images: {
-  wide: IApartmentImage[],
-  square: IApartmentImage[],
+export type IHomePageProps = { apartments: ApartmentCardProps[], images: {
+  wide: IImage[],
+  square: IImage[],
 } } & {
   reviews: IReview[];
 };
 
 // NextJS API Middleware is not available here
 const getStaticProps: GetStaticProps<IHomePageProps> = async ({}) => {
-  const apartments = Object.values(aparmentsData).map(
+
+  const apartmentsResp = await fetchApartments({includes: ["images"]})
+  const apartments = apartmentsResp ? apartmentsResp.map(
     ({
       name,
       displayName,
@@ -215,12 +219,19 @@ const getStaticProps: GetStaticProps<IHomePageProps> = async ({}) => {
         rooms,
         beds,
         maxPeople,
-        images: images.square,
+        images: images ? images.square : [],
         type,
-      } as AparmentCardProps)
-  );
+      } as ApartmentCardProps)
+  ) : []
 
-  const reviews = await fetchOutstandingReviews();
+  let reviews: IReview[] = []
+  const reviewsResponse = await fetchOutStandingReviews();
+  if (reviewsResponse.status === GenericResponseStatus.SUCCESFUL) {
+    const succes = (reviewsResponse as ISuccessGenericRes<IReviewsResposePayload>)
+    reviews = succes.data.reviews;
+  } else {
+    console.error(JSON.stringify(reviewsResponse))
+  }
 
   const images = {
     square: [

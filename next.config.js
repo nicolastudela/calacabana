@@ -1,7 +1,7 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   reactStrictMode: true,
-  // experimental:{ newNextLinkBehavior: trye },
+  // experimental:{ newNextLinkBehavior: true },
   redirects() {
     return [
       process.env.MAINTENANCE_MODE === "1"

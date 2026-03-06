@@ -12,7 +12,7 @@ export interface IPageDrawerProps {
   onHide: () => void
 }
 
-const PageDrawer = ({componentToShow, onHide}: IPageDrawerProps) => {
+export const PageDrawer = ({componentToShow, onHide}: IPageDrawerProps) => {
   const {
     isOpen: isDrawerOpen,
     onOpen: onDrawerOpen,

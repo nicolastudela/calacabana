@@ -1,26 +1,32 @@
-export interface INavGeneral {
-  label: string;
-}
+/**
+ * Central type re-exports for backward compatibility.
+ * Types have been moved to feature modules; this barrel keeps old @/types/types imports working.
+ */
 
-export interface INavMenu extends INavGeneral {
-  isMenu: true;
-  items: INavLink[];
-} 
+export type {
+  IApartment,
+  IImage,
+  IImagesGroup,
+} from "@/shared/types";
 
-export interface INavLink extends INavGeneral {
-  isMenu: false;
-  link: string;
-}
+export {
+  AMENITY,
+  AMENITIES_GROUP,
+} from "@/features/amenities/types";
 
-export enum IDrawerActionTypes {
-  SHOW_ALL_PICS,
-  SHOW_ALL_PICS_MOBILE,
-  SHOW_ALL_AMENITIES,
-  SHOW_DESCRIPTION,
-  SHOW_EDIT_DATES,
-  SHOW_ALL_REVIEWS,
-  HIDE,
-}
+export type {
+  IAmenity,
+  IAmenitiesGroup,
+} from "@/features/amenities/types";
 
-export type INav = INavMenu | INavLink
+export type {
+  BookeableValidPeriod,
+  BookingPeriod,
+} from "@/features/booking/types";
 
+export type {
+  UserInquiry,
+  UserInquiryRequest,
+} from "@/features/inquiry/types";
+
+export type { IReview } from "@/features/reviews/types";

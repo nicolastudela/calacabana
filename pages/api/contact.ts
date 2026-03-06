@@ -4,12 +4,12 @@ import {
   IGenericResponse,
   IUserInquiryRequestSerialized,
   IUserInquiryResposePayload,
-} from "@/types/api";
+} from "@/server/types";
 
 import type { NextApiRequest, NextApiResponse } from "next";
-import nc from "next-connect";
+import { createRouter } from "next-connect";
 import sgMail from "@sendgrid/mail";
-import { toErrorWithMessage } from "@/utils/genericErrorsHandler";
+import { toErrorWithMessage } from "server/utils/genericErrorsHandler";
 import { toDDMMYYYY } from "@/utils/dates";
 
 export type EmailData = string|{ name?: string; email: string; }
@@ -28,17 +28,11 @@ const handleSengridError = (maybeError: unknown) => {
 
 sgMail.setApiKey(process.env.SENDGRID_KEY as string)
 
-const handler = nc<NextApiRequest, NextApiResponse>({
-  onError: (err, _req, res) => {
-    // console.error(err.stack);
-    res.status(500).json({ error: err });
-  },
-  onNoMatch: (_req, res) => {
-    res.status(404).send("Request can't be resolved");
-  },
-}).post(async (req, res) => {
+const router = createRouter<NextApiRequest, NextApiResponse>();
+
+router.post(async (req, res) => {
   try {
-    const { apartment,  period, apartmentLink, userContact: {firstName, lastName, email, phone, body } } = req.body as IUserInquiryRequestSerialized
+    const { apartmentName,  period, apartmentLink, userContact: {firstName, lastName, email, phone, body } } = req.body as IUserInquiryRequestSerialized
 
     const periodStr = [formatFromYYYYMMDDtoDDMMYYYY(period[0]), formatFromYYYYMMDDtoDDMMYYYY(period[1])];
 
@@ -62,7 +56,7 @@ const handler = nc<NextApiRequest, NextApiResponse>({
           lastName,
           email,
           phone,
-          apartment,
+          apartment: apartmentName,
           startDate: periodStr[0],
           endDate: periodStr[1],
           body
@@ -78,7 +72,7 @@ const handler = nc<NextApiRequest, NextApiResponse>({
           dynamicTemplateData: {
             firstName,
             lastName,
-            apartment,
+            apartment: apartmentName,
             startDate: periodStr[0],
             endDate: periodStr[1],
             body,
@@ -115,4 +109,11 @@ const handler = nc<NextApiRequest, NextApiResponse>({
   }
 });
 
-export default handler;
+export default router.handler({
+  onError: (err, _req, res) => {
+    res.status(500).json({ error: err });
+  },
+  onNoMatch: (_req, res) => {
+    res.status(404).send("Request can't be resolved");
+  },
+});
