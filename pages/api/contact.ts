@@ -7,7 +7,7 @@ import {
 } from "@/server/types";
 
 import type { NextApiRequest, NextApiResponse } from "next";
-import nc from "next-connect";
+import { createRouter } from "next-connect";
 import sgMail from "@sendgrid/mail";
 import { toErrorWithMessage } from "server/utils/genericErrorsHandler";
 import { toDDMMYYYY } from "@/utils/dates";
@@ -28,15 +28,9 @@ const handleSengridError = (maybeError: unknown) => {
 
 sgMail.setApiKey(process.env.SENDGRID_KEY as string)
 
-const handler = nc<NextApiRequest, NextApiResponse>({
-  onError: (err, _req, res) => {
-    // console.error(err.stack);
-    res.status(500).json({ error: err });
-  },
-  onNoMatch: (_req, res) => {
-    res.status(404).send("Request can't be resolved");
-  },
-}).post(async (req, res) => {
+const router = createRouter<NextApiRequest, NextApiResponse>();
+
+router.post(async (req, res) => {
   try {
     const { apartmentName,  period, apartmentLink, userContact: {firstName, lastName, email, phone, body } } = req.body as IUserInquiryRequestSerialized
 
@@ -115,4 +109,11 @@ const handler = nc<NextApiRequest, NextApiResponse>({
   }
 });
 
-export default handler;
+export default router.handler({
+  onError: (err, _req, res) => {
+    res.status(500).json({ error: err });
+  },
+  onNoMatch: (_req, res) => {
+    res.status(404).send("Request can't be resolved");
+  },
+});

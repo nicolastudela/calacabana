@@ -1,6 +1,6 @@
 import { google } from "googleapis";
 import type { NextApiRequest, NextApiResponse } from "next";
-import nc from "next-connect";
+import { createRouter } from "next-connect";
 
 const jwtClient = new google.auth.JWT(
   process.env.GOOGLE_CLIENT_EMAIL,
@@ -15,15 +15,9 @@ const calendar = google.calendar({
   auth: jwtClient,
 });
 
-const handler = nc<NextApiRequest, NextApiResponse>({
-  onError: (err, _req, res) => {
-    // console.error(err.stack);
-    res.status(500).json({error: err});
-  },
-  onNoMatch: (_req, res) => {
-    res.status(404).send("Request can't be resolved");
-  },
-}).get(async (_req, res) => {
+const router = createRouter<NextApiRequest, NextApiResponse>();
+
+router.get(async (_req, res) => {
     const eventsResponse = await calendar.events.list({
       calendarId: process.env.GOOGLE_CALENDAR_ID,
       timeMin: new Date().toISOString(),
@@ -38,9 +32,20 @@ const handler = nc<NextApiRequest, NextApiResponse>({
         .status(eventsResponse.status)
         .json({ statusText: eventsResponse.statusText });
     }
-}).post((req,_post,next) => {
+});
+
+router.post((req,_post,next) => {
   console.log(`1er post: ${req}`);
   next();
-}).post((_req,res) => res.status(404).send("LA CONCHA DE TU MADRE ALBOYS"));
+});
 
-export default handler;
+router.post((_req,res) => res.status(404).send("LA CONCHA DE TU MADRE ALBOYS"));
+
+export default router.handler({
+  onError: (err, _req, res) => {
+    res.status(500).json({error: err});
+  },
+  onNoMatch: (_req, res) => {
+    res.status(404).send("Request can't be resolved");
+  },
+});

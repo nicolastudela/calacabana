@@ -7,7 +7,7 @@ import {
 } from "@/server/types";
 import { bookingPeriodSerialize } from "server/serializers/bookingPeriodSerializer";
 import type { NextApiRequest, NextApiResponse } from "next";
-import nc from "next-connect";
+import { createRouter } from "next-connect";
 import fetchBookings from "../../../server/services/fetchBookings";
 import joinArrayBookingPeriods from "@/server/utils/joinDateRanges";
 
@@ -25,13 +25,9 @@ const serializeBookingPeriods = (
   } as IAparmentBookingsResponseSerializedSuccessful;
 };
 
-const handler = nc<NextApiRequest, NextApiResponse>({
-  onError: (err, _req, res) => {
-    console.error(err.stack);
-    res.status(500).json({ error: err });
-  },
-  attachParams: true,
-}).get(async (req, res) => {
+const router = createRouter<NextApiRequest, NextApiResponse>();
+
+router.get(async (req, res) => {
   if (!req.query.apartment || Array.isArray(req.query.apartment)) {
     res.status(404).end("Apartment not found");
     return;
@@ -107,4 +103,12 @@ const handler = nc<NextApiRequest, NextApiResponse>({
   res.status(200).json(serializedResponse);
 });
 
-export default handler;
+export default router.handler({
+  onError: (err, _req, res) => {
+    console.error(err instanceof Error ? err.stack : err);
+    res.status(500).json({ error: err });
+  },
+  onNoMatch: (_req, res) => {
+    res.status(404).send("Request can't be resolved");
+  },
+});

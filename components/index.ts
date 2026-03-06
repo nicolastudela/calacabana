@@ -3,7 +3,7 @@ import Layout from "./Layout";
 export { Feature, FeatureList, FeatureIcon } from "./FeatureList";
 export type { IFeatureProps as IApartmentFeature } from "./FeatureList";
 
-export * as Layout from "./Layout";
+export { default as Layout } from "./Layout";
 export { PageDrawer } from "./PageDrawer";
 export type { IPageDrawerProps } from "./PageDrawer";
 export { TextAreaFieldWithRef, TextAreaField } from "./TextAreaField";

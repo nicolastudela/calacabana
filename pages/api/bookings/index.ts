@@ -1,5 +1,5 @@
 import type { NextApiRequest, NextApiResponse } from "next";
-import nc from "next-connect";
+import { createRouter } from "next-connect";
 import {
   BookingsInfoResponseStatus,
   IBookingsInfoResponseError,
@@ -8,19 +8,11 @@ import {
 } from "@/server/types";
 import intersectDateRanges from "@/server/utils/intersectDateRanges";
 import fetchBookings from "@/server/services/fetchBookings";
+import prisma from "@/lib/prisma";
 
+const router = createRouter<NextApiRequest, NextApiResponse>();
 
-const BUENOS_AIRES_ISO_TIME = "T15:00:00-03:00";
-
-const handler = nc<NextApiRequest, NextApiResponse>({
-  onError: (err, _req, res) => {
-    // console.error(err.stack);
-    res.status(500).json({ error: err });
-  },
-  onNoMatch: (_req, res) => {
-    res.status(404).send("Request can't be resolved");
-  },
-}).get(async (_req, res) => {
+router.get(async (_req, res) => {
 
   const apartments = await prisma.apartment.findMany({ select: {
     name: true,
@@ -73,4 +65,11 @@ const handler = nc<NextApiRequest, NextApiResponse>({
   }
 });
 
-export default handler;
+export default router.handler({
+  onError: (err, _req, res) => {
+    res.status(500).json({ error: err });
+  },
+  onNoMatch: (_req, res) => {
+    res.status(404).send("Request can't be resolved");
+  },
+});

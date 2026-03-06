@@ -1,19 +1,12 @@
 import type { NextApiRequest, NextApiResponse } from "next";
-import nc from "next-connect";
+import { createRouter } from "next-connect";
 import { toErrorWithMessage } from "@/server/utils/genericErrorsHandler";
 import { GenericResponseStatus, IGenericErrorRes } from "@/server/types";
 import fetchApartmentSlugs from "@/server/services/fetchApartmentSlugs";
 
+const router = createRouter<NextApiRequest, NextApiResponse>();
 
-const handler = nc<NextApiRequest, NextApiResponse>({
-  onError: (err, _req, res) => {
-    // console.error(err.stack);
-    res.status(500).json({ error: err });
-  },
-  onNoMatch: (_req, res) => {
-    res.status(404).send("Request can't be resolved");
-  },
-}).get(async (_req, res) => {
+router.get(async (_req, res) => {
 
   const slugs = await fetchApartmentSlugs()
 
@@ -31,4 +24,11 @@ const handler = nc<NextApiRequest, NextApiResponse>({
   }
 });
 
-export default handler;
+export default router.handler({
+  onError: (err, _req, res) => {
+    res.status(500).json({ error: err });
+  },
+  onNoMatch: (_req, res) => {
+    res.status(404).send("Request can't be resolved");
+  },
+});
