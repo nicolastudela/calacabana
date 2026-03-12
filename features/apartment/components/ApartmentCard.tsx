@@ -29,8 +29,9 @@ export const ApartmentCard = ({
   const { isMobile } = useGlobalContext();
   return (
       <Box
-        href={`/alojamiento/${name}`} 
+        href={`/alojamiento/${name}`}
         as={NextLink}
+        role="article"
         w={{ base: "100%", md: type !== "COMPOUND" ? "50%" : "auto" }}
         maxWidth={type !== "COMPOUND" ? "550px" : "1000px"}
         pb={4}

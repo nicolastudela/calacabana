@@ -1,7 +1,7 @@
 import type { GetStaticProps } from "next";
 import Head from "next/head";
 
-import { Box, Divider, Flex, Heading, Spinner } from "@chakra-ui/react";
+import { Box, Divider, Flex, Heading, Spinner, Text } from "@chakra-ui/react";
 import { PageDrawer } from "@/components";
 import { ApartmentCard,
   ApartmentCardProps, ImageCarousel as Carousel,
@@ -82,13 +82,16 @@ const Page = ({ apartments, reviews, images }: IHomePageProps) => {
   return (
     <>
       <Box display={{ base: "block", md: "none" }}>
-        <a
+        <Box
+          as="button"
           onClick={() => {
             dispatch({ type: IDrawerActionTypes.SHOW_ALL_PICS });
           }}
+          w="100%"
+          cursor="pointer"
         >
           <Carousel images={images.square} />
-        </a>
+        </Box>
       </Box>
       {!isMobile && (
         <HeroGrid
@@ -101,27 +104,43 @@ const Page = ({ apartments, reviews, images }: IHomePageProps) => {
         />
       )}
       <Heading
-        as="h2"
+        as="h1"
         size="xl"
-        fontFamily={"'MonteCarlo', cursive"}
-        letterSpacing="wide"
-        py={1}
+        py={{ base: 1, md: 3 }}
         textAlign="center"
-        display={{ base: "block", md: "none" }}
       >
-        Alojamiento y alquileres vacacionales
+        <Text
+          as="span"
+          display={{ base: "block", md: "inline" }}
+          fontFamily={{ base: "'MonteCarlo', cursive", md: "inherit" }}
+          letterSpacing={{ base: "wide", md: "normal" }}
+        >
+          Alojamiento y alquileres vacacionales
+        </Text>
+        <Text as="span" display={{ base: "none", md: "inline" }}>
+          {" en "}
+        </Text>
+        <Text
+          as="span"
+          display={{ base: "block", md: "inline" }}
+          fontSize={{ base: "lg", md: "inherit" }}
+        >
+          Tanti, Cordoba
+        </Text>
       </Heading>
       <Heading
         as="h2"
-        size="md"
-        // fontFamily={"'MonteCarlo', cursive"}
-        // pb={1}
+        size={{ base: "sm", md: "lg" }}
         textAlign="center"
-        display={{ base: "block", md: "none" }}
+        mb={{ base: 2, md: 4 }}
+        fontWeight="bold"
+        fontFamily={{ base: "inherit", md: "'MonteCarlo', cursive" }}
       >
-        Tanti, Cordoba
+        Naturaleza, confort. Mirador de las sierras, en las sierras.
       </Heading>
       <Flex
+        as="section"
+        aria-label="Departamentos disponibles"
         width="100%"
         flexWrap={"wrap"}
         justifyContent={{ base: "space-around", md: "space-between" }}
@@ -134,22 +153,36 @@ const Page = ({ apartments, reviews, images }: IHomePageProps) => {
         ))}
       </Flex>
       <Divider my={8} mb={4} />
-      <Reviews
-        reviews={reviews}
-        overallRating={"5.0"}
-        reviewsCount={reviews.length}
-        onExpand={() =>
-          dispatch({
-            type: IDrawerActionTypes.SHOW_ALL_REVIEWS,
-            payload: reviews,
-          })
-        }
-      />
+      <Box as="section" aria-label="Opiniones de huéspedes">
+        <Reviews
+          reviews={reviews}
+          overallRating={"5.0"}
+          reviewsCount={reviews.length}
+          onExpand={() =>
+            dispatch({
+              type: IDrawerActionTypes.SHOW_ALL_REVIEWS,
+              payload: reviews,
+            })
+          }
+        />
+      </Box>
       <Divider my={8} mb={4} />
+      <Text
+        display={{ base: "block", md: "none" }}
+        fontFamily={"'MonteCarlo', cursive"}
+        fontSize="4xl"
+        fontWeight="semibold"
+        textAlign="center"
+        my={4}
+      >
+        un mirador de las sierras, en las sierras
+      </Text>
       {scrollTrigger && (
-        <Suspense fallback={<LoadingMapContainer />}>
-          <Map />
-        </Suspense>
+        <Box as="section" aria-label="Ubicación en el mapa">
+          <Suspense fallback={<LoadingMapContainer />}>
+            <Map />
+          </Suspense>
+        </Box>
       )}
       <PageDrawer
         componentToShow={componentToShow}
@@ -159,11 +192,9 @@ const Page = ({ apartments, reviews, images }: IHomePageProps) => {
   );
 };
 
-const seoDescription = `El alojamiento cuenta con apartamentos diseñados al detalle, con terminaciones de calidad y equipados con todo lo que necesitas. 
-El aire puro de las sierras en combinación de las facilidades del alojamiento hacen una composición perfecta para que puedas relajarte disfrutando de una espectacular vista a las sierras.          
-  - Cala Cabana: Servicio de alojamiento seguro, alejado de la ciudad, en contacto con la naturaleza pero cerca de todo. Tanti, Cordoba -`;
+const seoDescription = `Alquiler de departamentos vacacionales en Tanti, Córdoba. Vista a las sierras, pileta, WiFi y estacionamiento. Reservá tu escapada en Cala Cabana.`;
 
-const seoTitle = `Cala Cabana: Servicio de alojamiento y alquileres vacacionales en Tanti, Cordoba`;
+const seoTitle = `Cala Cabana: Alquiler de departamentos vacacionales en Tanti, Córdoba`;
 
 const Home = (props: IHomePageProps) => {
   const canonicalPath = process.env.NEXT_PUBLIC_ORIGIN_PATH;
@@ -173,7 +204,9 @@ const Home = (props: IHomePageProps) => {
         <title>{seoTitle}</title>
         <meta name="description" content={seoDescription} />
         <link rel="icon" href="/favicon.ico" />
+        <link rel="canonical" href={canonicalPath} />
         <meta key="og-title" property="og:title" content={seoTitle} />
+        <meta key="og-url" property="og:url" content={canonicalPath} />
         <meta
           key="og-description"
           property="og:description"
@@ -183,6 +216,9 @@ const Home = (props: IHomePageProps) => {
           property="og:image"
           content={`${canonicalPath}${props.images.square[0].src}`}
         />
+        <meta name="twitter:title" content={seoTitle} />
+        <meta name="twitter:description" content={seoDescription} />
+        <meta name="twitter:image" content={`${canonicalPath}${props.images.square[0].src}`} />
       </Head>
       <Page {...props} />
     </>

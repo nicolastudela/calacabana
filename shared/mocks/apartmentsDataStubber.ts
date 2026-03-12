@@ -430,7 +430,7 @@ const APARMENTS_DATA = {
   ["calacabana"]: {
     type: "COMPOUND",
     mainFeature:
-      "Tode el complejo ( 2 departamentos )",
+      "Todo el complejo (2 departamentos)",
     name: "calacabana",
     displayName: `Cala + Cabana `,
     beds: "6",

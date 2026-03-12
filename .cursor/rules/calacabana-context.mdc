@@ -29,9 +29,84 @@ Next.js 14 vacation rental site (Cala + Cabana apartments, Tanti, Argentina). Br
 4. Future: Reservations in DB, admin APIs, booking manager, auth (NextAuth/Clerk/etc.)
 5. Minor: amenities bundle size (FIXME in amenitiesIconMapper), Footer copyright year
 
+---
+
+## SEO Overhaul (March 12, 2026)
+
+**Plan file**: `.cursor/plans/calacabana_seo_overhaul_4baa10ec.plan.md` — full audit + implementation plan
+
+### All 6 Phases Implemented & Committed
+
+**Phase 1 — Headings:**
+- Header logo changed from `h1` to `span` (both Desktop + Mobile headers)
+- DesktopHeader tagline `h3` -> `p`
+- Homepage H1: "Alojamiento y alquileres vacacionales" (MonteCarlo cursive on mobile, regular font on desktop with " en Tanti, Cordoba" inline). "Tanti, Cordoba" as separate block on mobile (`fontSize="lg"`).
+- Homepage H2: "Naturaleza, confort. Mirador de las sierras, en las sierras." (bold, MonteCarlo cursive on desktop `size="lg"`, default font on mobile `size="sm"`)
+- Mobile-only tagline ("un mirador de las sierras, en las sierras") between Reviews and Map, `fontSize="4xl"` `fontWeight="semibold"`
+- El-alojamiento: Single H1 "Sobre el alojamiento", three sections demoted to H2
+- Ubicacion: H1 "Ubicacion en Tanti, Cordoba"
+- 404: Added `as="h1"`
+
+**Phase 2 — JSON-LD:**
+- Created `components/seo/JsonLd.tsx` — reusable component + schema builders
+- Global `LodgingBusiness` schema in `_app.tsx` (every page)
+- Per-apartment schema on `/alojamiento/[apartment]` via `buildAccommodationSchema()`
+- `Place` schema with geo coords on `/ubicacion` via `ubicacionPlaceSchema`
+- Exact coordinates: -31.359358, -64.557336
+- Full address: Calle Juarez Celman, Villa Serrana Keoken Manzana I Lote 13
+
+**Phase 3 — Meta Tags:**
+- Canonical `<link rel="canonical">` on every page
+- `og:url` added to homepage, el-alojamiento, ubicacion (apartment pages already had it)
+- Twitter Card tags (`twitter:card`, `twitter:title`, `twitter:description`, `twitter:image`) on every page
+- Fixed `og:site_name` "Cala cabana" -> "Cala Cabana" in `_document.tsx`
+- Fixed `ubicacion.tsx` og:image `.jpg` -> `.jpeg`
+
+**Phase 4 — Meta Descriptions:**
+- Homepage, apartment pages (dynamic template), el-alojamiento, ubicacion, 404 — all with unique Spanish descriptions
+- `_document.tsx` fallback description updated
+
+**Phase 5 — Semantic HTML:**
+- `<section>` with aria-labels on homepage (apartments, reviews, map)
+- `<article>` on apartment detail, `role="article"` on ApartmentCard, `<aside>` on booking sidebar
+- `<a onClick>` -> `<Box as="button">` on carousel wrappers
+
+**Phase 6 — Quick Wins:**
+- Removed `user-scalable=0` from viewport meta
+- Fixed typos: vegetación, combinación, Todo, reservado, nuestro
+- Sitemap: lastmod, changefreq, priority, www prefix
+- robots.txt: `Allow: /`, www prefix
+- 404: Head with title, description, noindex, improved alt text
+
+### Files Changed
+- `components/seo/JsonLd.tsx` (NEW)
+- `components/headers/DesktopHeader.tsx`, `components/headers/MobileHeadMaster.tsx`
+- `features/apartment/components/ApartmentCard.tsx`
+- `features/inquiry/NotificationSection.tsx`
+- `shared/mocks/apartmentsDataStubber.ts`
+- `pages/_app.tsx`, `pages/_document.tsx`
+- `pages/index.tsx`, `pages/el-alojamiento.tsx`, `pages/ubicacion.tsx`, `pages/404.tsx`
+- `pages/alojamiento/[apartment].tsx`
+- `public/sitemap.xml`, `public/robots.txt`
+
+### Post-Deploy TODO
+- Run Lighthouse SEO audit on production
+- Validate JSON-LD via Google Rich Results Test
+- Submit updated sitemap in Google Search Console
+- Monitor Search Console for indexing, structured data, and ranking changes
+- Ubicacion H1 missing accent marks ("Ubicación", "Córdoba") — minor, fix if desired
+
+### Decisions
+- Canonical domain: `www.calacabana.ar` (non-www redirects to www)
+- Header tagline kept as `<p>` not `<h2>` (repeated across all pages = boilerplate, no SEO value as heading)
+- All user-facing content in Spanish (es_AR). Dev communication in English.
+
+---
+
 ## Reference
 - `WORKSPACE.md` — Full project index, architecture, planned features
 - `README.md` — Env vars, local dev, how to run
+- `.cursor/plans/calacabana_seo_overhaul_4baa10ec.plan.md` — Full SEO plan with audit details
 
 ---
 

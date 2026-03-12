@@ -13,6 +13,7 @@ import { trackPageview, GA_TRACKING_ID } from "@/lib/gtag";
 import "../styles/globals.css";
 import  { GlobalContextProvider } from "@/shared/hooks/useGlobalContext";
 import { Layout }  from "@/components";
+import JsonLd, { lodgingBusinessSchema } from "@/components/seo/JsonLd";
 
 import theme from "../theme";
 import { ChakraProvider } from "@chakra-ui/react";
@@ -41,8 +42,10 @@ function MyApp({ Component, pageProps }: AppProps) {
         <meta name="googlebot" content="index,follow"/>
         <meta
           name="viewport"
-          content="width=device-width, initial-scale=1.0, maximum-scale=1.0,user-scalable=0"
+          content="width=device-width, initial-scale=1.0"
         />
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:site" content="@calacabana" />
       </Head>
       {/* Global Site Tag (gtag.js) - Google Analytics */}
       <Script
@@ -67,6 +70,7 @@ function MyApp({ Component, pageProps }: AppProps) {
         }}
       />
 
+      <JsonLd data={lodgingBusinessSchema} />
       <ChakraProvider theme={theme}>
         <GlobalContextProvider>
           <Layout>
