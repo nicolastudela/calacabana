@@ -12,7 +12,7 @@ export enum NOTIFICATION {
 const t = (key: string) => {
   switch (key) {
     case NOTIFICATION.FAILED_SELECTED_DATES_NOT_AVAILABLE:
-      return "Parece que este apartamento ya esta resevado en las fechas que te interesan. Si te gustó, cambia las fechas del viaje y volve a intentarlo";
+      return "Parece que este apartamento ya está reservado en las fechas que te interesan. Si te gustó, cambiá las fechas del viaje y volvé a intentarlo";
     case NOTIFICATION.FAILED_INQUIRY_ACTION:
       return "Parece que hubo un problema en el envio de tu consulta, te pedimos disculpas. Si lo deseas puedes intentar otra vez";
     case NOTIFICATION.SUCCESS_INQUIRY_ACTION:

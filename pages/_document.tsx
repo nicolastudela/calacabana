@@ -9,10 +9,10 @@ class MyDocument extends Document {
         <Head>
           <meta
             name="description"
-            content="Servicio de alojamiento combinando naturaleza, confort y calidez. Mirador de las sierras, en las sierras"
+            content="Cala Cabana: alquiler de departamentos vacacionales en Tanti, Córdoba. Vista a las sierras, pileta, WiFi y estacionamiento."
           />
           <link rel="icon" href="/favicon.ico" />
-          <meta property="og:site_name" content="Cala cabana"/>
+          <meta property="og:site_name" content="Cala Cabana"/>
           <meta property="og:locale" content="es_AR"/>
           <meta property="og:type" content="website"/>
           <meta name="author" content="Nicolas Tudela"></meta>

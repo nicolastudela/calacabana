@@ -3,6 +3,7 @@ import Head from "next/head";
 import Image from "next/image";
 import Map from "@/features/location/Map"
 import useGlobalContext from "@/shared/hooks/useGlobalContext";
+import JsonLd, { ubicacionPlaceSchema } from "@/components/seo/JsonLd";
 
 const images = {
   detail: {
@@ -13,11 +14,9 @@ const images = {
   },
 };
 
-const seoTitle = `Ubicacion - Cala Cabana: Servicio de alojamiento y alquileres vacacionales en Tanti, Cordoba`;
+const seoTitle = `Ubicación - Cala Cabana en Tanti, Córdoba`;
 
-const seoDescription = `El complejo se encuentra en barrio semi-privado KEOKEN, en la
-ciudad de Tanti. El barrio cuenta con salida al rio. Córdoba se encuentra a 36 km de la casa, mientras que Villa
-Carlos Paz está a 9 km. - Cala Cabana: Servicio de alojamiento seguro, alejado de la ciudad, en contacto con la naturaleza pero cerca de todo. Tanti, Cordoba -`;
+const seoDescription = `Cala Cabana se ubica en Barrio Keoken, Tanti, Córdoba. A 9 km de Villa Carlos Paz y 36 km de Córdoba capital. Cómo llegar y mapa.`;
 
 const Page = ({}) => {
   const { isMobile } = useGlobalContext();
@@ -39,7 +38,7 @@ const Page = ({}) => {
             verticalAlign="center"
           >
             <Heading size={"lg"} as="h1" mb={2}>
-              Ubicacion
+              Ubicacion en Tanti, Cordoba
             </Heading>
             <Text>
               El complejo se encuentra en barrio semi-privado KEOKEN, en la
@@ -71,20 +70,19 @@ const Ubicacion = ({}) => {
   const canonicalPath = process.env.NEXT_PUBLIC_ORIGIN_PATH;
   return (
     <>
+      <JsonLd data={ubicacionPlaceSchema} />
       <Head>
         <title>{seoTitle}</title>
         <meta name="description" content={seoDescription} />
-        <meta key="og-title" property="og:title" content={seoTitle} />
-        <meta
-          key="og-description"
-          property="og:description"
-          content={seoDescription}
-        />
-        <meta
-          property="og:image"
-          content={`${canonicalPath}/images/homepage/square/1-homepage.jpg`}
-        />
         <link rel="icon" href="/favicon.ico" />
+        <link rel="canonical" href={`${canonicalPath}/ubicacion`} />
+        <meta key="og-title" property="og:title" content={seoTitle} />
+        <meta key="og-url" property="og:url" content={`${canonicalPath}/ubicacion`} />
+        <meta key="og-description" property="og:description" content={seoDescription} />
+        <meta property="og:image" content={`${canonicalPath}/images/homepage/square/1-homepage.jpeg`} />
+        <meta name="twitter:title" content={seoTitle} />
+        <meta name="twitter:description" content={seoDescription} />
+        <meta name="twitter:image" content={`${canonicalPath}/images/homepage/square/1-homepage.jpeg`} />
       </Head>
       <Page />
     </>

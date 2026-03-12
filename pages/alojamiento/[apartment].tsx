@@ -17,6 +17,7 @@ import {
 } from "@chakra-ui/react";
 
 import { Feature, FeatureList, FeatureIcon, PageDrawer} from "@/components"
+import JsonLd, { buildAccommodationSchema } from "@/components/seo/JsonLd";
 import { ApartmentTitle, HeroGrid, ImageCarousel as Carousel } from "@/features/apartment"
 
 import LoadingMapContainer from "@/features/location/LoadingMapContainer";
@@ -257,13 +258,16 @@ const Page = (apartmentData: IApartmentProps) => {
   return (
     <Box>
           <Box display={{base: "block", md: "none"}}>
-            <a
+            <Box
+              as="button"
               onClick={() => {
                 dispatch({ type: IDrawerActionTypes.SHOW_ALL_PICS });
               }}
+              w="100%"
+              cursor="pointer"
             >
               <Carousel aptName="cala" images={images.square} />
-            </a>
+            </Box>
           </Box>
           {!isMobile && <HeroGrid
             onShowAllPicks={onShowAllPicks}
@@ -279,6 +283,7 @@ const Page = (apartmentData: IApartmentProps) => {
           px={{ base: 1, md: "unset" }}
         >
           <Flex
+            as="article"
             w={{ base: "100%", md: "65%" }}
             alignItems={"flex-start"}
             direction="column"
@@ -333,6 +338,8 @@ const Page = (apartmentData: IApartmentProps) => {
             <Divider my={4} />
           </Flex>
           <Box
+            as="aside"
+            aria-label="Reserva y disponibilidad"
             w={{ base: "100%", md: "35%" }}
             position={{ base: "relative", md: "sticky" }}
             top={{ base: "unset", md: "40px" }}
@@ -434,16 +441,18 @@ const Apartment = (apartmentData: IApartmentProps) => {
   const canonicalPath = process.env.NEXT_PUBLIC_ORIGIN_PATH;
   return (
     <>
+      <JsonLd data={buildAccommodationSchema(apartmentData)} />
       <Head>
-        <title>{`${apartmentData.displayName} - ${apartmentData.mainFeature} - Cala Cabana: Servicio de alojamiento y alquileres vacacionales en Tanti, Cordoba`}</title>
+        <title>{`${apartmentData.displayName} - ${apartmentData.mainFeature} | Cala Cabana, Tanti, Córdoba`}</title>
         <meta
           name="description"
-          content={`El ${apartmentData.displayName} - ${apartmentData.mainFeature} - cuenta con ${apartmentData.rooms} ambientes - Completamente equipado, combinando  naturaleza, confort y calidez - Cala Cabana`}
+          content={`${apartmentData.displayName} en Tanti, Córdoba. ${apartmentData.mainFeature}. ${apartmentData.maxPeople} huéspedes, ${apartmentData.rooms} ambientes. Alquiler vacacional con vista a las sierras.`}
         />
+        <link rel="canonical" href={`${canonicalPath}/alojamiento/${apartmentData.name}`} />
         <meta
           key="og-title"
           property="og:title"
-          content={`${apartmentData.displayName} - ${apartmentData.mainFeature} - Cala Cabana: Servicio de alojamiento y alquileres vacacionales en Tanti, Cordoba`}
+          content={`${apartmentData.displayName} - ${apartmentData.mainFeature} | Cala Cabana, Tanti`}
         />
         <meta
           key="og-url"
@@ -457,8 +466,11 @@ const Apartment = (apartmentData: IApartmentProps) => {
         <meta
           key="og-description"
           property="og:description"
-          content={`${apartmentData.mainFeature} - cuenta con ${apartmentData.rooms} ambientes - Completamente equipado, combinando  naturaleza, confort y calidez`}
+          content={`${apartmentData.displayName} en Tanti, Córdoba. ${apartmentData.mainFeature}. ${apartmentData.maxPeople} huéspedes, ${apartmentData.rooms} ambientes.`}
         />
+        <meta name="twitter:title" content={`${apartmentData.displayName} - Cala Cabana`} />
+        <meta name="twitter:description" content={`${apartmentData.mainFeature} - ${apartmentData.rooms} ambientes en Tanti, Cordoba`} />
+        <meta name="twitter:image" content={`${canonicalPath}${apartmentData.images.square[0].src}`} />
       </Head>
       <Page {...apartmentData} />
     </>

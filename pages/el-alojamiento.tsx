@@ -31,17 +31,18 @@ const images = {
 };
 
 
-const seoTitle = `Sobre el Alojamiento - Cala Cabana: Servicio de alojamiento y alquileres vacacionales en Tanti, Cordoba`
+const seoTitle = `Sobre el alojamiento - Cala Cabana en Tanti, Córdoba`;
 
-const seoDescription = `El alojamiento cuenta con apartamentos diseñados al detalle, con terminaciones de calidad y equipados con todo lo que necesitas. 
-El aire puro de las sierras en combinación de las facilidades del alojamiento hacen una composición perfecta para que puedas relajarte disfrutando de una espectacular vista a las sierras.          
-  - Cala Cabana: Servicio de alojamiento seguro, alejado de la ciudad, en contacto con la naturaleza pero cerca de todo. Tanti, Cordoba -`;
+const seoDescription = `Conocé Cala Cabana: alojamiento vacacional rodeado de naturaleza en las sierras de Tanti, Córdoba. Tranquilidad, comodidad y vistas panorámicas.`;
 
 
 const Page = ({}) => {
   return (
     <Box>
         <Divider display={{base: "none", md: "block"}}/>
+        <Heading size={"xl"} as="h1" mt={4} ml={2} mb={2}>
+          Sobre el alojamiento
+        </Heading>
         <Flex alignItems={"flex-start"} direction="column" ml={2} mt={4}>
           <Flex
             direction={"column"}
@@ -58,19 +59,19 @@ const Page = ({}) => {
               verticalAlign="center"
               direction={"column"}
             >
-              <Heading size={"lg"} as="h1" mb={{base: 2, md: 10}}>
+              <Heading size={"lg"} as="h2" mb={{base: 2, md: 10}}>
                 Naturaleza
               </Heading>
               <Text>
-                Queremos compartir nuestra amor por la naturaleza.
+                Queremos compartir nuestro amor por la naturaleza.
                 <br />
                 <br />
                 Nuestra responsabilidad es con la flora y el cuidado de nuestra
                 tierra. <br />
                 <br />
-                Creemos que un lugar inmerso en la vegetation, que conserva su
-                vegetacion autoctona es ideal para disfrutar un tiempo de
-                relajacion e inspiracion
+                Creemos que un lugar inmerso en la vegetación, que conserva su
+                vegetación autóctona es ideal para disfrutar un tiempo de
+                relajación e inspiración
               </Text>
             </Flex>
 
@@ -105,7 +106,7 @@ const Page = ({}) => {
               verticalAlign="center"
               direction={"column"}
             >
-              <Heading size={"lg"} as="h1"mb={{base: 2, md: 10}}>
+              <Heading size={"lg"} as="h2" mb={{base: 2, md: 10}}>
                 Tranquilidad
               </Heading>
               <Text>
@@ -114,7 +115,7 @@ const Page = ({}) => {
                 ciudad y en contacto con la naturaleza.
                 <br />
                 <br />
-                El aire puro de las sierras en combination de las facilidades
+                El aire puro de las sierras en combinación de las facilidades
                 del alojamiento hacen una composición perfecta para que puedas
                 relajarte disfrutando de una espectacular vista a las sierras.
               </Text>
@@ -136,7 +137,7 @@ const Page = ({}) => {
               verticalAlign="center"
               direction={"column"}
             >
-              <Heading size={"lg"} as="h1" mb={{base: 2, md: 10}}>
+              <Heading size={"lg"} as="h2" mb={{base: 2, md: 10}}>
                 Comodidad
               </Heading>
               <Text>
@@ -170,28 +171,17 @@ const ElAlojamiento = ({}) => {
   return (
     <>
       <Head>
-        <title>
-          {seoTitle}
-        </title>
-        <meta
-          name="description"
-          content={seoDescription}
-        />
-        <meta
-          key="og-title"
-          property="og:title"
-          content={seoTitle}
-        />
-        <meta
-          key="og-description"
-          property="og:description"
-          content={seoDescription}
-          />
-         <meta
-          property="og:image"
-          content={`${canonicalPath}/images/homepage/square/1-homepage.jpeg`}
-          />
+        <title>{seoTitle}</title>
+        <meta name="description" content={seoDescription} />
         <link rel="icon" href="/favicon.ico" />
+        <link rel="canonical" href={`${canonicalPath}/el-alojamiento`} />
+        <meta key="og-title" property="og:title" content={seoTitle} />
+        <meta key="og-url" property="og:url" content={`${canonicalPath}/el-alojamiento`} />
+        <meta key="og-description" property="og:description" content={seoDescription} />
+        <meta property="og:image" content={`${canonicalPath}/images/homepage/square/1-homepage.jpeg`} />
+        <meta name="twitter:title" content={seoTitle} />
+        <meta name="twitter:description" content={seoDescription} />
+        <meta name="twitter:image" content={`${canonicalPath}/images/homepage/square/1-homepage.jpeg`} />
       </Head>
       <Page />
     </>
