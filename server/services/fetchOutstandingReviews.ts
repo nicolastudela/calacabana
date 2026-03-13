@@ -1,5 +1,5 @@
 
-import stubGooglePlaceAPIReviews from "@/shared/mocks/googlePlaceAPIReviewsStubber";
+import stubGooglePlaceAPIReviews from "@/shared/mocks/googlePlaceAPIReviewsFromSiteStubber";
 import { GenericResponseStatus, IGenericErrorRes, IReviewsResposePayload, ISuccessGenericRes } from "@/server/types";
 import { IReview } from "@/types/types";
 import { toErrorWithMessage } from "server/utils/genericErrorsHandler";
